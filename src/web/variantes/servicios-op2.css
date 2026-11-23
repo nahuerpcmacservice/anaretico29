@@ -1,0 +1,96 @@
+/* Servicios · opción 2 "Áreas con foto, como la portada" (09/11/2026). Maqueta: se carga después de tonos.css y movimiento.css.
+   Portada oscura corta (sin mapa ni relojes), pestañas como las de la portada, cada área abre con su foto y el nombre encima, y tarjetas más finas. */
+
+/* Portada corta: título, bajada y moneda */
+.of .fz-hero{background:var(--deep);color:var(--on-dark);padding:52px 0 34px}
+.of .fz-hero-grid{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:22px 40px}
+.of .fz-hero .s-hero-text{flex:1 1 560px;min-width:0}
+.of .fz-hero .lbl{color:var(--copper-light)}
+.of .fz-hero h1{margin:10px 0 14px;max-width:30ch;font-size:clamp(34px,4vw,52px);font-weight:350;line-height:1.06;letter-spacing:-.015em;color:var(--on-dark);text-wrap:balance}
+.of .fz-hero .bajada{margin:0;max-width:52ch;font:400 16.5px/1.55 'Inter',Arial,sans-serif;color:var(--muted-dark)}
+.of .fz-hero .currency span{color:var(--muted-dark)}
+.of .fz-hero .seg{background:transparent;border-color:#ffffff40}
+.of .fz-hero .seg button{min-height:44px;color:var(--on-dark)}
+.of .fz-hero .seg button+button{border-color:#ffffff40}
+/* Moneda elegida: además del relleno, tilde y raya clara abajo */
+.of .fz-hero .seg button[aria-pressed="true"]{background:var(--copper-text);color:#fff;box-shadow:inset 0 -3px 0 var(--copper-light)}
+.of .fz-hero .seg button[aria-pressed="true"]::before{content:"✓";margin-right:6px}
+
+/* Pestañas como "Cada foto es una plaza"; quedan fijas debajo del encabezado */
+/* display:block anula el nav{display:flex} general de styles.css, que centraba las pestañas */
+.of .fz-tabs{display:block;width:auto;position:sticky;top:88px;z-index:40;background:var(--deep);border-top:1px solid #ffffff1f}
+.of .fz-tabs::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:88px;background:#efeae1;opacity:0;pointer-events:none}
+.of .fz-tabs.is-stuck::before{opacity:1}
+.of .fz-tabs-in{display:flex}
+.of .fz-tabs a{position:relative;display:inline-flex;align-items:center;gap:10px;min-height:54px;padding:0 22px;color:#b9c3c4;text-decoration:none;font:500 15px/1.2 'Inter',Arial,sans-serif}
+.of .fz-tabs a:first-child{padding-left:0}
+.of .fz-tabs a::before{content:"";position:absolute;top:-1px;left:22px;right:22px;height:2px;background:var(--copper);transform:scaleX(0);transform-origin:left;transition:transform .35s ease}
+.of .fz-tabs a:first-child::before{left:0}
+.of .fz-tabs a:hover,.of .fz-tabs a[aria-current="true"]{color:#fff}
+.of .fz-tabs a[aria-current="true"]::before{transform:none}
+.of .fz-tabs a:focus-visible{outline:2px solid var(--copper-light);outline-offset:-6px}
+.of .fz-n{font-size:11.5px;color:#8fa0a2;font-variant-numeric:tabular-nums}
+.of .fz-tabs a[aria-current="true"] .fz-n{color:var(--copper-light)}
+.of .fz-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Cada área abre con su foto y el nombre encima */
+.of.fz .area{padding:40px 0 44px;border-bottom:0;scroll-margin-top:60px}
+.of.fz .area+.area{padding-top:12px}
+.of.fz .area-head{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;gap:10px;min-height:300px;margin:0 0 16px;padding:30px clamp(22px,3.6vw,44px);border-radius:12px;background:#1b2629;color:#f4f0ea}
+.of.fz .fz-img{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;filter:saturate(.75)}
+.of.fz .area-head::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#1b2629eb 0,#1b2629c7 38%,#1b262966 68%,#1b262914 100%),linear-gradient(0deg,#1b262980,transparent 55%)}
+.of.fz .area-head .num{padding:5px 7px;border:0;border-radius:6px;background:var(--deep);color:var(--copper-light)}
+.of.fz .area-head h2{max-width:16ch;font-size:clamp(30px,3.4vw,44px);font-weight:350;line-height:1.06;letter-spacing:-.015em;color:#fff;text-wrap:balance}
+.of.fz .area-head p{max-width:44ch;color:#e9e6df;text-wrap:pretty}
+
+/* Tarjetas más finas: sin el nombre del área repetido, formato y entrega en una línea */
+.of.fz .cards{gap:14px}
+.of.fz .card{gap:10px;padding:18px 18px 16px}
+.of.fz .card>.lbl{display:none}
+.of.fz .card h3{font-size:21px;line-height:1.18}
+.of.fz .card .desc{font-size:15.5px}
+.of.fz .card .rec{padding-top:10px}
+.of.fz .card .rec ul{gap:4px;margin-top:6px}
+.of.fz .card dl{display:flex;flex-wrap:wrap;gap:4px 18px;padding-top:10px}
+.of.fz .card dl div{display:flex;align-items:baseline;gap:6px}
+.of.fz .card dd{margin:0;color:var(--muted)}
+.of.fz .card .buy{padding-top:12px}
+/* Sin precio cargado: "A definir" chico y gris; el cobre queda para los precios reales */
+.of.fz .price.is-tbd .amt{font-size:13px;font-weight:400;color:var(--muted)}
+/* Un solo botón cobre por área; los otros dos con borde */
+.of.fz .card .buy>.btn.fz-sec{background:transparent!important;border-color:var(--slate)!important;color:var(--ink)!important}
+.of.fz .card .buy>.btn.fz-sec:hover{background:#fff!important}
+/* Las tarjetas no son un enlace: no se levantan al pasar el mouse */
+.of.fz .card,.of.fz .card:hover{transform:none!important;box-shadow:none!important}
+
+/* Cierre oscuro: "Ver la membresía →" en cobre claro (el cobre oscuro de tonos.css no se leía sobre pizarra) */
+.of.fz .closing-of .btn.line{color:var(--copper-light)!important}
+.of.fz .closing-of .btn.line:hover{color:#f2c9a4!important}
+.of.fz .closing-of .btn:focus-visible{outline-color:var(--copper-light)}
+
+@media (prefers-reduced-motion:no-preference){html[data-d="foto"]{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){.of .fz-tabs a::before{transition:none}}
+@media (max-width:900px){
+ .of.fz .area-head{min-height:260px}
+ .of.fz .area-head::before{background:linear-gradient(90deg,#1b2629f0 0,#1b2629d1 50%,#1b262980 80%,#1b262940),linear-gradient(0deg,#1b262999,transparent 55%)}
+ .of.fz .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .of.fz .card:nth-child(3){grid-column:1/-1}
+}
+/* Celular: pestañas repartidas en el ancho, foto arriba y el texto sobre la parte baja, más oscura */
+@media (max-width:600px){
+ .of .fz-hero{padding:30px 0 24px}
+ .of .fz-hero-grid{gap:18px}
+ .of .fz-hero .s-hero-text{flex-basis:100%}
+ .of .fz-hero h1{font-size:clamp(29px,8.2vw,34px);margin:8px 0 10px}
+ .of .fz-tabs a,.of .fz-tabs a:first-child{flex:1 1 0;flex-direction:column;justify-content:center;gap:3px;min-height:54px;padding:8px 2px;font-size:14px;text-align:center}
+ .of .fz-tabs a::before,.of .fz-tabs a:first-child::before{left:8px;right:8px}
+ .of .fz-tabs-in{padding:0 8px}
+ .of.fz .area{padding:24px 0 32px;scroll-margin-top:66px}
+ .of.fz .area+.area{padding-top:8px}
+ .of.fz .area-head{min-height:0;padding:104px 20px 20px;gap:8px}
+ .of.fz .area-head::before{background:linear-gradient(0deg,#1b2629f5 0,#1b2629e0 50%,#1b26298c 78%,#1b262933 100%)}
+ .of.fz .area-head h2{font-size:clamp(27px,7.6vw,32px)}
+ .of.fz .cards{grid-template-columns:1fr}
+ .of.fz .card:nth-child(3){grid-column:auto}
+}
+@media (max-width:360px){.of .fz-tabs a,.of .fz-tabs a:first-child{font-size:13px}}

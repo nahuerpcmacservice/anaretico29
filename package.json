@@ -1,0 +1,22 @@
+{
+  "name": "anaretico29",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Sitio de Anaretico 29 — astrología aplicada al trabajo, la vocación y los equipos. Express + SQLite.",
+  "license": "AGPL-3.0-or-later",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node scripts/test-portero.mjs && node scripts/test-cielo.mjs && node scripts/test-efemerides.mjs && node scripts/test-geo.mjs"
+  },
+  "dependencies": {
+    "@kuntay/swisseph": "^0.2.2",
+    "@kuntay/swisseph-data": "^0.2.2",
+    "better-sqlite3": "^11.0.0",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "astronomy-engine": "^2.1.19"
+  }
+}

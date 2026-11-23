@@ -1,0 +1,516 @@
+{
+ "_ayuda": [
+  "Prototipo del interruptor «Próximamente» (pedido de Fernando, aprobación pendiente). Los datos son de ejemplo y las páginas reales todavía no leen este archivo: tu programador arma los interruptores en el administrador.",
+  "FORMATO. Cada página y cada parte tiene visible: true (se muestra) o false (el visitante ve «Próximamente»). Los ids son únicos en todo el archivo, porque proximamente.html?p=<id> busca primero entre las páginas y después entre las partes. Si una página está apagada, todas sus partes quedan apagadas aunque estén encendidas: se las puede preparar de antemano.",
+  "REGLA 1 · PÁGINAS BLOQUEADAS. Inicio y Servicios tienen bloqueada: true: están siempre visibles y el administrador no les muestra interruptor de página (solo dice «Siempre visible» y el motivo); sus partes sí se apagan una por una. Motivo: la pantalla Próximamente ofrece «Volver al inicio» y «Ver servicios» como salidas. Si Inicio se pudiera apagar, el visitante entraría en un círculo (Inicio lleva a Próximamente y Próximamente vuelve a Inicio), y Servicios es la otra salida. Si un archivo trae visible: false en una página bloqueada, se ignora.",
+  "REGLA 2 · PÁGINA APAGADA. Sigue en el menú con la marca «Pronto» y lleva a proximamente.html?p=<id>. Excepción: los botones principales de la página (ver regla 4) se ocultan, no se redirigen.",
+  "REGLA 3 · PARTE APAGADA. No aparece en su página. Donde una pestaña o una puerta lleva a ella, se muestra con la marca «Pronto» y no se puede abrir (no es un enlace, no recibe el foco). Una parte apagada que es ítem del menú (menu: true) conserva su lugar con «Pronto» y lleva a proximamente.html?p=<id>.",
+  "REGLA 3b · ÁREAS DE SERVICIOS. Cuando se apaga un área de Servicios, su campo tambien_en lista los otros lugares donde figura: (1) la puerta en «Cuatro áreas de trabajo» de Inicio, (2) la pestaña de Servicios y (3) la pestaña del carrusel «Cada foto es una plaza» (01 Geopolítica = Mundana, 02 Finanzas = Financiera, 03 Empresas = Empresarial, 04 Personal = Personal). En los tres lugares la marca «Pronto» ocupa el lugar del enlace. La pestaña del carrusel además se salta al pasar de foto con las flechas, el teclado o el dedo: la rotación sigue con la siguiente área encendida.",
+  "REGLA 4 · «SUMARME» NO VA A PRÓXIMAMENTE. Cuando Membresía está apagada se OCULTAN (no se redirigen): el botón «Sumarme» del encabezado, el «Sumarme» del carrusel de Inicio y la franja «Membresía mensual» con «Conocer la membresía» (dentro de «Cuatro áreas de trabajo»). Los selectores están en ocultar_si_apagada de la página Membresía. El ítem «Membresía» del menú conserva su lugar con «Pronto».",
+  "REGLA 5 · ENLACES DE CONTENIDO Y SUBPÁGINAS. Cualquier enlace a una página apagada apunta a proximamente.html?p=<id>, salvo los botones principales, que se ocultan (regla 4). Lo mismo vale para un enlace con ancla a una parte apagada (por ejemplo servicios.html#personal). Cada página lista en subpaginas los archivos que dependen de ella (fichas, notas, paneles): al abrirlos con la página apagada, redirigen a proximamente.html?p=<id de la página>.",
+  "REGLA 6 · TEXTO DE LA PANTALLA. Si lo apagado tiene lugar en el menú: «…lo vas a encontrar en el mismo lugar del menú». Si no lo tiene (una parte, o una página que no está en el menú): «…lo vas a encontrar en <página>», con el campo donde cuando la página no es de primer nivel (Mi recorrido y la carta se encuentran desde Inicio). Si el ?p= no existe o falta, texto genérico. El título del navegador es siempre «Anaretico 29 · Próximamente». Si ?p= es una página o parte visible, la pantalla redirige con location.replace() a la página real; «Ver servicios» se oculta cuando lo apagado es Servicios.",
+  "REGLA 7 · SELECTORES. Cada parte tiene un selector CSS que encuentra su bloque en la página real (el nombre es el título visible; :has() ubica el bloque que contiene un título sin id). condicional marca las partes que solo existen cuando hay datos (hoy «Registro de Fechas 29» y «Registro de aciertos»; la carta del momento no muestra «También te la enviamos por mail»): en esos casos apagar es preparar la parte para cuando aparezca. El título principal de cada página (su encabezado) no se apaga por separado: para eso se apaga la página.",
+  "Los ids de las partes de Inicio son los de combinado.html (#cielo, #agenda, #areas, #presentacion, #herramientas, #canales); «plaza» y «cierre» hoy no tienen id y se encuentran por su clase (.plaza, .cierre)."
+ ],
+ "paginas": [
+  {
+   "id": "inicio",
+   "nombre": "Inicio",
+   "archivo": "combinado.html",
+   "visible": true,
+   "bloqueada": true,
+   "motivo": "Es adonde lleva «Volver al inicio» en la pantalla Próximamente: apagada, el visitante quedaría en un círculo.",
+   "partes": [
+    {
+     "id": "plaza",
+     "etiqueta": "Cada foto es una plaza (fotos, pestañas y Observatorio)",
+     "selector": "section.plaza",
+     "visible": true
+    },
+    {
+     "id": "cielo",
+     "etiqueta": "El cielo de hoy",
+     "selector": "#cielo",
+     "visible": true,
+     "menu": true
+    },
+    {
+     "id": "agenda",
+     "etiqueta": "La línea de tiempo",
+     "selector": "#agenda",
+     "visible": true,
+     "menu": true
+    },
+    {
+     "id": "areas",
+     "etiqueta": "Cuatro áreas de trabajo",
+     "selector": "#areas",
+     "visible": true
+    },
+    {
+     "id": "presentacion",
+     "etiqueta": "Quién está atrás",
+     "selector": "#presentacion",
+     "visible": true
+    },
+    {
+     "id": "herramientas",
+     "etiqueta": "Calculá tu carta natal gratis · La carta de este momento",
+     "selector": "#herramientas",
+     "visible": true
+    },
+    {
+     "id": "cierre",
+     "etiqueta": "Tu organización frente al cielo.",
+     "selector": "section.cierre",
+     "visible": true
+    },
+    {
+     "id": "canales",
+     "etiqueta": "Seguí nuestros análisis",
+     "selector": "#canales",
+     "visible": true
+    },
+    {
+     "id": "boletin",
+     "etiqueta": "Recibí el cielo del mes en tu mail",
+     "selector": "#canales form.boletin",
+     "visible": true
+    }
+   ],
+   "ruta": "/"
+  },
+  {
+   "id": "servicios",
+   "nombre": "Servicios",
+   "archivo": "servicios.html",
+   "visible": false,
+   "menu": true,
+   "partes": [
+    {
+     "id": "mundana",
+     "etiqueta": "Mundana y geopolítica",
+     "selector": "#mundana",
+     "visible": true,
+     "tambien_en": [
+      {
+       "pagina": "servicios",
+       "selector": ".fz-tabs-in a:nth-child(1)",
+       "que": "pestaña de Servicios"
+      },
+      {
+       "pagina": "inicio",
+       "selector": "#pz-tab-0",
+       "que": "pestaña de «Cada foto es una plaza» (se salta al pasar de foto)"
+      },
+      {
+       "pagina": "inicio",
+       "selector": "#areas .door:nth-child(1)",
+       "que": "puerta de «Cuatro áreas de trabajo»"
+      }
+     ]
+    },
+    {
+     "id": "financiera",
+     "etiqueta": "Financiera",
+     "selector": "#financiera",
+     "visible": true,
+     "tambien_en": [
+      {
+       "pagina": "servicios",
+       "selector": ".fz-tabs-in a:nth-child(2)",
+       "que": "pestaña de Servicios"
+      },
+      {
+       "pagina": "inicio",
+       "selector": "#pz-tab-1",
+       "que": "pestaña de «Cada foto es una plaza» (se salta al pasar de foto)"
+      },
+      {
+       "pagina": "inicio",
+       "selector": "#areas .door:nth-child(2)",
+       "que": "puerta de «Cuatro áreas de trabajo»"
+      }
+     ]
+    },
+    {
+     "id": "empresarial",
+     "etiqueta": "Empresarial",
+     "selector": "#empresarial",
+     "visible": true,
+     "tambien_en": [
+      {
+       "pagina": "servicios",
+       "selector": ".fz-tabs-in a:nth-child(3)",
+       "que": "pestaña de Servicios"
+      },
+      {
+       "pagina": "inicio",
+       "selector": "#pz-tab-2",
+       "que": "pestaña de «Cada foto es una plaza» (se salta al pasar de foto)"
+      },
+      {
+       "pagina": "inicio",
+       "selector": "#areas .door:nth-child(3)",
+       "que": "puerta de «Cuatro áreas de trabajo»"
+      }
+     ]
+    },
+    {
+     "id": "personal",
+     "etiqueta": "Personal",
+     "selector": "#personal",
+     "visible": false,
+     "tambien_en": [
+      {
+       "pagina": "servicios",
+       "selector": ".fz-tabs-in a:nth-child(4)",
+       "que": "pestaña de Servicios"
+      },
+      {
+       "pagina": "inicio",
+       "selector": "#pz-tab-3",
+       "que": "pestaña de «Cada foto es una plaza» (se salta al pasar de foto)"
+      },
+      {
+       "pagina": "inicio",
+       "selector": "#areas .door:nth-child(4)",
+       "que": "puerta de «Cuatro áreas de trabajo»"
+      }
+     ]
+    },
+    {
+     "id": "cierre-servicios",
+     "etiqueta": "Si no sabés qué servicio elegir, escribime.",
+     "selector": "section.closing-of",
+     "visible": true
+    }
+   ]
+  },
+  {
+   "id": "research",
+   "nombre": "Research",
+   "archivo": "shop.html",
+   "visible": false,
+   "menu": true,
+   "subpaginas": [
+    "producto.html",
+    "terminal29.html"
+   ],
+   "partes": [
+    {
+     "id": "catalogo",
+     "etiqueta": "Catálogo de productos (Inversores, Empresas y directorios, Eventos)",
+     "selector": ".sh-tabs, [data-panels]",
+     "visible": true
+    },
+    {
+     "id": "registro",
+     "etiqueta": "Registro de Fechas 29 (se muestra cuando haya datos)",
+     "selector": "[data-registro]",
+     "visible": true,
+     "condicional": true
+    },
+    {
+     "id": "observatorio",
+     "etiqueta": "Observatorio 29",
+     "selector": ".sh-obs",
+     "visible": true
+    },
+    {
+     "id": "muestras",
+     "etiqueta": "Leé una edición antes de suscribirte",
+     "selector": "#muestras",
+     "visible": true
+    },
+    {
+     "id": "preguntas-research",
+     "etiqueta": "Antes de comprar",
+     "selector": ".sh-faq",
+     "visible": true
+    }
+   ]
+  },
+  {
+   "id": "academia",
+   "nombre": "Academia",
+   "archivo": "academia.html",
+   "visible": false,
+   "menu": true,
+   "subpaginas": [
+    "curso.html"
+   ],
+   "partes": [
+    {
+     "id": "escuelas",
+     "etiqueta": "Elegí por dónde empezar",
+     "selector": "section.ac-sec:has(#esc-t)",
+     "visible": true
+    },
+    {
+     "id": "cursos",
+     "etiqueta": "Cursos",
+     "selector": "#cursos",
+     "visible": true
+    },
+    {
+     "id": "programa",
+     "etiqueta": "Programa Profesional Anaretico 29",
+     "selector": "#programa",
+     "visible": true
+    },
+    {
+     "id": "pasos",
+     "etiqueta": "Cuatro pasos",
+     "selector": "section.ac-sec:has(#como-t)",
+     "visible": true
+    },
+    {
+     "id": "pagos",
+     "etiqueta": "Cómo pagás",
+     "selector": "section.ac-sec:has(#pago-t)",
+     "visible": true
+    },
+    {
+     "id": "preguntas-academia",
+     "etiqueta": "Antes de inscribirte",
+     "selector": "section.sh-faq:has(#faq-t)",
+     "visible": true
+    }
+   ]
+  },
+  {
+   "id": "revista",
+   "nombre": "Revista",
+   "archivo": "revista.html",
+   "visible": false,
+   "menu": true,
+   "subpaginas": [
+    "nota.html",
+    "colaborar.html"
+   ],
+   "partes": [
+    {
+     "id": "nota-de-tapa",
+     "etiqueta": "Por qué una revista de ciclos necesita escépticos (nota de tapa)",
+     "selector": "section.rv-lead",
+     "visible": true
+    },
+    {
+     "id": "ultimo",
+     "etiqueta": "Lo último",
+     "selector": "section.rv-block:has(#rec-t)",
+     "visible": true
+    },
+    {
+     "id": "firmas",
+     "etiqueta": "Firmas de esta edición",
+     "selector": "#firmas",
+     "visible": true
+    },
+    {
+     "id": "secciones",
+     "etiqueta": "Por sección",
+     "selector": "section.rv-block:has(#sec-t)",
+     "visible": true
+    },
+    {
+     "id": "entrevistas",
+     "etiqueta": "Entrevistas",
+     "selector": "#sec-entrevistas",
+     "visible": true
+    },
+    {
+     "id": "bitacora",
+     "etiqueta": "Bitácora",
+     "selector": "section.rv-bit",
+     "visible": true
+    },
+    {
+     "id": "colaborar",
+     "etiqueta": "Escribir para la revista",
+     "selector": "section.rv-call",
+     "visible": true
+    }
+   ]
+  },
+  {
+   "id": "membresia",
+   "nombre": "Membresía",
+   "archivo": "membresia.html",
+   "visible": false,
+   "menu": true,
+   "subpaginas": [
+    "miembros.html"
+   ],
+   "ocultar_si_apagada": [
+    {
+     "selector": "header .h-cta",
+     "que": "«Sumarme» del encabezado"
+    },
+    {
+     "selector": ".pz-ctas a[href$=\"membresia.html\"]",
+     "que": "«Sumarme» del carrusel de Inicio"
+    },
+    {
+     "selector": "#areas .m-feature",
+     "que": "franja «Membresía mensual» con «Conocer la membresía», dentro de «Cuatro áreas de trabajo»"
+    }
+   ],
+   "partes": [
+    {
+     "id": "recibis",
+     "etiqueta": "Qué recibís",
+     "selector": "section:has(#t-rec)",
+     "visible": true
+    },
+    {
+     "id": "beneficios",
+     "etiqueta": "Beneficios",
+     "selector": "section:has(#t-ben)",
+     "visible": true
+    },
+    {
+     "id": "muestra",
+     "etiqueta": "Mirá un número de muestra",
+     "selector": "section:has(#t-mue)",
+     "visible": true
+    },
+    {
+     "id": "precio",
+     "etiqueta": "Ticket de suscripción (el precio)",
+     "selector": "aside.m-aside",
+     "visible": true
+    },
+    {
+     "id": "aciertos",
+     "etiqueta": "Registro de aciertos (se muestra cuando haya datos)",
+     "selector": "section:has(#t-aci)",
+     "visible": true,
+     "condicional": true
+    },
+    {
+     "id": "preguntas-membresia",
+     "etiqueta": "Antes de sumarte",
+     "selector": "section:has(#t-faq)",
+     "visible": true
+    },
+    {
+     "id": "cierre-membresia",
+     "etiqueta": "Cada mes, el cielo leído para tus decisiones.",
+     "selector": "section.m-close",
+     "visible": true
+    }
+   ]
+  },
+  {
+   "id": "enfoque",
+   "nombre": "El enfoque",
+   "archivo": "combinado.html",
+   "visible": true,
+   "menu": true,
+   "tipo": "cuadro",
+   "nota": "No es una página: es el cuadro que abre el botón «El enfoque ↗» del menú.",
+   "partes": [],
+   "ruta": "/"
+  },
+  {
+   "id": "recorrido",
+   "nombre": "Mi recorrido",
+   "archivo": "recorrido.html",
+   "visible": true,
+   "donde": "Inicio, en «Quién está atrás»",
+   "partes": [
+    {
+     "id": "hitos",
+     "etiqueta": "Recorrido en hitos",
+     "selector": "section.rc-sec:has(#rc-hitos)",
+     "visible": true
+    },
+    {
+     "id": "formacion",
+     "etiqueta": "Formación",
+     "selector": "section.rc-sec:has(#rc-formacion)",
+     "visible": true
+    },
+    {
+     "id": "carrera",
+     "etiqueta": "Carrera",
+     "selector": "section.rc-sec:has(#rc-carrera)",
+     "visible": true
+    },
+    {
+     "id": "proyecto",
+     "etiqueta": "Anaretico 29",
+     "selector": "section.rc-sec:has(#rc-a29)",
+     "visible": true
+    },
+    {
+     "id": "cierre-recorrido",
+     "etiqueta": "Contame qué necesitás.",
+     "selector": "section.closing-of",
+     "visible": true
+    }
+   ],
+   "ruta": "/sobre-mi"
+  },
+  {
+   "id": "carta",
+   "nombre": "Carta natal y carta del momento",
+   "archivo": "carta.html",
+   "visible": false,
+   "donde": "Inicio, en «Calculá tu carta natal gratis»",
+   "partes": [
+    {
+     "id": "carta-datos",
+     "etiqueta": "Datos de la carta",
+     "selector": "section.ob-ticket",
+     "visible": true
+    },
+    {
+     "id": "mail-carta",
+     "etiqueta": "También te la enviamos por mail (solo en la carta natal)",
+     "selector": "section.ob-mail",
+     "visible": true,
+     "condicional": true
+    },
+    {
+     "id": "posiciones",
+     "etiqueta": "Posiciones",
+     "selector": "#posiciones",
+     "visible": true
+    },
+    {
+     "id": "aspectos",
+     "etiqueta": "Aspectos",
+     "selector": "#aspectos",
+     "visible": true
+    },
+    {
+     "id": "casas",
+     "etiqueta": "Casas y ángulos",
+     "selector": "#casas",
+     "visible": true
+    },
+    {
+     "id": "balance",
+     "etiqueta": "Balance de elementos y modalidades",
+     "selector": "#balance",
+     "visible": true
+    },
+    {
+     "id": "como-leer",
+     "etiqueta": "Cómo leer tu carta",
+     "selector": "#como-leer",
+     "visible": true
+    },
+    {
+     "id": "cierre-carta",
+     "etiqueta": "Esta pantalla muestra los datos. Una consulta los lee con vos.",
+     "selector": "section.ob-cierre",
+     "visible": true
+    }
+   ]
+  }
+ ]
+}

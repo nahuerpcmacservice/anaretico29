@@ -1,0 +1,607 @@
+/* Tamaño de letra Recomendado: generado automáticamente desde las hojas de combinado.html. Reescribe solo font-size, en el mismo orden. No editar a mano, salvo el bloque final de ajustes. */
+/* undefined */
+body{font-size:15px;font-size:16.5px}
+.prototype{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.strap{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+nav{font-size:13.5px;font-size:14.5px}
+.kicker{font-size:11.5px;font-variant-numeric:tabular-nums}
+.section-title h2{font-size:29px}
+.date-stamp strong{font-size:12.5px;font-size:14.5px}
+.date-stamp span, .quiet{font-size:12px;font-size:12.5px}
+.text-link{font-size:13.5px;font-size:14.5px}
+.hero-credit{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.hero-content .kicker{font-size:11.5px;font-variant-numeric:tabular-nums}
+.hero-content h1{font-size:43px}
+.hero-content p{font-size:15px;font-size:16.5px}
+.hero-content .text-link{font-size:12.5px;font-size:14.5px}
+.slide-count{font-size:11.5px;font-variant-numeric:tabular-nums}
+.carousel-caption{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.carousel-arrows button{font-size:18px}
+.panel-heading h3{font-size:16.5px}
+.panel-heading > span{font-size:11px;font-size:12.5px}
+.bar-row strong{font-size:13.5px;font-size:14.5px}
+.bar-row small{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.bar-number{font-size:12.5px;font-variant-numeric:tabular-nums}
+.metric-note{font-size:13.5px;font-size:14.5px}
+.moon-body > div > strong{font-size:34px}
+.moon-body > div > span{font-size:12px;font-size:12.5px}
+.moon-body > div > small{font-size:11.5px;font-size:12.5px}
+.planet-list li{font-size:12.5px;font-size:14.5px}
+.planet-list b{font-size:17.5px}
+.planet-list strong{font-size:11.5px;font-variant-numeric:tabular-nums}
+.small-note{font-size:12px;font-size:12.5px}
+.tension-number{font-size:48px}
+.tension-number > span{font-size:27px}
+.tension-counts{font-size:11.5px;font-variant-numeric:tabular-nums}
+.method-line{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.week-day small{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.week-day > strong{font-size:23px}
+.week-day > span:last-child{font-size:11px;font-size:12.5px}
+.day-detail .kicker{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.day-detail h3{font-size:20px}
+.day-detail p{font-size:12.5px;font-size:14.5px}
+.day-detail .text-link{font-size:12px;font-size:12.5px}
+.period{font-size:11.5px;font-variant-numeric:tabular-nums}
+.agenda-intro > p{font-size:13.5px;font-size:14.5px}
+.timeline-filters > button{font-size:12px;font-size:12.5px}
+.timeline-date{font-size:12px;font-variant-numeric:tabular-nums}
+.timeline-date small{font-size:11.5px;font-size:12.5px}
+.timeline-category{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.timeline-node > strong{font-size:16.5px}
+.timeline-more{font-size:11.5px;font-size:12.5px}
+.agenda-foot{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.agenda > .text-link{font-size:12.5px;font-size:14.5px}
+.reading-grid figcaption{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.reading-grid h3{font-size:23px}
+.reading-grid p{font-size:13.5px;font-size:14.5px}
+.read-more{font-size:12px;font-size:12.5px}
+.closing h2{font-size:29px}
+.closing p{font-size:14px;font-size:14.5px}
+footer p{font-size:12px;font-size:12.5px}
+footer > small{font-size:11px;font-size:12.5px}
+.close{font-size:29px}
+dialog h2{font-size:28px}
+dialog p{font-size:14px;font-size:14.5px}
+dialog .event-meta{font-size:12px;font-variant-numeric:tabular-nums}
+dialog .all-event span{font-size:11.5px;font-variant-numeric:tabular-nums}
+dialog .all-event h3{font-size:16.5px}
+.editorial .section-title h2{font-size:34px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+.editorial .panel-heading h3{font-size:16px;font-size:16.5px}
+.editorial .panel-heading > span{font-size:11px;font-size:12.5px}
+.editorial .reading-grid h3, .editorial .closing h2{font-size:28px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+.editorial .timeline-node > strong{font-size:22px}
+@media (min-width: 1600px){
+ .hero-content h1{font-size:46px}
+}
+@media (max-width: 1100px){
+ .hero-content h1{font-size:38px}
+ .panel-heading h3{font-size:16px;font-size:16.5px}
+ .panel-heading > span{font-size:11px;font-size:12.5px}
+ .moon-body > div > strong{font-size:30px}
+ .planet-list li{font-size:12px;font-size:12.5px}
+ .planet-list strong{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .metric-note{font-size:12.5px;font-size:14.5px}
+ .carousel-caption{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+}
+@media (max-width: 800px){
+ nav{font-size:12px;font-size:12.5px}
+ .strap{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .hero-content h1{font-size:34px}
+ .hero-content p{font-size:13.5px;font-size:14.5px}
+ .reading-grid h3, .editorial .reading-grid h3{font-size:21px;font-size:21px;font-weight:450;letter-spacing:-.012em}
+ .reading-grid p{font-size:12.5px;font-size:14.5px}
+ .closing h2{font-size:26px}
+ .closing p{font-size:13.5px;font-size:14.5px}
+}
+@media (max-width: 600px){
+ .prototype{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .strap{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ nav{font-size:11.5px;font-size:12.5px}
+ .hero-content .kicker{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .hero-content h1{font-size:30px}
+ .hero-content p{font-size:13.5px;font-size:14.5px}
+ .hero-content .text-link{font-size:12px;font-size:12.5px}
+ .hero-credit{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .slide-count{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .carousel-arrows button{font-size:17.5px;font-size:18px}
+ .section-title h2{font-size:24px}
+ .section-title .kicker{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .date-stamp strong{font-size:11.5px;font-size:12.5px}
+ .date-stamp span{font-size:11px;font-size:12.5px}
+ .panel-heading h3, .editorial .panel-heading h3{font-size:16.5px}
+ .panel-heading > span, .editorial .panel-heading > span{font-size:11px;font-size:12.5px}
+ .bar-row strong{font-size:13.5px;font-size:14.5px}
+ .bar-row small{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .bar-number{font-size:12.5px;font-variant-numeric:tabular-nums}
+ .metric-note, .editorial .metric-note{font-size:12.5px;font-size:14.5px}
+ .moon-body > div > strong{font-size:34px}
+ .moon-body > div > span{font-size:12.5px;font-size:14.5px}
+ .moon-body > div > small{font-size:12px;font-size:12.5px}
+ .planet-list li{font-size:13.5px;font-size:14.5px}
+ .planet-list strong{font-size:12px;font-variant-numeric:tabular-nums}
+ .planet-list b{font-size:17.5px}
+ .tension-number{font-size:43px}
+ .tension-counts{font-size:11.5px;font-variant-numeric:tabular-nums}
+ .method-line{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .method-line button{font-size:11px;font-size:12.5px}
+ .section-title > .quiet, .section-title > .period{font-size:11.5px;font-variant-numeric:tabular-nums}
+ .week-day small{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .week-day > strong{font-size:21px}
+ .week-day > span:last-child{font-size:11px;font-size:12.5px}
+ .day-detail h3{font-size:19px}
+ .day-detail p{font-size:12px;font-size:12.5px}
+ .day-detail .kicker{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .agenda-intro > p{font-size:12.5px;font-size:14.5px}
+ .timeline-filters > button{font-size:11.5px;font-size:12.5px}
+ .period{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .timeline-node > strong{font-size:16px;font-size:16.5px}
+ .editorial .timeline-node > strong{font-size:20px}
+ .timeline-date{font-size:11.5px;font-variant-numeric:tabular-nums}
+ .timeline-date small{font-size:11px;font-size:12.5px}
+ .agenda-foot{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .reading-grid h3, .editorial .reading-grid h3{font-size:23px;font-size:21px;font-weight:450;letter-spacing:-.012em}
+ .reading-grid p{font-size:13.5px;font-size:14.5px}
+ .read-more{font-size:12px;font-size:12.5px}
+ .closing h2{font-size:25px}
+ .closing p{font-size:13.5px;font-size:14.5px}
+ footer p{font-size:12.5px;font-size:14.5px}
+ footer > small{font-size:11px;font-size:12.5px}
+ .editorial .section-title h2{font-size:29px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+ dialog h2{font-size:25px}
+ dialog p{font-size:13.5px;font-size:14.5px}
+ dialog .event-meta{font-size:11.5px;font-variant-numeric:tabular-nums}
+}
+.editorial .hero-content h1{font-size:46px;font-size:clamp(34px,3.8vw,48px);font-weight:350;letter-spacing:-.025em}
+.editorial .hero-content .kicker{font-size:11.5px;font-variant-numeric:tabular-nums}
+.editorial .hero-content p{font-size:15px;font-size:16.5px}
+.editorial .hero-content .text-link{font-size:12.5px;font-size:14.5px}
+.editorial .hero-credit{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.editorial .section-title h2{font-size:34px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+.editorial .panel-heading h3{font-size:16.5px}
+.editorial .bar-row small{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.editorial .reading-grid figcaption{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.editorial footer > small{font-size:11px;font-size:12.5px}
+@media (max-width: 1000px){
+ .editorial .hero-content h1{font-size:41px;font-size:clamp(34px,3.8vw,48px);font-weight:350;letter-spacing:-.025em}
+}
+@media (max-width: 800px){
+ .editorial .hero-content h1{font-size:37px;font-size:clamp(34px,3.8vw,48px);font-weight:350;letter-spacing:-.025em}
+ .editorial .hero-content p{font-size:13.5px;font-size:14.5px}
+}
+@media (max-width: 600px){
+ .editorial .hero-content h1{font-size:32px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+ .editorial .hero-content .kicker{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .editorial .hero-content p{font-size:13.5px;font-size:14.5px}
+ .editorial .hero-content .text-link{font-size:12px;font-size:12.5px}
+ .editorial .hero-credit{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .editorial .section-title h2{font-size:29px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+ .editorial nav{font-size:12px;font-size:12.5px}
+}
+/* undefined */
+.preview-heading > span{font-size:12px;font-size:12.5px}
+.preview-heading > small{font-size:11px;font-size:12.5px}
+.compact-heading h2{font-size:29px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+.compact-heading > .quiet, .compact-heading > span{font-size:11.5px;font-size:12.5px}
+.compact-heading .kicker{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.mini-label{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.current-date > strong{font-size:15px;font-size:16.5px}
+.planet-chip{font-size:12px;font-size:12.5px}
+.current-clock time{font-size:29px}
+.current-clock small{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.current-clock > p{font-size:11.5px;font-size:12.5px}
+.current-moon-heading strong{font-size:16px;font-size:16.5px}
+.current-moon-heading p{font-size:12px;font-size:12.5px}
+.current-events{font-size:11.5px;font-size:12.5px}
+.moon-course{font-size:12px;font-size:12.5px}
+.moon-course button{font-size:11.5px;font-size:12.5px}
+.compact-grid > .metric .panel-heading h3, .compact-sky > .barometer .panel-heading h3{font-size:15px;font-size:16.5px}
+.compact-grid > .metric .panel-heading > span{font-size:11px;font-size:12.5px}
+.compact-grid > .metric .bar-row strong{font-size:12.5px;font-size:14.5px}
+.compact-grid > .metric .bar-row small{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.compact-grid > .metric .bar-number{font-size:12px;font-variant-numeric:tabular-nums}
+.compact-grid > .metric .planet-list li{font-size:12px;font-size:12.5px}
+.compact-grid > .metric .planet-list strong{font-size:11.5px;font-variant-numeric:tabular-nums}
+.compact-grid > .metric .planet-list b{font-size:15px}
+.compact-grid > .metric .moon-body > div > strong{font-size:28px}
+.compact-grid > .metric .moon-body > div > span{font-size:12px;font-size:12.5px}
+.compact-grid > .metric .moon-body > div > small{font-size:11.5px;font-size:12.5px}
+.baro-reading > span{font-size:11px;font-size:12.5px}
+.baro-reading > strong{font-size:31px}
+.baro-reading > strong > small{font-size:18px}
+.baro-reading > b{font-size:12.5px;font-size:14.5px}
+.baro-summary{font-size:12px;font-size:12.5px}
+.baro-foot > span{font-size:11px;font-size:12.5px}
+.baro-foot > button{font-size:11px;font-size:12.5px}
+.ticker-label{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.ticker-item{font-size:12px;font-variant-numeric:tabular-nums}
+.ticker-item > i{font-size:16px;font-size:16.5px}
+.ticker-item > b{font-size:13.5px;font-size:14.5px}
+.ticker-pause{font-size:14px;font-size:14.5px}
+.reference-note{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.format-2 .baro-reading > strong{font-size:35px}
+.format-2 .baro-reading > b{font-size:13.5px;font-size:14.5px}
+.format-2 .baro-summary{font-size:12.5px;font-size:14.5px}
+.format-2 .baro-foot > button{font-size:11.5px;font-size:12.5px}
+.format-3 .current-clock time{font-size:25px}
+.format-3 .current-clock small{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.format-3 .current-date > strong{font-size:14px;font-size:14.5px}
+.format-3 .current-moon-heading strong{font-size:15px;font-size:16.5px}
+.format-3 .compact-sky > .barometer > .panel-heading > span{font-size:11px;font-size:12.5px}
+.format-3 .baro-reading > strong{font-size:29px}
+.format-3 .baro-reading > strong > small{font-size:16.5px}
+.format-3 .baro-summary{font-size:12px;font-size:12.5px}
+.format-3 .baro-foot > button{font-size:11.5px;font-size:12.5px}
+.format-3 .compact-grid > .metric .panel-heading h3{font-size:14px;font-size:14.5px}
+.format-3 .compact-grid > .metric .planet-list strong{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.format-3 .compact-grid > .metric .planet-list li{font-size:11.5px;font-size:12.5px}
+@media (max-width: 1050px){
+ .current-events{font-size:11px;font-size:12.5px}
+ .current-moon-heading strong{font-size:15px;font-size:16.5px}
+ .current-clock time{font-size:26px}
+ .format-3 .compact-grid > .metric .planet-list strong{font-size:11.5px;font-variant-numeric:tabular-nums}
+ .format-3 .compact-grid > .metric .planet-list li{font-size:12px;font-size:12.5px}
+}
+@media (max-width: 750px){
+ .current-events{font-size:11.5px;font-size:12.5px}
+ .format-2 .baro-reading > strong{font-size:31px}
+ .compact-heading > span{font-size:11px;font-size:12.5px}
+ .preview-heading > small{font-size:11px;font-size:12.5px}
+ .preview-heading > span{font-size:11.5px;font-size:12.5px}
+}
+@media (max-width: 600px){
+ .compact-heading h2{font-size:26px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+ .compact-heading .kicker{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .preview-heading > span{font-size:11.5px;font-size:12.5px}
+ .preview-heading > small{font-size:11px;font-size:12.5px}
+ .mini-label{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .current-date > strong{font-size:13.5px;font-size:14.5px}
+ .planet-chip{font-size:11.5px;font-size:12.5px}
+ .current-clock time{font-size:24px}
+ .current-clock small{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .current-clock > p{font-size:11px;font-size:12.5px}
+ .current-moon-heading strong, .format-3 .current-moon-heading strong{font-size:14px;font-size:14.5px}
+ .current-moon-heading p{font-size:11.5px;font-size:12.5px}
+ .moon-course{font-size:11.5px;font-size:12.5px}
+ .moon-course > span{font-size:11.5px;font-size:12.5px}
+ .moon-course > button{font-size:11px;font-size:12.5px}
+ .current-events{font-size:11px;font-size:12.5px}
+ .compact-grid > .metric .panel-heading h3, .compact-sky > .barometer .panel-heading h3, .format-3 .compact-grid > .metric .panel-heading h3{font-size:15px;font-size:16.5px}
+ .compact-grid > .metric .planet-list strong, .format-3 .compact-grid > .metric .planet-list strong{font-size:12px;font-variant-numeric:tabular-nums}
+ .compact-grid > .metric .planet-list li, .format-3 .compact-grid > .metric .planet-list li{font-size:12.5px;font-size:14.5px}
+ .baro-reading > strong, .format-2 .baro-reading > strong{font-size:30px}
+ .baro-reading > span{font-size:11px;font-size:12.5px}
+ .baro-summary, .format-2 .baro-summary{font-size:12px;font-size:12.5px}
+ .baro-foot > span{font-size:11px;font-size:12.5px}
+ .baro-foot > button, .format-2 .baro-foot > button{font-size:11px;font-size:12.5px}
+ .ticker-label{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .ticker-item{font-size:12px;font-variant-numeric:tabular-nums}
+ .reference-note{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .format-3 .current-clock small{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .format-3 .current-clock time{font-size:24px}
+ .format-3 .baro-reading > strong{font-size:29px}
+ .format-3 .baro-foot > button{font-size:11px;font-size:12.5px}
+}
+/* undefined */
+.rich .compact-heading h2{font-size:34px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+.rich .compact-heading > .quiet, .rich .compact-heading > span{font-size:11.5px;font-size:12.5px}
+.focus-deck{font-size:13.5px;font-size:14.5px}
+.focus-card .mini-label{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.phase-badge{font-size:11.5px;font-variant-numeric:tabular-nums}
+.clock-location > span:last-child{font-size:11px;font-size:12.5px}
+.focus-clock h3{font-size:17.5px;font-size:18px}
+.clock-year{font-size:11.5px;font-variant-numeric:tabular-nums}
+.large-clock time{font-size:45px}
+.large-clock time > span{font-size:26px}
+.large-clock small{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.ruler-grid > div > span{font-size:11px;font-size:12.5px}
+.ruler-grid > div > strong{font-size:14px;font-size:14.5px}
+.hour-period{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.solar-times{font-size:11px;font-size:12.5px}
+.moon-feature h3{font-size:29px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+.moon-feature p{font-size:14px;font-size:14.5px}
+.moon-feature p > span{font-size:12px;font-size:12.5px}
+.lunar-milestones span{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.lunar-milestones strong{font-size:16.5px}
+.lunar-milestones time{font-size:12px;font-variant-numeric:tabular-nums}
+.course-line{font-size:12px;font-size:12.5px}
+.course-line > button{font-size:11.5px;font-size:12.5px}
+.radar-time time{font-size:32px}
+.radar-time > span{font-size:11px;font-size:12.5px}
+.aspect-glyphs{font-size:28px}
+.aspect-glyphs > span{font-size:18px}
+.focus-next h3{font-size:17.5px;font-size:18px}
+.focus-next > p{font-size:12px;font-size:12.5px}
+.focus-more{font-size:12px;font-size:12.5px}
+.focus-more span{font-size:17.5px;font-size:18px}
+.rich .ticker-label{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.rich .ticker-item{font-size:12px;font-variant-numeric:tabular-nums}
+.rich .compact-sky > .barometer > .panel-heading h3{font-size:22px}
+.rich .compact-sky > .barometer > .panel-heading > span{font-size:11px;font-size:12.5px}
+.rich .baro-reading > strong{font-size:32px}
+.rich .baro-reading > strong > small{font-size:18px}
+.rich .baro-reading > b{font-size:12.5px;font-size:14.5px}
+.rich .baro-reading > span{font-size:11px;font-size:12.5px}
+.rich .baro-summary{font-size:12.5px;font-size:14.5px}
+.rich .compact-grid > .metric .panel-heading h3{font-size:14px;font-size:14.5px}
+.rich .compact-grid > .metric .bar-row strong{font-size:12.5px;font-size:14.5px}
+.rich .compact-grid > .metric .bar-row small{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.rich .compact-grid > .metric .planet-list strong{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.rich .compact-grid > .metric .planet-list li{font-size:12px;font-size:12.5px}
+.rich-2 .focus-clock h3{font-size:16px;font-size:16.5px}
+.rich-2 .large-clock time{font-size:35px}
+.rich-2 .large-clock time > span{font-size:21px}
+.rich-2 .large-clock small{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.rich-2 .ruler-grid > div > span{font-size:11px;font-size:12.5px}
+.rich-2 .ruler-grid > div > strong{font-size:13.5px;font-size:14.5px}
+.rich-2 .hour-period{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.rich-2 .hour-period strong{font-size:11px;font-size:12.5px}
+.rich-2 .solar-times{font-size:11px;font-size:12.5px}
+.rich-2 .solar-times button{font-size:12px;font-size:12.5px}
+.rich-2 .focus-next > .mini-label{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.rich-2 .radar-time time{font-size:36px}
+.rich-2 .radar-time span{font-size:11px;font-size:12.5px}
+.rich-2 .focus-next h3{font-size:17.5px;font-size:18px}
+.rich-2 .focus-more{font-size:11.5px;font-size:12.5px}
+.rich-2 .moon-feature h3{font-size:36px;font-size:clamp(34px,3.8vw,48px);font-weight:350;letter-spacing:-.025em}
+.rich-2 .moon-feature p{font-size:16.5px}
+.rich-2 .moon-feature p > span{font-size:12.5px;font-size:14.5px}
+.rich-2 .lunar-milestones strong{font-size:18px}
+.rich-2 .lunar-milestones time{font-size:12.5px;font-variant-numeric:tabular-nums}
+.rich-2 .course-line{font-size:12.5px;font-size:14.5px}
+.forest-dateline{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.forest-dateline > span:last-child{font-size:11px;font-size:12.5px}
+.rich-3 .clock-location .mini-label{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.rich-3 .focus-clock h3{font-size:17.5px;font-size:18px}
+.rich-3 .large-clock time{font-size:45px}
+.rich-3 .phase-badge{font-size:12px;font-variant-numeric:tabular-nums}
+.rich-3 .moon-feature h3{font-size:33px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+.rich-3 .moon-feature p{font-size:15px;font-size:16.5px}
+.rich-3 .lunar-milestones strong{font-size:17.5px;font-size:18px}
+.rich-3 .lunar-milestones time{font-size:12.5px;font-variant-numeric:tabular-nums}
+.rich-3 .course-line{font-size:12.5px;font-size:14.5px}
+.rich-3 .course-line button{font-size:11.5px;font-size:12.5px}
+.immediate-title{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.immediate-agenda > div > span, .immediate-agenda > button > span{font-size:11px;font-size:12.5px}
+.immediate-agenda strong{font-size:18px;font-size:18px;font-weight:450;letter-spacing:-.01em}
+.immediate-agenda p{font-size:12px;font-size:12.5px}
+.immediate-agenda b{font-size:18px}
+@media (max-width: 1150px){
+ .moon-feature h3{font-size:27px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+ .moon-feature p{font-size:13.5px;font-size:14.5px}
+ .moon-feature p > span{font-size:11.5px;font-size:12.5px}
+ .phase-badge{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .focus-card .mini-label{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .lunar-milestones span{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .lunar-milestones time{font-size:11.5px;font-variant-numeric:tabular-nums}
+ .focus-clock h3{font-size:16.5px}
+ .large-clock time{font-size:40px}
+ .large-clock time > span{font-size:23px}
+ .focus-next h3{font-size:16.5px}
+ .radar-time time{font-size:30px}
+ .focus-next > p{font-size:11.5px;font-size:12.5px}
+ .ruler-grid > div > span{font-size:11px;font-size:12.5px}
+ .ruler-grid > div > strong{font-size:13.5px;font-size:14.5px}
+ .hour-period{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .rich-2 .moon-feature h3{font-size:32px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+ .rich-3 .moon-feature h3{font-size:31px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+ .immediate-title{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .immediate-agenda > div > span, .immediate-agenda > button > span{font-size:11px;font-size:12.5px}
+}
+@media (max-width: 950px){
+ .focus-next > .aspect-glyphs{font-size:27px}
+ .focus-next > h3{font-size:16.5px}
+ .focus-next > .focus-more{font-size:11.5px;font-size:12.5px}
+ .rich .compact-grid > .metric .planet-list strong{font-size:12px;font-variant-numeric:tabular-nums}
+ .rich .compact-grid > .metric .planet-list li{font-size:12.5px;font-size:14.5px}
+ .rich .baro-summary{font-size:12px;font-size:12.5px}
+ .rich-2 .focus-clock h3{font-size:15px;font-size:16.5px}
+ .rich-2 .large-clock time{font-size:31px}
+ .rich-2 .large-clock time > span{font-size:17.5px;font-size:18px}
+ .rich-2 .focus-next > h3{font-size:16px;font-size:16.5px}
+ .rich-2 .moon-feature h3{font-size:30px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+ .rich-2 .moon-feature p{font-size:15px;font-size:16.5px}
+ .rich-2 .lunar-milestones time{font-size:12px;font-variant-numeric:tabular-nums}
+ .rich-2 .lunar-milestones span{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .rich-3 .moon-feature h3{font-size:29px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+ .rich-3 .lunar-milestones time{font-size:12px;font-variant-numeric:tabular-nums}
+}
+@media (max-width: 700px){
+ .rich .compact-heading h2{font-size:29px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+ .rich .compact-heading > span{font-size:11px;font-size:12.5px}
+ .focus-deck{font-size:12.5px;font-size:14.5px}
+ .focus-clock h3{font-size:16.5px}
+ .large-clock time{font-size:40px}
+ .large-clock time > span{font-size:23px}
+ .large-clock small{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .ruler-grid > div > span{font-size:11px;font-size:12.5px}
+ .ruler-grid > div > strong{font-size:14px;font-size:14.5px}
+ .hour-period{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .hour-period > strong{font-size:11.5px;font-size:12.5px}
+ .solar-times{font-size:11px;font-size:12.5px}
+ .solar-times button{font-size:12.5px;font-size:14.5px}
+ .focus-card .mini-label{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .phase-badge{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .moon-feature h3{font-size:30px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+ .moon-feature p{font-size:14px;font-size:14.5px}
+ .moon-feature p > span{font-size:12px;font-size:12.5px}
+ .lunar-milestones span{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .lunar-milestones strong{font-size:17.5px;font-size:18px}
+ .lunar-milestones time{font-size:12px;font-variant-numeric:tabular-nums}
+ .course-line{font-size:12px;font-size:12.5px}
+ .course-line > button{font-size:11.5px;font-size:12.5px}
+ .radar-time time{font-size:32px}
+ .radar-time > span{font-size:11px;font-size:12.5px}
+ .focus-next > h3{font-size:16.5px}
+ .focus-next > p{font-size:11.5px;font-size:12.5px}
+ .focus-next > .focus-more{font-size:12px;font-size:12.5px}
+ .rich .ticker-label{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .rich .compact-sky > .barometer > .panel-heading h3{font-size:24px}
+ .rich .compact-sky > .barometer > .panel-heading > span{font-size:11px;font-size:12.5px}
+ .rich .baro-reading > strong{font-size:32px}
+ .rich .baro-reading > strong > small{font-size:17.5px;font-size:18px}
+ .rich .baro-reading > b{font-size:12.5px;font-size:14.5px}
+ .rich .baro-reading > span{font-size:11px;font-size:12.5px}
+ .rich .baro-summary{font-size:12.5px;font-size:14.5px}
+ .rich .baro-foot > span{font-size:11px;font-size:12.5px}
+ .rich .baro-foot > button{font-size:11.5px;font-size:12.5px}
+ .rich .compact-grid > .metric .panel-heading h3{font-size:15px;font-size:16.5px}
+ .rich .compact-grid > .metric .planet-list li{font-size:13.5px;font-size:14.5px}
+ .rich .compact-grid > .metric .planet-list strong{font-size:12px;font-variant-numeric:tabular-nums}
+ .rich-2 .focus-next > h3{font-size:16.5px}
+ .rich-2 .focus-next > .focus-more{font-size:12px;font-size:12.5px}
+ .rich-2 .moon-feature h3{font-size:31px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+ .rich-2 .moon-feature p{font-size:14px;font-size:14.5px}
+ .rich-2 .moon-feature p > span{font-size:12px;font-size:12.5px}
+ .rich-2 .lunar-milestones span{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .rich-2 .lunar-milestones strong{font-size:17.5px;font-size:18px}
+ .rich-2 .course-line{font-size:12px;font-size:12.5px}
+ .rich-2 .focus-clock h3{font-size:16.5px}
+ .rich-2 .large-clock time{font-size:40px}
+ .rich-2 .large-clock time > span{font-size:23px}
+ .rich-2 .ruler-grid > div > span{font-size:11px;font-size:12.5px}
+ .rich-2 .ruler-grid > div > strong{font-size:14px;font-size:14.5px}
+ .rich-2 .hour-period{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .rich-2 .hour-period strong{font-size:11.5px;font-size:12.5px}
+ .rich-2 .solar-times{font-size:11px;font-size:12.5px}
+ .forest-dateline{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .rich-3 .moon-feature h3{font-size:30px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+ .rich-3 .course-line{font-size:12px;font-size:12.5px}
+ .immediate-title{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .immediate-agenda > div > span, .immediate-agenda > button > span{font-size:11px;font-size:12.5px}
+ .immediate-agenda strong{font-size:19px;font-size:21px;font-weight:450;letter-spacing:-.012em}
+ .immediate-agenda p{font-size:12px;font-size:12.5px}
+ .rich-3 .large-clock time{font-size:40px}
+ .rich-3 .focus-clock h3{font-size:16.5px}
+}
+@media (max-width: 360px){
+ .focus-clock h3, .rich-2 .focus-clock h3{font-size:15px;font-size:16.5px}
+ .large-clock time, .rich-2 .large-clock time, .rich-3 .large-clock time{font-size:33px}
+ .large-clock time > span, .rich-2 .large-clock time > span{font-size:19px}
+ .moon-feature h3, .rich-2 .moon-feature h3, .rich-3 .moon-feature h3{font-size:27px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+ .phase-badge{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .focus-card .mini-label{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .course-line{font-size:11.5px;font-size:12.5px}
+ .course-line > button{font-size:11px;font-size:12.5px}
+ .lunar-milestones span{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .lunar-milestones time{font-size:11.5px;font-variant-numeric:tabular-nums}
+ .rich .baro-reading > strong{font-size:29px}
+ .rich .compact-sky > .barometer > .panel-heading h3{font-size:22px}
+ .rich .baro-foot > button{font-size:11px;font-size:12.5px}
+}
+/* undefined */
+.rich-hybrid .compact-heading h2{font-size:27px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+.rich-hybrid .focus-clock h3{font-size:15px;font-size:16.5px}
+.rich-hybrid .large-clock time{font-size:32px}
+.rich-hybrid .large-clock time > span{font-size:20px}
+.rich-hybrid .large-clock small{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.rich-hybrid .ruler-grid > div > span{font-size:11px;font-size:12.5px}
+.rich-hybrid .ruler-grid > div > strong{font-size:13.5px;font-size:14.5px}
+.rich-hybrid .hour-period{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.rich-hybrid .solar-times{font-size:11px;font-size:12.5px}
+.rich-hybrid .moon-feature h3{font-size:25px;font-size:21px;font-weight:450;letter-spacing:-.012em}
+.rich-hybrid .moon-feature p{font-size:13.5px;font-size:14.5px}
+.rich-hybrid .moon-feature p > span{font-size:11.5px;font-size:12.5px}
+.rich-hybrid .lunar-milestones strong{font-size:15px;font-size:16.5px}
+.rich-hybrid .lunar-milestones time{font-size:11.5px;font-variant-numeric:tabular-nums}
+.rich-hybrid .course-line{font-size:11.5px;font-size:12.5px}
+.rich-hybrid .radar-time time{font-size:27px}
+.rich-hybrid .aspect-glyphs{font-size:22px}
+.rich-hybrid .focus-next h3{font-size:15px;font-size:16.5px}
+.rich-hybrid .focus-next > p{font-size:11.5px;font-size:12.5px}
+.rich-hybrid .focus-more{font-size:11.5px;font-size:12.5px}
+.rich-hybrid .compact-sky > .barometer > .panel-heading h3{font-size:21px}
+.rich-hybrid .baro-reading > strong{font-size:26px}
+.rich-hybrid .baro-summary{font-size:12px;font-size:12.5px}
+@media (max-width: 700px){
+ .rich-hybrid .compact-heading h2{font-size:25px;font-size:21px;font-weight:450;letter-spacing:-.012em}
+ .rich-hybrid .focus-clock h3{font-size:16px;font-size:16.5px}
+ .rich-hybrid .moon-feature h3{font-size:26px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+ .rich-hybrid .baro-reading > strong{font-size:26px}
+ .rich-hybrid .baro-summary{font-size:12px;font-size:12.5px}
+}
+@media (min-width: 701px){
+ .rich-hybrid .focus-clock h3{font-size:14px;font-size:14.5px}
+ .rich-hybrid .large-clock time{font-size:29px}
+ .rich-hybrid .large-clock time > span{font-size:17.5px;font-size:18px}
+ .rich-hybrid .hour-period{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .rich-hybrid .hour-period strong{font-size:11px;font-size:12.5px}
+ .rich-hybrid .solar-times{font-size:11px;font-size:12.5px}
+ .rich-hybrid .aspect-glyphs{font-size:17.5px}
+ .rich-hybrid .aspect-glyphs > span{font-size:13.5px}
+ .rich-hybrid .focus-next h3{font-size:15px;font-size:16.5px}
+}
+/* undefined */
+.astro-section .section-title h2{font-size:31px}
+.astro-section .period{font-size:11.5px;font-variant-numeric:tabular-nums}
+.astro-filters button{font-size:12.5px;font-size:14.5px}
+.astro-instruction{font-size:12px;font-size:12.5px}
+.astro-shell-head h3{font-size:24px;font-size:21px;font-weight:450;letter-spacing:-.012em}
+.astro-shell-head > p{font-size:11px;font-size:12.5px}
+.axis-date{font-size:12px;font-variant-numeric:tabular-nums}
+.event-date{font-size:12px;font-variant-numeric:tabular-nums}
+.event-symbols{font-size:20px}
+.astro-event > strong{font-size:20px}
+.event-meta-small{font-size:11.5px;font-size:13px}
+.astro-legend{font-size:11.5px;font-size:12.5px}
+.astro-controls > span{font-size:11.5px;font-size:12.5px}
+.astro-controls button{font-size:17.5px;font-size:18px}
+.astro-count{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.timeline-study-2 .event-symbols{font-size:17.5px}
+.timeline-study-2 .event-date{font-size:12px;font-variant-numeric:tabular-nums}
+.timeline-study-2 .astro-event > strong{font-size:20px}
+.timeline-study-3 .event-symbols{font-size:16px}
+.timeline-study-3 .astro-event > strong{font-size:13.5px;font-size:14.5px}
+.timeline-study-3 .event-meta-small{font-size:11px;font-size:13px}
+.timeline-study-3 .event-date{font-size:11.5px;font-variant-numeric:tabular-nums}
+.astro-inspector > .kicker{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.inspect-glyph{font-size:37px;font-size:clamp(34px,3.8vw,48px);font-weight:350;letter-spacing:-.025em}
+.astro-inspector h3{font-size:30px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+.astro-inspector p{font-size:12.5px;font-size:14.5px}
+.astro-inspector .text-link{font-size:12px;font-size:12.5px}
+@media (max-width: 800px){
+ .astro-shell-head h3{font-size:22px;font-size:21px;font-weight:450;letter-spacing:-.012em}
+ .astro-shell-head > p{font-size:11px;font-size:12.5px}
+ .astro-inspector h3{font-size:27px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+}
+@media (max-width: 600px){
+ .astro-section .section-title h2{font-size:27px}
+ .astro-section .period{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .astro-filters button{font-size:11.5px;font-size:12.5px}
+ .astro-instruction{font-size:11.5px;font-size:12.5px}
+ .astro-shell-head > p{font-size:11px;font-size:12.5px}
+ .astro-legend{font-size:11px;font-size:12.5px}
+ .astro-controls > span{font-size:11px;font-size:12.5px}
+ .astro-count{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+ .inspect-glyph{font-size:25px;font-size:21px;font-weight:450;letter-spacing:-.012em}
+ .astro-inspector h3{font-size:24px;font-size:21px;font-weight:450;letter-spacing:-.012em}
+ .astro-inspector p{font-size:12px;font-size:12.5px}
+ .astro-inspector .text-link{font-size:12px;font-size:12.5px}
+}
+.timeline-compact .astro-section .section-title h2{font-size:26px}
+.timeline-compact .astro-filters button{font-size:12px;font-size:12.5px}
+.timeline-compact .astro-instruction{font-size:11.5px;font-size:12.5px}
+.timeline-compact .astro-shell-head h3{font-size:21px;font-size:21px;font-weight:450;letter-spacing:-.012em}
+.timeline-compact .astro-shell-head > p{font-size:11px;font-size:12.5px}
+.timeline-compact .event-date{font-size:11.5px;font-variant-numeric:tabular-nums}
+.timeline-compact .event-symbols{font-size:14px}
+.timeline-compact .astro-event > strong{font-size:12.5px;font-size:14.5px}
+.timeline-compact .event-meta-small{font-size:11px;font-size:13px}
+.timeline-compact .astro-inspector > .kicker{font-size:11px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.timeline-compact .inspect-glyph{font-size:27px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+.timeline-compact .astro-inspector h3{font-size:25px;font-size:21px;font-weight:450;letter-spacing:-.012em}
+.timeline-compact .astro-inspector p{font-size:12px;font-size:12.5px}
+.timeline-compact .astro-inspector .text-link{font-size:11.5px;font-size:12.5px}
+@media (max-width: 800px){
+ .timeline-compact .astro-inspector h3{font-size:24px;font-size:21px;font-weight:450;letter-spacing:-.012em}
+}
+@media (max-width: 600px){
+ .timeline-compact .astro-section .section-title h2{font-size:25px}
+ .timeline-compact .astro-filters button{font-size:11.5px;font-size:12.5px}
+ .timeline-compact .inspect-glyph{font-size:23px;font-size:21px;font-weight:450;letter-spacing:-.012em}
+ .timeline-compact .astro-inspector h3{font-size:23px;font-size:21px;font-weight:450;letter-spacing:-.012em}
+ .timeline-compact .astro-inspector p{font-size:12px;font-size:12.5px}
+ .timeline-compact .astro-inspector .text-link{font-size:11.5px;font-size:12.5px}
+}
+/* Ajuste manual: las tarjetas de la línea de tiempo tienen alto fijo desde panorama.js; con letra más grande, un título en dos líneas puede crecer hasta los 12 px libres entre filas. */
+.astro-event{height:auto !important;min-height:74px}
+.panorama-canvas{box-sizing:content-box;padding-bottom:12px}

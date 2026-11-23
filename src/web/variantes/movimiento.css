@@ -1,0 +1,43 @@
+/* Encabezado único y fijo (punto 8) y movimientos sutiles (punto 11), 31/10/2026.
+   Se carga después de tonos.css en las 11 páginas principales (terminal29 queda aparte). Sin dependencias. */
+
+/* --- Punto 8: mismo encabezado en todas las páginas --- */
+.strap,.rich-hybrid .strap{display:none!important}
+html{scroll-padding-top:96px}
+body>header{position:sticky;top:0;z-index:60;background:rgba(239,234,225,.84);-webkit-backdrop-filter:saturate(1.4) blur(12px);backdrop-filter:saturate(1.4) blur(12px);transition:padding .25s ease,margin .25s ease,box-shadow .25s ease,background-color .25s ease}
+body>header .brand img{transition:height .25s ease,max-height .25s ease}
+/* Al bajar se achica: movimiento.js devuelve como margen el padding que pierde, así la página no salta */
+body>header.is-scrolled{padding-top:8px;padding-bottom:8px;background:rgba(239,234,225,.9);box-shadow:0 1px 0 #d8d0c3,0 10px 24px -18px rgba(36,50,54,.35)}
+@media (max-width:1080px){
+ body>header.is-scrolled{padding-top:7px;padding-bottom:7px}
+ /* Menú abierto dentro del encabezado fijo: se desplaza si no entra en la pantalla */
+ body>header nav.open{max-height:calc(100dvh - 72px);overflow-y:auto;overscroll-behavior:contain}
+}
+/* Celular angosto: logo, Sumarme y Menú en una sola línea para que el encabezado fijo ocupe poco */
+@media (max-width:400px){body>header .brand img{max-width:100px;height:auto}body>header .h-cta{padding:0 12px}body>header .h-menu{padding:0 11px;margin-left:6px}}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){body>header{background:#efeae1}}
+/* Lo que ya era fijo baja para no quedar debajo del encabezado */
+.cu-buy,.co-form{top:88px}
+
+/* --- Punto 11: movimientos sutiles --- */
+@view-transition{navigation:auto}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.22s}
+
+@media (hover:hover) and (pointer:fine){
+ .door,.sh-card,.ac-school,.rv-card,.i-card,.of .card,.mb .tile{transition:transform .25s ease,box-shadow .25s ease}
+ .door:hover,.sh-card:hover,.ac-school:hover,.rv-card:hover,.i-card:hover,.of .card:hover,.mb .tile:hover{transform:translateY(-3px);box-shadow:0 14px 28px -20px rgba(36,50,54,.45)}
+ .sh-card img,.ac-school img,.rv-card img,.i-card img,.door img{transition:transform .5s ease}
+ .sh-card:hover img,.ac-school:hover img,.rv-card:hover img,.i-card:hover img,.door:hover img{transform:scale(1.035)}
+}
+
+/* Aparición al bajar: solo si movimiento.js marcó la página (sin JS, todo se ve) */
+html.mv-on .mv{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+html.mv-on .mv.mv-in{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+ @view-transition{navigation:none}
+ body>header,body>header .brand img,.door,.sh-card,.ac-school,.rv-card,.i-card,.of .card,.mb .tile,.sh-card img,.ac-school img,.rv-card img,.i-card img,.door img{transition:none!important}
+ .door:hover,.sh-card:hover,.ac-school:hover,.rv-card:hover,.i-card:hover,.of .card:hover,.mb .tile:hover,.sh-card:hover img,.ac-school:hover img,.rv-card:hover img,.i-card:hover img,.door:hover img{transform:none!important}
+ html.mv-on .mv{opacity:1;transform:none;transition:none}
+}
+@media print{body>header{position:static}html.mv-on .mv{opacity:1;transform:none}}

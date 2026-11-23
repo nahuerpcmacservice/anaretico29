@@ -1,0 +1,8 @@
+{
+  "_ayuda": "Video y foto de 'Quién está atrás' y de la página Mi recorrido. Subí los archivos a web/assets/presentacion/ y escribí acá su ruta desde la carpeta variantes/, por ejemplo ../assets/presentacion/video.mp4. Con null se ven la portada y las iniciales de siempre.",
+  "video": null,
+  "poster": "../assets/poster.webp",
+  "duracion": "2:40",
+  "foto": "../assets/presentacion/fernando.jpg",
+  "foto_alt": "Fernando Javier Pérez"
+}

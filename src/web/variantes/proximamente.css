@@ -1,0 +1,84 @@
+/* Pantalla "Próximamente" y marca "Pronto" (maqueta para aprobar, 21/11/2026).
+   Sistema del sitio: Pizarra y cobre, Fraunces + Inter, esquinas Media, líneas de 1 px, aire, sin sombras ni degradados.
+   Un solo gesto: el anillo fino con doce divisiones; con "reducir movimiento" queda quieto. Se carga antes de tonos.css. */
+
+/* Marca "Pronto": texto con borde fino, no depende del color. Se usa en el menú y en la franja de ejemplo. */
+.pronto{display:inline-flex;align-items:center;flex:none;margin-left:8px;padding:2px 6px;border:1px solid currentColor;border-radius:6px;color:#844a2b;font:600 10.5px/1.3 'Inter',Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;vertical-align:middle;text-decoration:none}
+.pronto-osc{color:#e2b48f}
+/* En el menú de escritorio la marca cuelga debajo del nombre: no cambia el ancho ni la altura de nada, y todos los nombres quedan alineados */
+@media (min-width:1081px){header nav a .pronto{position:absolute;left:0;top:calc(100% + 5px);margin:0;padding:1px 5px;font-size:10.5px}}
+@media (max-width:1080px){header nav a .pronto{font-size:11.5px;padding:2px 7px;margin-left:10px}}
+header nav a[aria-current="page"]{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
+@media (max-width:1080px){header nav a[aria-current="page"]{text-decoration:none;font-weight:600}}
+
+/* Aviso */
+.pr{background:var(--ivory);color:var(--ink)}
+.pr .wrap{max-width:1180px}
+.pr-aviso{padding:112px 0 104px}
+.pr-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:56px;align-items:center}
+.pr-texto .lbl{font-size:12px}
+.pr h1{font-size:clamp(38px,8.5vw,88px);line-height:1.02;font-weight:300;letter-spacing:-.03em;margin:14px 0 22px;overflow-wrap:anywhere}
+.pr-frase{max-width:34ch;margin:0 0 34px;font:400 17px/1.6 'Inter',Arial,sans-serif;font-size:18px;color:var(--muted)}
+.pr-acciones{display:flex;flex-wrap:wrap;align-items:center;gap:14px 26px}
+.pr .btn.pr-primario{background:#844a2b;border-color:#844a2b;color:#fff}
+.pr .btn.pr-primario:hover{background:#6e3c22;border-color:#6e3c22}
+.pr-anillo{display:block;width:100%;max-width:400px;height:auto;margin-left:auto;fill:none;stroke:var(--copper);stroke-width:1;opacity:.9}
+.pr-anillo *{vector-effect:non-scaling-stroke}
+.pr-anillo .pr-centro{fill:var(--copper);stroke:none}
+.pr-giro{transform-origin:200px 200px;animation:pr-giro 160s linear infinite}
+@keyframes pr-giro{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.pr-giro{animation:none}}
+
+/* Mientras se lee el archivo de visibilidad, con ?p= no se muestra el aviso (evita el parpadeo antes de redirigir); si falla, aparece solo */
+.pr-espera .pr-aviso{visibility:hidden;animation:pr-ver 0s 1.6s forwards}
+@keyframes pr-ver{to{visibility:visible}}
+
+/* Franja de ejemplo: usa el marcado y las clases reales (Servicios .fz-tabs, portada .pz-tab y .door), con la regla de "apagado" encima */
+.pr-demo{padding:72px 0 88px;border-top:1px solid var(--line)}
+.pr-nota{margin:0 0 28px;padding:2px 0 2px 14px;border-left:2px solid var(--copper);font:500 13.5px/1.5 'Inter',Arial,sans-serif;color:var(--muted)}
+.pr-demo h2{font-size:clamp(30px,3.4vw,42px);line-height:1.1;font-weight:350;letter-spacing:-.02em;margin:8px 0 14px}
+.pr-regla{max-width:64ch;margin:0 0 40px;font:400 16px/1.65 'Inter',Arial,sans-serif;font-size:16.5px;color:var(--ink)}
+.pr-regla .pronto{margin:0 2px}
+.pr-ejemplos{display:grid;gap:44px;margin-bottom:48px}
+.pr-ej{margin:0;min-width:0}
+.pr-ej h3,.pr-sub{font-size:22px;line-height:1.2;font-weight:350;margin:0 0 14px}
+.of .pr-sub{margin:0 0 14px}
+.pr-ej figcaption{max-width:64ch;margin:14px 0 0;font:400 14px/1.55 'Inter',Arial,sans-serif;font-size:14.5px;color:var(--muted)}
+.pr-regla:last-child{margin-bottom:0}
+
+/* Pestañas de Servicios (.fz-tabs): iguales a las reales, sin quedar fijas al bajar */
+.of .pr-demo .fz-tabs{position:static;border-radius:12px;overflow:hidden}
+.of .pr-demo .fz-tabs::before{display:none}
+.of .pr-demo .fz-tabs-in{padding:0 22px;max-width:none;margin:0}
+.of .pr-demo .fz-tabs a.is-off{color:#b9c3c4;cursor:default}
+.of .pr-demo .fz-tabs a.is-off:hover{color:#b9c3c4}
+.of .pr-demo .fz-tabs a.is-off .pronto{margin-left:2px}
+/* Pestañas del carrusel (.plaza .pz-bar): solo la barra, sin foto ni márgenes de la portada */
+.plaza.pr-plaza{margin:0}
+.plaza.pr-plaza .pz-bar{border-bottom:0}
+.plaza.pr-plaza .pz-tab{cursor:default}
+.plaza.pr-plaza .pz-tab::before{display:none}
+.plaza.pr-plaza .pz-tab:hover{color:#b9c3c4}
+.plaza.pr-plaza .pz-tab.is-off .pronto{margin-left:2px}
+.plaza.pr-plaza .pz-tab{min-width:0}
+@media (max-width:600px){.plaza.pr-plaza .pz-tab.is-off .pronto{margin:0;letter-spacing:.04em}}
+@media (max-width:360px){.plaza.pr-plaza .pz-area{font-size:12.5px}.plaza.pr-plaza .pz-tab,.plaza.pr-plaza .pz-tab:first-child{padding-left:1px;padding-right:1px}.plaza.pr-plaza .pz-tab.is-off .pronto{padding:2px 4px;font-size:10px}}
+/* Puertas (.door): la real, con foto; la apagada con la foto atenuada, sin enlace, sin foco ni gesto de mano */
+.of .pr-demo .pr-doors{padding:0;border-top:0}
+.of .pr-demo .door.is-off{cursor:default}
+.of .pr-demo .door.is-off:hover{background:var(--paper);transform:none;box-shadow:none}
+.of .pr-demo .door.is-off:hover strong{color:var(--ink)}
+.of .pr-demo .door.is-off .d-img{filter:grayscale(.6) opacity(.55)}
+.of .pr-demo .door.is-off:hover .d-img{transform:none}
+.of .pr-demo .door.is-off em{display:flex;align-items:center}
+.of .pr-demo .door.is-off em .pronto{margin-left:0;font:600 11.5px/1.3 'Inter',Arial,sans-serif;letter-spacing:.08em;color:#844a2b}
+
+@media (max-width:900px){
+ .pr-aviso{padding:72px 0 64px}
+ .pr-grid{grid-template-columns:1fr;gap:44px}
+ .pr-anillo{max-width:220px;margin:0}
+}
+@media (max-width:600px){
+ .pr-demo{padding:56px 0 64px}
+ .of .pr-demo .fz-tabs-in{padding:0 8px}
+}

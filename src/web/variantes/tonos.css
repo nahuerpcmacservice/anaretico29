@@ -1,0 +1,20 @@
+/* Tonos y botones · opción B "Tres momentos", elegida por Fernando el 31/10/2026 (puntos 5, 6 y 7 de la revisión de diseño).
+   Oscuro solo en carrusel + Observatorio, "Tu organización" y el pie; tarjetas del cielo y "La carta de este momento" claras; membresía en cobre suave.
+   Botón principal siempre cobre; secundario como enlace subrayado con flecha. Se carga última en todas las páginas. Propuestas en tonos/ y tonos.html. */
+.phase-badge{color:#f2d3b8!important;border-color:#f2d3b866!important}
+.astro-event .event-symbols{color:#7a4527!important}
+.rich-hybrid .focus-card{--fg:#213034;--muted:#5d6a6c;--accent:#844a2b;--line:#d8d0c3;background:#f7f4ee!important;color:#213034!important;border:1px solid #d8d0c3!important;border-top:2px solid #b97a52!important}
+.rich-hybrid .focus-next{background:#efe7dc!important}
+.of .m-feature{background:#f1e2d4!important;color:#213034!important;border:0!important;border-left:3px solid #844a2b!important}
+.of .m-feature .mf-lbl{color:#844a2b!important}.of .m-feature h3{color:#213034!important}.of .m-feature p:not(.mf-lbl){color:#4a585b!important}
+.t3 .t3-now{background:#f7f4ee!important;color:#213034!important;border:1px solid #d8d0c3!important;border-top:2px solid #b97a52!important}.t3 .t3-now .t-kicker,.t3 .t3-now .t-wheel{color:#844a2b!important}.t3 .t3-now .t-title{color:#213034!important}.t3 .t3-now .t-text{color:#5d6a6c!important}
+.pres .p-btn.primary,.t3-submit .t-btn.primary,.of .buy>.btn{background:#844a2b!important;border-color:#844a2b!important;color:#fff!important}
+.pres .p-btn.primary:hover,.t3-submit .t-btn.primary:hover,.of .buy>.btn:hover{background:#6e3c22!important;border-color:#6e3c22!important}
+/* Secundarios como enlace */
+.btn.line,.pres .p-btn.secondary,.hc-btn:not(.primary){background:transparent!important;border-color:transparent!important;border-bottom:1px solid currentColor!important;border-radius:0!important;padding-left:2px!important;padding-right:2px!important}
+.btn.line,.pres .p-btn.secondary{color:#844a2b!important}
+.btn.line::after,.pres .p-btn.secondary::after,.hc-btn:not(.primary)::after{content:" →"}
+/* Textos con color fijo claro dentro de las tarjetas del cielo */
+.rich-hybrid .focus-card strong{color:#213034!important}
+.rich-hybrid .focus-card time,.rich-hybrid .focus-card button,.rich-hybrid .focus-card span:not([class]){color:#5d6a6c!important}
+.rich-hybrid .focus-card .phase-badge{color:#7a4527!important;border-color:#b97a5266!important;background:#fff8!important}

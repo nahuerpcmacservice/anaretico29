@@ -1,0 +1,11 @@
+/* Esquinas Media: recuadros grandes 12 px, elementos chicos 6 px, botones 6 px. Se carga encima de las hojas de combinado. */
+/* Recuadros grandes */
+.hero-carousel,.focus-card,.planet-ticker,.metric,.astro-shell,.readings figure,#detail{border-radius:12px !important}
+/* Cuando un hijo con fondo propio toca el borde, el contenedor recorta */
+.hero-carousel,.planet-ticker,.metric,.astro-shell,.readings figure{overflow:hidden}
+/* Fotos y logos dentro de las perspectivas siguen el recuadro */
+.readings figure img{border-radius:0}
+/* Elementos chicos */
+.phase-badge,.astro-event,.astro-filters{border-radius:6px !important}
+/* Botones con borde completo */
+.astro-filters button,.carousel-arrows button,[data-pan],.ticker-pause,#detail .close{border-radius:6px !important}

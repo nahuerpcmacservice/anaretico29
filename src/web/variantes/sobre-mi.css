@@ -1,0 +1,90 @@
+/* Sobre mí (21/11/2026) · diseño "Índice lateral" (referencias/sobre-mi/cinco-2.html), rehecho con las capas reales del sitio.
+   Pizarra y cobre, Fraunces + Inter, esquinas Media (12 px / 6 px). Se carga antes de tonos.css, que va último de las hojas del sitio.
+   Todo cuelga de .sm para no tocar otras páginas. Lo fijo (índice lateral) usa top de 96 px: el encabezado fijo mide menos. */
+.sm{--piz:#33454a;--piz2:#243236;--piz3:#1b2629;--cob:#844a2b;--cob2:#b97a52;--cobl:#e2b48f;--mar:#efeae1;--mar2:#e6dfd3;--tx:#243236;--sub:#52605f;--lin:#d9d2c5;--dsub:#cfd6d4;
+ background:var(--mar);color:var(--tx);font:400 17px/1.68 'Inter',system-ui,sans-serif}
+.sm *{box-sizing:border-box}
+.sm h1,.sm h2,.sm h3{font-family:'Fraunces',Georgia,serif;font-weight:500;margin:0;line-height:1.1;letter-spacing:0;text-wrap:balance}
+.sm p{margin:0 0 1.05em;line-height:1.68}
+.sm ul,.sm ol{list-style:none;margin:0;padding:0}
+.sm-w{max-width:1200px;margin:0 auto;padding-left:clamp(16px,4vw,48px);padding-right:clamp(16px,4vw,48px)}
+.sm .k{display:block;margin:0;font:600 12px/1.4 'Inter',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--cob)}
+.sm .osc .k,.sm .geo .k{color:var(--cobl)}
+.sm .z{font-family:'Noto Sans Symbols','Noto Sans Symbols 2','Noto Sans','Apple Symbols','Segoe UI Symbol',sans-serif;font-style:normal;font-weight:400;font-size:1.5em;line-height:1;color:var(--cob);vertical-align:-.1em}
+.sm a:focus-visible{outline:2px solid var(--cob2);outline-offset:3px}
+.sm .osc a:focus-visible,.sm .geo a:focus-visible{outline-color:var(--cobl)}
+
+/* Cabecera clara */
+.sm-hero{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(24px,5vw,72px);align-items:end;padding-top:clamp(36px,5vw,72px);padding-bottom:44px;border-bottom:1px solid var(--lin)}
+.sm-hero h1{font-size:clamp(46px,7vw,100px);letter-spacing:-.01em;margin:14px 0 14px;font-weight:500;text-wrap:wrap}
+.sm-hero .s{margin:0;color:var(--sub)}
+.sm-hero .tr{font:italic 400 clamp(20px,2.1vw,26px)/1.4 'Fraunces',Georgia,serif;color:var(--cob);margin:26px 0 0;max-width:34ch}
+.sm-hero picture{display:block}
+.sm-hero img{display:block;width:100%;height:auto;aspect-ratio:1/1;object-fit:cover;object-position:50% 24%;border-radius:12px;background:var(--mar2)}
+
+/* Cuerpo: índice lateral + puntos */
+.sm-cu{display:grid;grid-template-columns:270px minmax(0,1fr);gap:clamp(24px,5vw,80px);padding-top:48px;padding-bottom:72px}
+.sm .ix{display:block;position:sticky;top:96px;align-self:start;max-height:calc(100vh - 112px);overflow-y:auto;font-size:16px}
+.sm .ix .k{margin-bottom:8px}
+.sm .ix a{display:flex;gap:14px;align-items:baseline;min-height:48px;padding:13px 0;border-bottom:1px solid var(--lin);text-decoration:none;color:var(--tx)}
+.sm .ix a b{font:500 14px/1.2 'Inter',sans-serif;color:var(--cob);width:24px;flex:none}
+.sm .ix a span{font:500 19px/1.2 'Fraunces',Georgia,serif}
+.sm .ix a:hover span{color:var(--cob)}
+.sm .ix a[aria-current="true"]{border-bottom:2px solid var(--cob)}
+.sm .ix .cj{margin-top:22px;background:var(--mar2);border-radius:12px;padding:18px}
+.sm .ix .cj p{font-size:13.5px;margin:6px 0 0;line-height:1.45}
+.sm .ix .cj .k+p{margin-top:8px}
+.sm-intro{font:400 clamp(20px,2vw,24px)/1.5 'Fraunces',Georgia,serif;margin:12px 0 20px}
+.sm .pt{padding:44px 0;border-top:1px solid var(--lin)}
+.sm .pt .cb{display:flex;gap:22px;align-items:flex-end;margin-bottom:20px}
+.sm .pt .n{font:500 clamp(60px,7vw,96px)/.8 'Fraunces',Georgia,serif;color:var(--cob);flex:none}
+.sm .pt h2{font-size:clamp(28px,3.2vw,40px);min-width:0}
+.sm .pt .cb .k{margin-bottom:8px}
+.sm .pt>p{font-size:17.5px;max-width:66ch}
+.sm .ch{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.sm .ch li{background:var(--mar2);border-radius:6px;padding:8px 12px;font-size:13.5px;line-height:1.5}
+.sm .ch li b{color:var(--cob);font-weight:600}
+.sm .pt.geo{background:var(--piz2);color:var(--mar);border-radius:12px;padding:40px;border:0;margin:8px 0 44px}
+.sm .pt.geo .n{color:var(--cob2)}
+.sm .pt.geo h2{color:#fff}
+.sm .pt.geo .ch li{background:var(--piz3);color:#dfe5e3}
+.sm .pt.geo .ch li b{color:var(--cobl)}
+
+/* Bloque blanco "Miembro de" (debajo del punto 03) */
+.sm .mem{background:#fff;border-radius:12px;padding:30px;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(20px,4vw,48px);align-items:center;margin-top:28px}
+.sm .mem p{margin:0;font-size:15.5px}
+.sm .mem .lg{display:grid;gap:12px}
+.sm .mem .lg li{border:1px solid var(--cob2);border-radius:10px;padding:14px 18px}
+.sm .mem .lg b{display:block;font:500 22px/1.2 'Fraunces',Georgia,serif}
+.sm .mem .lg span{font-size:13.5px;color:var(--sub)}
+.sm .mem .k{margin-bottom:10px}
+
+/* Cierre oscuro: Mi misión */
+.sm .osc{background:var(--piz2);color:var(--mar);padding:72px 0}
+.sm .osc .g{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(24px,5vw,72px);align-items:end}
+.sm .osc h2{font:400 clamp(26px,3.2vw,40px)/1.28 'Fraunces',Georgia,serif;color:#fff;margin-top:16px}
+.sm .osc .e{margin:0;color:var(--dsub);border-left:2px solid var(--cob2);padding-left:20px}
+.sm .osc .acc{display:flex;flex-wrap:wrap;gap:8px 22px;align-items:center;margin-top:28px}
+.sm .btn-sm{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 24px;border-radius:6px;background:var(--cob);color:#fff;text-decoration:none;font:600 15px/1 'Inter',sans-serif;border:1px solid var(--cob)}
+.sm .btn-sm:hover{background:#6e3c22;border-color:#6e3c22}
+.sm .btn-sm.l{background:none;border:0;border-bottom:1px solid currentColor;border-radius:0;color:inherit;padding:0 2px;min-height:48px}
+.sm .btn-sm.l:hover{background:none;color:#fff}
+.sm .btn-sm.l::after{content:" →";white-space:pre}
+
+@media (max-width:900px){
+ .sm-hero,.sm-cu{grid-template-columns:1fr}
+ .sm .ix{display:none}
+ .sm-hero{padding-top:24px;gap:24px}
+ .sm-hero img{order:-1}
+ .sm-hero picture{order:-1;max-width:380px}
+ .sm-hero h1{font-size:clamp(38px,11.5vw,56px)}
+ .sm-cu{padding-top:32px;padding-bottom:48px}
+ .sm .mem,.sm .osc .g{grid-template-columns:1fr}
+ .sm .pt{padding:36px 0}
+ .sm .pt .cb{gap:16px}
+ .sm .pt.geo{padding:26px 20px}
+ .sm .mem{padding:22px 18px}
+ .sm .osc{padding:56px 0}
+}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){.sm *{transition:none!important;animation:none!important}}

@@ -1,0 +1,339 @@
+/* Paleta Pizarra y cobre: generado automáticamente desde las hojas de combinado.html. No editar a mano. */
+/* undefined */
+body{--bg:#efe8e3;--fg:#1e2a2d;--muted:#6b706a;--line:#d6d5cd;--accent:#755744;--soft:#e7dfda;--moon-light:#b89b84;--moon-dark:#3f565c;background-image:;background-color:;color:var(--fg)}
+a{color:inherit;text-decoration-color:initial}
+button{background-image:initial;background-color:transparent;border-top-color:currentcolor;border-right-color:currentcolor;border-bottom-color:currentcolor;border-left-color:currentcolor;color:inherit}
+button:focus-visible, a:focus-visible{outline-color:}
+.prototype{background-image:initial;background-color:rgb(231, 229, 222);color:rgb(102, 107, 100)}
+.strap{color:var(--muted)}
+header{border-bottom-color:}
+nav > button{border-bottom-color:}
+.kicker{color:var(--accent)}
+.date-stamp span, .quiet{color:var(--muted)}
+.text-link{border-bottom-color:currentcolor}
+.hero-carousel{color:rgb(255, 255, 255);background-image:initial;background-color:#233033}
+.scrim{background-image:linear-gradient(90deg, rgba(17, 26, 21, 0.85) 0%, rgba(18, 28, 22, 0.396) 55%, rgba(19, 23, 16, 0.063)), linear-gradient(0deg, rgba(12, 21, 15, 0.2), transparent 60%);background-color:initial}
+.hero-credit{color:rgb(231, 230, 223);text-shadow:rgba(0, 0, 0, 0.667) 0px 1px 4px}
+.hero-content .kicker{color:#d6beab}
+.hero-content p{color:rgb(237, 236, 229)}
+.hero-content .text-link{color:#efe6de;border-top-color:rgb(213, 206, 193);border-right-color:rgb(213, 206, 193);border-bottom-color:rgb(213, 206, 193);border-left-color:rgb(213, 206, 193)}
+.carousel-bottom{background-image:initial;background-color:#263437;color:#e8e4df}
+.slide-count{color:#c9c3bc}
+.slide-count b{color:rgb(255, 255, 255)}
+.slide-dots button::after{background-image:initial;background-color:rgba(255, 255, 255, 0.333)}
+.slide-dots button.active::after{background-image:initial;background-color:#e0c1a8}
+.carousel-arrows button{border-left-color:rgba(255, 255, 255, 0.19)}
+.sky-grid{border-top-color:;border-left-color:}
+.metric{border-right-color:;border-bottom-color:}
+.panel-heading > span{color:var(--muted)}
+.bar-row small{color:var(--muted)}
+.track{background-image:;background-color:}
+.track span{background-image:;background-color:}
+.metric-note{color:var(--muted);border-top-color:}
+.metric-note strong{color:var(--fg)}
+.moon-body > div > span{color:var(--muted)}
+.moon-body > div > small{color:var(--accent)}
+.planet-list li{border-bottom-color:}
+.planet-list li:last-child{border-bottom-color:currentcolor}
+.planet-list b{color:var(--accent)}
+.planet-list strong{color:var(--accent)}
+.tension-track{background-image:;background-color:}
+.tension-track > span{background-image:;background-color:}
+.tension-counts{color:var(--muted)}
+.method-line{color:var(--muted)}
+.method-line button{color:var(--accent)}
+.week{border-top-color:;background-image:;background-color:}
+.week-strip{border-left-color:;border-top-color:}
+.week-day{border-bottom-color:;border-right-color:}
+.week-day small{color:var(--muted)}
+.event-dots i{background-image:;background-color:}
+.week-day > span:last-child{color:var(--muted)}
+.week-day.active{box-shadow:inset 0 -3px var(--accent);background-image:;background-color:}
+.day-detail p{color:var(--muted)}
+.agenda{border-top-color:}
+.period{color:var(--accent)}
+.agenda-intro > p{color:var(--muted)}
+.timeline-filters > button{border-top-color:;border-right-color:;border-bottom-color:;border-left-color:}
+.timeline-filters > button.active{background-image:;background-color:;color:var(--bg);border-top-color:;border-right-color:;border-bottom-color:;border-left-color:}
+.timeline-date{color:var(--fg)}
+.timeline-date small{color:var(--muted)}
+.timeline-point{background-image:;background-color:;box-shadow:0 0 0 5px var(--bg)}
+.timeline-node::after{background-image:;background-color:}
+.timeline-point.lunation{background-image:;background-color:}
+.timeline-point.ingress{background-image:;background-color:;border-top-color:;border-right-color:;border-bottom-color:;border-left-color:}
+.timeline-category{color:var(--accent)}
+.timeline-more{color:var(--muted)}
+.agenda-foot{color:var(--muted)}
+.readings{border-top-color:}
+.reading-grid figure{background-image:;background-color:}
+.reading-grid figcaption{color:rgb(255, 255, 255);background-image:initial;background-color:rgba(0, 0, 0, 0.533)}
+.reading-grid p{color:var(--muted)}
+.closing{background-image:;background-color:;border-top-color:}
+.closing p{color:var(--muted)}
+footer{border-top-color:}
+footer p{color:var(--muted)}
+footer > small{color:var(--muted)}
+dialog{background-image:;background-color:;color:var(--fg);border-top-color:;border-right-color:;border-bottom-color:;border-left-color:;box-shadow:rgba(0, 0, 0, 0.267) 0px 30px 90px}
+dialog::backdrop{background-image:initial;background-color:rgba(21, 25, 18, 0.69)}
+dialog p{color:var(--muted)}
+dialog strong{color:var(--fg)}
+dialog .event-meta{color:var(--accent);border-top-color:;border-bottom-color:}
+dialog .all-event{border-top-color:}
+dialog .all-event span{color:var(--muted)}
+.editorial{--bg:#ede3da;--fg:#253337;--muted:#545e5d;--line:#d2d1c2;--accent:#29393d;--soft:#e2d9d1;--moon-light:#b9ad9f;--moon-dark:#374b51}
+@media (max-width: 600px){
+ .scrim{background-image:linear-gradient(90deg, rgba(23, 32, 22, 0.875), rgba(23, 32, 22, 0.333)), linear-gradient(0deg, rgba(23, 32, 22, 0.467), transparent 70%);background-color:initial}
+ .sky-grid, .editorial .sky-grid{border-left-color:currentcolor;border-right-color:currentcolor}
+ .metric, .editorial .metric{border-left-color:currentcolor;border-right-color:currentcolor;border-top-color:currentcolor;border-bottom-color:;background-image:initial;background-color:transparent}
+}
+.editorial{--bg:#ede3da;--fg:#253337;--muted:#545e5d;--line:#d2d1c2;--accent:#29393d;--soft:#e2d9d1;--moon-light:#b9ad9f;--moon-dark:#374b51}
+.editorial .hero-carousel{background-image:initial;background-color:#263437;color:rgb(255, 255, 255)}
+.editorial .scrim{background-image:linear-gradient(90deg, rgba(23, 32, 22, 0.93) 0%, rgba(23, 32, 22, 0.518) 51%, rgba(23, 32, 22, 0.063)), linear-gradient(0deg, rgba(23, 32, 22, 0.267), transparent 65%);background-color:initial}
+.editorial .hero-content{background-image:initial;background-color:transparent;color:rgb(255, 255, 255)}
+.editorial .hero-content .kicker{color:#dec8b6}
+.editorial .hero-content p{color:#e7dfda}
+.editorial .hero-content .text-link{color:#f0e6df;border-top-color:#d5c2b2;border-right-color:#d5c2b2;border-bottom-color:#d5c2b2;border-left-color:#d5c2b2}
+.editorial .carousel-bottom{background-image:initial;background-color:#364a4f}
+.editorial .slide-dots button.active::after{background-image:initial;background-color:#d8c6b8}
+/* undefined */
+.preview-heading{border-bottom-color:}
+.preview-heading > span{color:var(--accent)}
+.preview-heading > small{color:var(--muted)}
+.compact-heading > .quiet, .compact-heading > span{color:var(--muted)}
+.sky-current{background-image:;background-color:;border-top-color:;border-right-color:;border-bottom-color:;border-left-color:}
+.sky-current > div{border-right-color:}
+.sky-current > div:last-child{border-right-color:currentcolor}
+.mini-label{color:var(--muted)}
+.planet-chip{border-top-color:#425b6145;border-right-color:#425b6145;border-bottom-color:#425b6145;border-left-color:#425b6145;background-image:initial;background-color:#425b6109;color:var(--accent)}
+.current-clock small{color:var(--muted)}
+.current-clock > p{color:var(--muted)}
+.small-moon{background-image:;background-color:}
+.small-moon::after{background-image:;background-color:}
+.current-moon-heading p{color:var(--muted)}
+.current-events{color:var(--muted)}
+.moon-course{border-top-color:}
+.moon-course span{color:var(--muted)}
+.moon-course button{color:var(--accent)}
+.compact-grid{border-left-color:;border-top-color:}
+.compact-grid > .metric, .compact-sky > .barometer{border-top-color:currentcolor;border-left-color:currentcolor;border-right-color:;border-bottom-color:;background-image:initial;background-color:transparent}
+.baro-reading > span{color:var(--muted)}
+.baro-reading > b{color:var(--accent)}
+.mini-track{background-image:;background-color:}
+.mini-track > i{background-image:;background-color:}
+.baro-summary{color:var(--muted)}
+.baro-foot > span{color:var(--muted)}
+.baro-foot > button{color:var(--accent)}
+.planet-ticker{border-top-color:;border-right-color:;border-bottom-color:;border-left-color:;background-image:initial;background-color:#ded5cd}
+.ticker-label{color:var(--accent);border-right-color:}
+.ticker-item{color:var(--muted)}
+.ticker-item > i{color:var(--accent)}
+.ticker-item > strong{color:var(--accent)}
+.ticker-item > b{color:var(--accent)}
+.ticker-pause{border-left-color:;color:var(--accent)}
+.reference-note{color:var(--muted)}
+.format-2 .compact-grid > .barometer{background-image:initial;background-color:#e8e2db}
+.format-2 .baro-reading{border-bottom-color:}
+.format-3 .sky-current{background-image:initial;background-color:transparent}
+.format-3 .compact-sky > .barometer{border-bottom-color:}
+.format-3 .compact-grid{border-left-color:currentcolor;border-top-color:currentcolor}
+.format-3 .compact-grid > .metric:last-child{border-right-color:currentcolor}
+@media (max-width: 1050px){
+ .format-3 .compact-grid > .metric{border-bottom-color:}
+ .format-3 .compact-grid > .metric:nth-child(2n){border-right-color:currentcolor}
+}
+@media (max-width: 750px){
+ .current-moon{border-top-color:}
+ .sky-current > .current-clock{border-right-color:currentcolor}
+ .format-2 .baro-reading{border-top-color:currentcolor;border-right-color:currentcolor;border-bottom-color:currentcolor;border-left-color:currentcolor}
+}
+@media (max-width: 600px){
+ .compact-grid > .metric, .format-2 .compact-grid > .metric, .format-1 .compact-grid > .barometer, .format-1 .compact-grid > .moon, .format-3 .compact-grid > .metric{border-right-color:currentcolor;border-bottom-color:}
+ .format-1 .compact-grid > .barometer{background-image:initial;background-color:#e8e2db}
+ .compact-grid{border-left-color:currentcolor}
+}
+/* undefined */
+.rich{--accent:#29393d;--soft:#e4dad3;--line:#d4cdc4;--bg:#ede3da;--fg:#27363a;--muted:#545e5d}
+.focus-deck{color:var(--muted)}
+.focus-card{border-top-color:;border-right-color:;border-bottom-color:;border-left-color:;background-image:initial;background-color:#f5ebe3}
+.phase-badge{color:var(--accent);border-top-color:;border-right-color:;border-bottom-color:;border-left-color:;background-image:initial;background-color:#425b6108}
+.clock-location > span:last-child{color:var(--muted)}
+.clock-year{color:var(--muted)}
+.large-clock time > span{color:var(--muted)}
+.large-clock small{color:var(--muted)}
+.ruler-grid{border-top-color:}
+.ruler-grid > div > span{color:var(--muted)}
+.ruler-grid > div > strong{color:var(--accent)}
+.hour-period{color:var(--muted)}
+.hour-period > strong{color:var(--fg)}
+.solar-times{border-top-color:;color:var(--muted)}
+.solar-times b{color:var(--fg)}
+.solar-times button{color:var(--accent)}
+.feature-moon{background-image:initial;background-color:#415a60;box-shadow:#425b6108 0px 0px 0px 8px}
+.feature-moon::after{background-image:initial;background-color:#c5bbb0}
+.moon-feature p{color:var(--muted)}
+.moon-feature p > span{color:var(--accent)}
+.lunar-milestones{border-top-color:}
+.lunar-milestones > div + div{border-left-color:}
+.lunar-milestones span{color:var(--muted)}
+.lunar-milestones strong{color:var(--fg)}
+.lunar-milestones time{color:var(--accent)}
+.course-line{border-top-color:}
+.course-line i{background-image:;background-color:}
+.course-line > button{color:var(--accent)}
+.focus-next{background-image:initial;background-color:#e9e3dc;border-top-color:}
+.radar-time > span{color:var(--muted)}
+.aspect-glyphs{color:var(--accent)}
+.focus-next > p{color:var(--muted)}
+.focus-more{border-top-color:;color:var(--accent)}
+.rich .planet-ticker{background-image:initial;background-color:#e7e1d9;border-top-color:;border-right-color:;border-bottom-color:;border-left-color:}
+.rich .ticker-label{color:var(--accent)}
+.rich .compact-sky > .barometer{border-top-color:;border-right-color:;border-bottom-color:;border-left-color:;background-image:initial;background-color:#f3e8df}
+.rich .compact-grid{border-top-color:currentcolor;border-right-color:currentcolor;border-bottom-color:currentcolor;border-left-color:currentcolor}
+.rich .compact-grid > .metric{background-image:initial;background-color:#f3eae2;border-top-color:;border-right-color:;border-bottom-color:;border-left-color:}
+.rich .compact-grid > .elements .bar-row:nth-child(2) .track span{background-image:initial;background-color:rgb(164, 122, 93)}
+.rich .compact-grid > .elements .bar-row:nth-child(3) .track span{background-image:initial;background-color:rgb(137, 136, 120)}
+.rich .compact-grid > .elements .bar-row:nth-child(4) .track span{background-image:initial;background-color:#425b61}
+.rich-1 .focus-clock{background-image:initial;background-color:#e8e2d9}
+.rich-1 .focus-next{background-image:initial;background-color:#e8d9ce;--accent:#8b6b4b}
+.rich-1 .compact-sky > .barometer{--fg:#f1e4d9;--muted:#d8d1c8;--accent:#cbc2b7;--line:#5d7e86;color:#f1e4d9;background-image:initial;background-color:#3c5258;border-top-color:#3c5258;border-right-color:#3c5258;border-bottom-color:#3c5258;border-left-color:#3c5258}
+.rich-1 .compact-sky > .barometer .panel-heading h3{color:#f1e4d9}
+.rich-1 .compact-sky > .barometer .panel-heading > span{color:#d8d1c8}
+.rich-2{--accent:#9a654a;--fg:#49382d;--muted:#8a7968;--line:#dbcaba;--soft:#ede1d5;--bg:#f1e3d8}
+.rich-2 .focus-moon{background-image:initial;background-color:rgb(241, 229, 215);border-top-color:rgb(166, 119, 86)}
+.rich-2 .focus-clock{background-image:initial;background-color:#f7ebe2}
+.rich-2 .solar-times{border-top-color:currentcolor;border-right-color:currentcolor;border-bottom-color:currentcolor;border-left-color:currentcolor}
+.rich-2 .focus-next{background-image:initial;background-color:rgb(155, 108, 80);--accent:#f3dfc5;--fg:#f7eae0;--muted:#ead3ba;--line:#c89f80;color:#f6e9de;border-right-color:rgb(155, 108, 80);border-bottom-color:rgb(155, 108, 80);border-left-color:rgb(155, 108, 80);border-top-color:currentcolor}
+.rich-2 .focus-next > .mini-label{color:rgb(237, 206, 176)}
+.rich-2 .radar-time span{color:rgb(234, 211, 186)}
+.rich-2 .focus-more{border-top-color:rgb(200, 159, 128);border-right-color:rgb(200, 159, 128);border-bottom-color:rgb(200, 159, 128);border-left-color:rgb(200, 159, 128);color:#f4e2d4}
+.rich-2 .feature-moon{background-image:initial;background-color:rgb(91, 80, 66);box-shadow:rgba(154, 101, 74, 0.03) 0px 0px 0px 10px}
+.rich-2 .feature-moon::after{background-image:initial;background-color:rgb(211, 180, 143)}
+.rich-2 .planet-ticker{background-image:initial;background-color:rgb(234, 221, 207)}
+.rich-2 .compact-sky > .barometer{background-image:initial;background-color:rgb(233, 216, 199);border-top-color:rgb(216, 189, 166);border-right-color:rgb(216, 189, 166);border-bottom-color:rgb(216, 189, 166);border-left-color:rgb(216, 189, 166)}
+.rich-2 .compact-grid > .metric{background-image:initial;background-color:#f7ebe2}
+.rich-3{--bg:#e9e0d9;--fg:#263438;--accent:#29393d;--muted:#545e5d;--line:#d0c8be;--soft:#e6e0d7}
+.forest-dateline{background-image:initial;background-color:#2c3d41;color:#d2cbc2;border-top-color:#2c3d41;border-right-color:#2c3d41;border-left-color:#2c3d41;border-bottom-color:#425b61}
+.forest-dateline > span:last-child{color:#b79f8c}
+.rich-3 .focus-grid{background-image:initial;background-color:#33464b;border-right-color:#2c3d41;border-bottom-color:#2c3d41;border-left-color:#2c3d41;border-top-color:currentcolor}
+.rich-3 .focus-card{--fg:#efe1d5;--muted:#c6bdb2;--accent:#d1a786;--line:#547178;background-image:initial;background-color:transparent;color:#efe1d5;border-top-color:currentcolor;border-right-color:currentcolor;border-bottom-color:currentcolor;border-left-color:currentcolor}
+.rich-3 .focus-clock{border-right-color:#425b61}
+.rich-3 .large-clock time > span{color:#c8beb3}
+.rich-3 .ruler-grid > div > strong{color:#dcb290}
+.rich-3 .phase-badge{background-image:initial;background-color:rgba(255, 255, 255, 0.03);color:#dbbea7;border-top-color:#547178;border-right-color:#547178;border-bottom-color:#547178;border-left-color:#547178}
+.rich-3 .moon-feature p{color:#d0c8bf}
+.rich-3 .feature-moon{background-image:initial;background-color:#212d30;box-shadow:#cea58509 0px 0px 0px 8px}
+.rich-3 .feature-moon::after{background-image:initial;background-color:#c8beb3}
+.rich-3 .lunar-milestones strong{color:#edddd0}
+.rich-3 .lunar-milestones time{color:#dbb99e}
+.rich-3 .course-line button{color:#dbb99e}
+.immediate-agenda{background-image:initial;background-color:#3b5257;border-right-color:#2c3d41;border-bottom-color:#2c3d41;border-left-color:#2c3d41;border-top-color:#425b61;color:#efe1d5}
+.immediate-agenda > div, .immediate-agenda > button{border-right-color:#547178}
+.immediate-agenda > div:last-child{border-right-color:currentcolor}
+.immediate-title{color:#ccb09a}
+.immediate-agenda > div > span, .immediate-agenda > button > span{color:#c8beb2}
+.immediate-agenda strong{color:#e3bea0}
+.immediate-agenda p{color:#d8d1c9}
+.immediate-agenda b{color:#d2a886}
+.rich-3 .planet-ticker{background-image:initial;background-color:#e5dfd6}
+.rich-3 .compact-sky > .barometer{background-image:initial;background-color:#f5eae1;border-right-color:#c5bbb0;border-bottom-color:#c5bbb0;border-left-color:#c5bbb0;border-top-color:#57757c}
+.rich-3 .compact-grid > .metric{background-image:initial;background-color:#ece6df;border-top-color:#cdc4ba;border-right-color:#cdc4ba;border-bottom-color:#cdc4ba;border-left-color:#cdc4ba}
+@media (max-width: 950px){
+ .focus-next > .focus-more{border-top-color:currentcolor;border-right-color:currentcolor;border-bottom-color:currentcolor;border-left-color:currentcolor}
+ .rich-2 .focus-next > .focus-more{border-top-color:}
+}
+@media (max-width: 700px){
+ .solar-times{border-top-color:currentcolor;border-right-color:currentcolor;border-bottom-color:currentcolor;border-left-color:currentcolor}
+ .focus-next > .focus-more{border-top-color:}
+ .rich-3 .focus-clock{border-right-color:currentcolor;border-bottom-color:#547178}
+ .immediate-title{border-bottom-color:#547178}
+ .immediate-agenda > div, .immediate-agenda > button{border-right-color:currentcolor;border-bottom-color:#547178}
+ .immediate-agenda > div:last-child{border-bottom-color:currentcolor}
+}
+/* undefined */
+.rich-hybrid{--bg:#e9e0d9;--fg:#263438;--accent:#29393d;--muted:#545e5d;--line:#d0c8be;--soft:#e6e0d7}
+.rich-hybrid .focus-card{--fg:#efe1d5;--muted:#cec5bb;--accent:#dbb394;--line:#547178;background-image:initial;background-color:#33464b;color:var(--fg);border-top-color:#425b61;border-right-color:#425b61;border-bottom-color:#425b61;border-left-color:#425b61}
+.rich-hybrid .focus-clock{background-image:initial;background-color:#2c3d41}
+.rich-hybrid .focus-next{background-image:initial;background-color:#3b5257;border-top-color:#b97a52}
+.rich-hybrid .large-clock time > span{color:#c8beb3}
+.rich-hybrid .ruler-grid > div > strong{color:#dcb290}
+.rich-hybrid .phase-badge{background-image:initial;background-color:rgba(255, 255, 255, 0.03);color:#dbbea7;border-top-color:#547178;border-right-color:#547178;border-bottom-color:#547178;border-left-color:#547178}
+.rich-hybrid .feature-moon{background-image:initial;background-color:#212d30;box-shadow:#cea58509 0px 0px 0px 8px}
+.rich-hybrid .feature-moon::after{background-image:initial;background-color:#c8beb3}
+.rich-hybrid .lunar-milestones strong{color:#edddd0}
+.rich-hybrid .lunar-milestones time, .rich-hybrid .course-line button{color:#dbb99e}
+.rich-hybrid .planet-ticker{background-image:initial;background-color:#e5dfd6}
+.rich-hybrid .compact-sky > .barometer{--fg:#263438;--muted:#545e5d;--accent:#29393d;--line:#d0c8be;color:var(--fg);background-image:initial;background-color:#f5eae1;border-right-color:#c5bbb0;border-bottom-color:#c5bbb0;border-left-color:#c5bbb0;border-top-color:#57757c}
+.rich-hybrid .compact-sky > .barometer .panel-heading h3{color:var(--fg)}
+.rich-hybrid .compact-sky > .barometer .panel-heading > span{color:var(--muted)}
+.rich-hybrid .compact-grid > .metric{background-image:initial;background-color:#ece6df;border-top-color:#cdc4ba;border-right-color:#cdc4ba;border-bottom-color:#cdc4ba;border-left-color:#cdc4ba}
+.rich-hybrid button:focus-visible, .rich-hybrid a:focus-visible{outline-color:#b97a52}
+@media (max-width: 950px){
+ .rich-hybrid .focus-next > .focus-more{border-top-color:currentcolor;border-right-color:currentcolor;border-bottom-color:currentcolor;border-left-color:currentcolor}
+}
+@media (max-width: 700px){
+ .rich-hybrid .focus-next > .focus-more{border-top-color:}
+}
+@media (min-width: 701px){
+ .rich-hybrid .solar-times{border-top-color:currentcolor;border-right-color:currentcolor;border-bottom-color:currentcolor;border-left-color:currentcolor}
+ .rich-hybrid .focus-next > .focus-more{border-top-color:}
+}
+@media (min-width: 701px) and (max-width: 950px){
+ .rich-hybrid .focus-next > .focus-more{border-top-color:currentcolor;border-right-color:currentcolor;border-bottom-color:currentcolor;border-left-color:currentcolor}
+}
+/* undefined */
+.astro-section{border-top-color:;background-image:initial;background-color:#ece6df}
+.astro-filters{border-top-color:#c5baae;border-right-color:#c5baae;border-bottom-color:#c5baae;border-left-color:#c5baae;background-image:initial;background-color:#ece3dc}
+.astro-filters button{border-top-color:currentcolor;border-right-color:currentcolor;border-bottom-color:currentcolor;border-left-color:currentcolor}
+.astro-filters button.active{background-image:initial;background-color:#33464b;color:#efded0}
+.astro-instruction{color:#545e5d}
+.astro-shell{--ink:#efdfd1;--sub:#c9bfb4;--rule:#60828b;--paper:#33464b;--tile:#3b5257;--metal:#d3a681;--ingress:#b97a52;--aspect:#d0b3a1;--station:#baad9f;--lunation:#e2bb9c;background-image:;background-color:;color:var(--ink);border-top-color:#425b61;border-right-color:#425b61;border-bottom-color:#425b61;border-left-color:#425b61}
+.astro-shell-head{border-bottom-color:#60828b66}
+.astro-shell-head > p{color:var(--sub)}
+.panorama-scroll:focus-visible{outline-color:}
+.axis-rule{stroke:var(--rule)}
+.axis-tick{stroke:var(--rule)}
+.axis-date{fill:var(--sub)}
+.event-wire{fill:none;stroke:var(--event)}
+.kind-lunation{--event:var(--lunation)}
+.kind-aspect{--event:var(--aspect)}
+.kind-station{--event:var(--station)}
+.kind-ingress{--event:var(--ingress)}
+.axis-node{stroke:var(--paper);fill:var(--event)}
+.astro-event{border-top-color:#678c95;border-right-color:#678c95;border-bottom-color:#678c95;border-left-color:#678c95;background-image:;background-color:;color:var(--ink)}
+.astro-event:hover{background-image:initial;background-color:#425b61;border-top-color:;border-right-color:;border-bottom-color:;border-left-color:}
+.astro-event:focus-visible{outline-color:}
+.event-date{color:var(--event)}
+.event-symbols{color:var(--event)}
+.event-meta-small{color:var(--sub)}
+.astro-bottom{border-top-color:#60828b66}
+.astro-legend{color:var(--sub)}
+.astro-legend i{border-top-color:;border-right-color:;border-bottom-color:;border-left-color:;background-image:;background-color:}
+.astro-legend .kind-ingress i{background-image:initial;background-color:transparent}
+.astro-controls > span{color:var(--sub)}
+.astro-controls button{border-top-color:#60828b99;border-right-color:#60828b99;border-bottom-color:#60828b99;border-left-color:#60828b99;color:var(--ink)}
+.astro-count{color:var(--muted)}
+.timeline-study-2 .astro-section{background-image:initial;background-color:#eae1d9}
+.timeline-study-2 .astro-shell{--ink:#263438;--sub:#545e5d;--rule:#c1b7ac;--paper:#f4e8dd;--tile:#f4e8dd;--metal:#92704e;--ingress:#b97a52;--aspect:#946c54;--station:#425b61;--lunation:#3b5157;border-top-color:#cdc5bb;border-right-color:#cdc5bb;border-bottom-color:#cdc5bb;border-left-color:#cdc5bb}
+.timeline-study-2 .astro-shell-head{background-image:initial;background-color:#e7e0d7;border-bottom-color:#cdc5bb}
+.timeline-study-2 .astro-event{border-top-color:currentcolor;border-right-color:currentcolor;border-bottom-color:currentcolor;border-left-color:;background-image:initial;background-color:#eee8e1}
+.timeline-study-2 .astro-event.kind-lunation{background-image:initial;background-color:#e1dbd5}
+.timeline-study-2 .astro-event:hover{background-image:initial;background-color:#e5dfd6}
+.timeline-study-2 .astro-bottom{border-top-color:#cdc5bb;background-image:initial;background-color:#f0ebe4}
+.timeline-study-2 .astro-controls button{border-top-color:#c3b9ad;border-right-color:#c3b9ad;border-bottom-color:#c3b9ad;border-left-color:#c3b9ad}
+.timeline-study-2 .astro-shell-head > p{color:#844a2b}
+.timeline-study-3 .astro-shell{--paper:#f0e5db;--tile:#eee8e1;--ink:#263438;--sub:#545e5d;--rule:#b9ad9f;--metal:#b97a52;--ingress:#97754e;--aspect:#9e7861;--station:#425b61;--lunation:#3c5258;border-top-color:#c4b9ad;border-right-color:#c4b9ad;border-bottom-color:#c4b9ad;border-left-color:#c4b9ad}
+.timeline-study-3 .astro-shell-head{background-image:initial;background-color:#2e3f43;color:#efded0;border-bottom-color:currentcolor}
+.timeline-study-3 .astro-shell-head > p{color:#cbc3b9}
+.timeline-study-3 .astro-event{border-top-color:#cac1b6;border-right-color:#cac1b6;border-bottom-color:#cac1b6;border-left-color:#cac1b6;background-image:;background-color:}
+.timeline-study-3 .astro-event:hover{background-image:initial;background-color:#e6dfd5}
+.timeline-study-3 .astro-event.is-selected{border-top-color:#3b5157;border-right-color:#3b5157;border-bottom-color:#3b5157;border-left-color:#3b5157;box-shadow:#3b515718 0px 0px 0px 2px;background-image:initial;background-color:#e5ddd2}
+.timeline-study-3 .astro-inspector{background-image:initial;background-color:#e6dfd6;border-left-color:#c7bdb1}
+.astro-inspector > .kicker{color:#29393d}
+.inspect-glyph{color:#b97a52}
+.astro-inspector h3{color:#263438}
+.astro-inspector p{color:#545e5d}
+.timeline-study-3 .astro-bottom{border-top-color:#c7bdb1;background-image:initial;background-color:#f0ebe4}
+.timeline-study-3 .astro-controls button{border-top-color:#c3b9ad;border-right-color:#c3b9ad;border-bottom-color:#c3b9ad;border-left-color:#c3b9ad}
+@media (max-width: 600px){
+ .timeline-study-3 .astro-inspector{border-right-color:currentcolor;border-bottom-color:currentcolor;border-left-color:currentcolor;border-top-color:#c7bdb1}
+}

@@ -1,0 +1,28 @@
+/* Arreglos de la versión principal (24/10/2026). Se carga al final de combinado.html; no cambia el diseño. */
+
+/* Cinta: una vez que se usa el botón, manda el botón aunque el mouse siga encima o el botón tenga foco.
+   arreglos.js agrega .is-manual al primer clic. */
+.planet-ticker.is-manual:not(.is-paused) .ticker-track{animation-play-state:running}
+/* En pantallas táctiles el "encima" queda pegado al tocar: ahí la cinta solo se detiene con el botón. */
+@media (hover:none){.planet-ticker:hover:not(.is-paused) .ticker-track{animation-play-state:running}}
+
+/* Zonas táctiles: se agranda el área que responde al dedo con un margen invisible, sin cambiar el dibujo. */
+header nav a,[data-course],[data-barometer],.carousel-arrows button,[data-pan],.astro-filters button,.ticker-pause{position:relative}
+header nav a::before,[data-solar]::before,[data-course]::before,[data-barometer]::before,.slide-dots button::before,
+.carousel-arrows button::before,[data-pan]::before,#detail .close::before,.astro-filters button::before,.ticker-pause::before{content:"";position:absolute}
+header nav a::before{inset:-13px -4px}
+[data-solar]::before{inset:-13px -16px}
+[data-course]::before,[data-barometer]::before{inset:-14px -6px}
+.slide-dots button::before{inset:-12px -2px}
+.carousel-arrows button::before{inset:-6px -4px}
+[data-pan]::before{inset:-9px -7px}
+#detail .close::before{inset:-12px -14px}
+.astro-filters button::before{inset:-7px 0}
+.ticker-pause::before{inset:-6px -4px}
+
+/* Perspectivas: el navegador centra verticalmente el contenido de los botones; se alinea arriba para que las tres fotos queden parejas. */
+.reading-grid>button{display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start}
+.reading-grid>button>figure{width:100%;align-self:stretch}
+
+/* Menú con 6 opciones en celular: dos filas prolijas, sin cortar palabras (30/10/2026). */
+@media (max-width:600px){header nav{flex-wrap:wrap;justify-content:flex-start;gap:6px 16px;width:100%}header nav a,header nav button{white-space:nowrap}}

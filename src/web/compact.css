@@ -1,0 +1,100 @@
+body>header,.prototype,.strap,.hero-carousel{display:none!important}
+.compact-sky{padding-top:20px;padding-bottom:25px}
+.preview-heading{display:flex;justify-content:space-between;align-items:center;gap:20px;border-bottom:1px solid var(--line);padding-bottom:15px;margin-bottom:18px}
+.preview-heading>span{font:10px 'Inter',Arial,sans-serif;letter-spacing:1px;color:var(--accent);font-size:11.5px;font-variant-numeric:tabular-nums}
+.preview-heading>small{font:8px 'Inter',Arial,sans-serif;color:var(--muted);line-height:1.6;text-align:right;font-size:11.5px;font-variant-numeric:tabular-nums}
+.compact-heading{display:flex;justify-content:space-between;align-items:center;margin:24px 0 16px;gap:20px}
+.compact-heading h2{font:400 29px/1.1 'Fraunces',Georgia,serif;margin-top:4px;letter-spacing:-.02em;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+.compact-heading>.quiet,.compact-heading>span{font:9px 'Inter',Arial,sans-serif;color:var(--muted);font-size:11.5px;font-variant-numeric:tabular-nums}
+.compact-heading .kicker{font-size:8px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.sky-current{display:grid;grid-template-columns:200px 220px 1fr;background:var(--soft);border:1px solid var(--line);padding:15px 0;min-width:0}
+.sky-current>div{padding:0 20px;min-width:0;border-right:1px solid var(--line)}
+.sky-current>div:last-child{border-right:0}
+.mini-label{display:block;font:8px 'Inter',Arial,sans-serif;letter-spacing:.8px;color:var(--muted);font-size:11.5px;font-variant-numeric:tabular-nums}
+.current-date>strong{display:block;font-size:14px;font-weight:500;margin:12px 0 10px;line-height:1.25;font-size:14.5px}
+.planet-chip{display:inline-block;font-size:10px;border:1px solid #65704a45;background:#65704a09;color:var(--accent);padding:4px 7px;white-space:nowrap;font-size:12.5px}
+.current-clock time{font:400 29px/1.1 'Inter',sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-1px}
+.current-clock small{font:7px 'Inter',Arial,sans-serif;color:var(--muted);display:block;margin-top:4px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.current-clock>.planet-chip{margin-top:8px}
+.current-clock>p{font:9px 'Inter',Arial,sans-serif;color:var(--muted);margin-top:8px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.current-moon-heading{display:flex;gap:13px;align-items:center}
+.small-moon{display:block;height:35px;width:35px;flex-shrink:0;border-radius:50%;background:var(--moon-dark);position:relative;overflow:hidden}
+.small-moon:after{content:'';display:block;position:absolute;top:0;bottom:0;right:0;width:74%;border-radius:50%;background:var(--moon-light)}
+.current-moon-heading strong{font-size:15px;font-weight:500;letter-spacing:-.025em;font-size:16.5px}
+.current-moon-heading p{font-size:10px;color:var(--muted);margin-top:3px;font-size:12.5px}
+.current-events{display:flex;gap:7px 15px;flex-wrap:wrap;margin:10px 0 0;font-size:9px;color:var(--muted);font-size:12.5px}
+.moon-course{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:11px;padding-top:9px;border-top:1px solid var(--line);font-size:10px;font-size:12.5px}
+.moon-course strong{font-weight:500}.moon-course span{color:var(--muted)}.moon-course button{font-size:9px;color:var(--accent);margin-left:auto;font-size:12.5px}
+.compact-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-left:1px solid var(--line);border-top:1px solid var(--line)}
+.compact-grid>.metric,.compact-sky>.barometer{grid-area:auto;min-height:0;padding:17px 19px;border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:transparent;min-width:0}
+.compact-grid>.metric .panel-heading{margin-bottom:17px;align-items:center;gap:10px}
+.compact-grid>.metric .panel-heading h3,.compact-sky>.barometer .panel-heading h3{font-size:14px;font-family:'Inter',Arial,sans-serif;font-weight:500;font-size:14.5px}
+.compact-grid>.metric .panel-heading>span{font-size:7px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.compact-grid>.metric .bar-list{gap:11px;margin-bottom:0}
+.compact-grid>.metric .bar-row{grid-template-columns:67px 1fr 32px;gap:10px}
+.compact-grid>.metric .bar-row strong{font-size:11px;font-size:12.5px}.compact-grid>.metric .bar-row small{font-size:7px;margin-top:3px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.compact-grid>.metric .track{height:4px}
+.compact-grid>.metric .bar-number{font-size:10px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.compact-grid>.metric .planet-list{margin:0}
+.compact-grid>.metric .planet-list li{font-size:10px;padding:8px 0;font-size:12.5px}
+.compact-grid>.metric .planet-list strong{font-size:9px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.compact-grid>.metric .planet-list b{font-size:14px;width:16px}
+.compact-grid>.metric .moon-body{margin:0;gap:15px}
+.compact-grid>.metric .moon-symbol{width:75px}
+.compact-grid>.metric .moon-body>div>strong{font-size:28px}
+.compact-grid>.metric .moon-body>div>span{font-size:10px;margin-top:6px;font-size:12.5px}
+.compact-grid>.metric .moon-body>div>small{font-size:9px;font-size:12.5px}
+.baro-readings{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.baro-reading{min-width:0}
+.baro-reading>span{font:7px 'Inter',Arial,sans-serif;letter-spacing:.7px;color:var(--muted);display:block;line-height:1.5;font-size:11.5px;font-variant-numeric:tabular-nums}
+.baro-reading>strong{font-size:31px;font-weight:500;letter-spacing:-1.3px;line-height:1;display:block;margin:10px 0 7px}
+.baro-reading>strong>small{font-size:18px;letter-spacing:-.5px}
+.baro-reading>b{font-size:11px;font-weight:500;color:var(--accent);display:block;font-size:12.5px}
+.mini-track{height:3px;background:var(--line);margin-top:12px}.mini-track>i{display:block;background:var(--accent);height:100%}
+.baro-summary{font-size:10px;color:var(--muted);line-height:1.5;margin-top:15px;font-size:12.5px}
+.baro-foot{display:flex;gap:10px;justify-content:space-between;align-items:baseline;margin-top:auto;padding-top:12px}
+.baro-foot>span{font:7px/1.6 'Inter',Arial,sans-serif;color:var(--muted);font-size:11.5px;font-variant-numeric:tabular-nums}
+.baro-foot>button{font-size:8px;white-space:nowrap;color:var(--accent);font-size:12.5px}
+.planet-ticker{display:flex;align-items:center;border:1px solid var(--line);background:#e5e3d8;margin-top:18px;min-width:0;height:39px}
+.ticker-label{font:8px 'Inter',Arial,sans-serif;letter-spacing:.8px;color:var(--accent);padding:0 15px;white-space:nowrap;border-right:1px solid var(--line);height:100%;display:flex;align-items:center;font-size:11.5px;font-variant-numeric:tabular-nums}
+.ticker-window{flex:1;min-width:0;overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 18px,#000 calc(100% - 18px),transparent)}
+.ticker-track{width:max-content;display:flex;animation:planet-scroll 78s linear infinite}
+.ticker-copy{display:flex;align-items:center;gap:34px;padding-right:34px;flex-shrink:0}
+.ticker-item{display:flex;gap:8px;align-items:center;font:10px 'Inter',Arial,sans-serif;color:var(--muted);white-space:nowrap;font-size:11.5px;font-variant-numeric:tabular-nums}
+.ticker-item>i{font-family:Georgia,serif;font-style:normal;font-size:15px;color:var(--accent)}.ticker-item>strong{font-weight:500;color:var(--accent)}.ticker-item>b{font-weight:400;color:var(--accent);font-size:12px;font-size:12.5px}
+.ticker-pause{height:100%;width:37px;flex-shrink:0;border-left:1px solid var(--line);font-size:13px;color:var(--accent);font-size:14.5px}
+.planet-ticker:hover .ticker-track,.planet-ticker:focus-within .ticker-track,.planet-ticker.is-paused .ticker-track{animation-play-state:paused}
+.reference-note{margin-top:12px;font:8px/1.7 'Inter',Arial,sans-serif;color:var(--muted);font-size:11.5px;font-variant-numeric:tabular-nums}
+@keyframes planet-scroll{to{transform:translateX(-50%)}}
+/* 01: six equal compact modules, with the full status band above. */
+.format-1 .compact-grid>.metric{min-height:181px}
+.format-1 .compact-grid>.barometer{grid-row:span 1}
+/* 02: barometer is the anchor; lunar information lives in the status band. */
+.format-2 .compact-heading{margin-top:3px}
+.format-2 .sky-current{margin-bottom:18px;grid-template-columns:190px 200px 1fr}
+.format-2 .compact-grid{grid-template-columns:1.02fr 1.12fr 1.12fr}
+.format-2 .compact-grid>.barometer{grid-column:1;grid-row:1/3;background:#e8e8db;padding:20px 24px}
+.format-2 .compact-grid>.elements{grid-column:2;grid-row:1}.format-2 .compact-grid>.modalities{grid-column:3;grid-row:1}
+.format-2 .compact-grid>.retro{grid-column:2;grid-row:2}.format-2 .compact-grid>.background{grid-column:3;grid-row:2}
+.format-2 .barometer .panel-heading{display:block;margin-bottom:18px}.format-2 .barometer .panel-heading>span{display:block;margin-top:6px}
+.format-2 .baro-readings{grid-template-columns:1fr;gap:15px}
+.format-2 .baro-reading{display:grid;grid-template-columns:1fr 65px;gap:4px 16px;border-bottom:1px solid var(--line);padding-bottom:13px}
+.format-2 .baro-reading>strong{grid-column:2;grid-row:1/4;font-size:35px;margin:0;align-self:center;text-align:right}
+.format-2 .baro-reading>b{grid-row:2;grid-column:1;font-size:12px;font-size:12.5px}.format-2 .mini-track{grid-column:1;grid-row:3;margin-top:6px}
+.format-2 .baro-summary{font-size:11px;margin-top:18px;max-width:230px;font-size:12.5px}.format-2 .baro-foot{display:block;padding-top:17px}.format-2 .baro-foot>button{display:block;margin-top:8px;font-size:9px;font-size:12.5px}
+/* 03: one reading desk, with a wide barometer row and four supporting columns. */
+.format-3 .compact-heading{margin-top:2px}
+.format-3 .sky-current{grid-template-columns:180px 220px 1fr;min-height:0;background:transparent;padding:14px 0}
+.format-3 .current-clock{display:grid;grid-template-columns:1fr;align-content:center}.format-3 .current-clock>div{display:flex;align-items:center;gap:9px}.format-3 .current-clock time{font-size:25px}.format-3 .current-clock small{max-width:65px;font-size:7px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.format-3 .current-date>strong{font-size:13px;margin:9px 0;font-size:14.5px}
+.format-3 .current-moon-heading strong{font-size:14px;font-size:14.5px}.format-3 .small-moon{width:29px;height:29px}
+.format-3 .planet-ticker{margin-top:12px}
+.format-3 .compact-sky>.barometer{display:grid;grid-template-columns:190px 1fr 230px;gap:8px 25px;padding:19px 0;border-bottom:1px solid var(--line);align-items:center}
+.format-3 .compact-sky>.barometer>.panel-heading{grid-column:1;grid-row:1/3;display:block;margin:0}.format-3 .compact-sky>.barometer>.panel-heading>span{display:block;margin-top:8px;font-size:7px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.format-3 .baro-readings{grid-column:2;grid-row:1/3;gap:25px}.format-3 .baro-reading{display:grid;grid-template-columns:1fr 55px;gap:4px 8px}.format-3 .baro-reading>strong{grid-column:2;grid-row:1/3;align-self:center;text-align:right;margin:0;font-size:29px}.format-3 .baro-reading>strong>small{font-size:16px;font-size:16.5px}.format-3 .baro-reading>b{grid-row:2;grid-column:1}.format-3 .mini-track{grid-column:1/3;margin:5px 0 0;grid-row:3}
+.format-3 .baro-summary{grid-column:3;grid-row:1;margin:0;font-size:10px;font-size:12.5px}.format-3 .baro-foot{grid-column:3;grid-row:2;padding-top:0;display:block}.format-3 .baro-foot>span{display:none}.format-3 .baro-foot>button{font-size:9px;font-size:12.5px}
+.format-3 .compact-grid{grid-template-columns:repeat(4,minmax(0,1fr));border-left:0;border-top:0}.format-3 .compact-grid>.metric{padding-left:16px;padding-right:16px;min-height:0}.format-3 .compact-grid>.metric:first-child{padding-left:0}.format-3 .compact-grid>.metric:last-child{border-right:0;padding-right:0}.format-3 .compact-grid>.metric .panel-heading h3{font-size:13px;font-size:14.5px}.format-3 .compact-grid>.metric .bar-row{grid-template-columns:60px 1fr 31px;gap:7px}.format-3 .compact-grid>.metric .panel-heading>span{display:none}.format-3 .compact-grid>.metric .planet-list strong{font-size:8px;font-size:11.5px;font-variant-numeric:tabular-nums}.format-3 .compact-grid>.metric .planet-list li{font-size:9px;gap:6px;font-size:12.5px}
+@media(max-width:1050px){.sky-current,.format-2 .sky-current,.format-3 .sky-current{grid-template-columns:170px 185px 1fr}.sky-current>div{padding-left:16px;padding-right:16px}.current-events{font-size:8px;gap:6px 10px;font-size:12.5px}.current-moon-heading strong{font-size:14px;font-size:14.5px}.current-clock time{font-size:26px}.compact-grid>.metric{padding:16px}.compact-grid>.metric .bar-row{grid-template-columns:60px 1fr 31px;gap:8px}.format-2 .compact-grid>.barometer{padding:19px}.format-3 .compact-sky>.barometer{grid-template-columns:150px 1fr 170px;gap:10px 20px}.format-3 .baro-readings{gap:16px}.format-3 .compact-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.format-3 .compact-grid>.metric{border-bottom:1px solid var(--line);padding:16px}.format-3 .compact-grid>.metric:nth-child(odd){padding-left:0}.format-3 .compact-grid>.metric:nth-child(even){border-right:0}.format-3 .compact-grid>.metric .planet-list strong{font-size:9px;font-size:11.5px;font-variant-numeric:tabular-nums}.format-3 .compact-grid>.metric .planet-list li{font-size:10px;font-size:12.5px}}
+@media(max-width:750px){.sky-current,.format-2 .sky-current,.format-3 .sky-current{grid-template-columns:1fr 1fr;padding:15px 0}.current-moon{grid-column:1/-1;margin-top:15px;padding-top:15px!important;border-top:1px solid var(--line)}.sky-current>.current-clock{border-right:0}.current-events{font-size:9px;font-size:12.5px}.compact-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.compact-grid>.metric{grid-area:auto}.format-2 .compact-grid{grid-template-columns:1fr 1fr}.format-2 .compact-grid>.barometer{grid-column:1/-1;grid-row:1}.format-2 .compact-grid>.elements{grid-column:1;grid-row:2}.format-2 .compact-grid>.modalities{grid-column:2;grid-row:2}.format-2 .compact-grid>.retro{grid-column:1;grid-row:3}.format-2 .compact-grid>.background{grid-column:2;grid-row:3}.format-2 .baro-readings{grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.format-2 .baro-reading{display:block;border:0;padding:0}.format-2 .baro-reading>strong{font-size:31px;text-align:left;margin:10px 0 7px}.format-2 .baro-summary{max-width:none;margin-top:15px}.format-2 .baro-foot{display:flex;align-items:baseline;padding-top:10px}.format-2 .baro-foot>button{margin:0}.format-3 .compact-sky>.barometer{grid-template-columns:1fr;gap:15px;padding:20px 0}.format-3 .compact-sky>.barometer>.panel-heading{grid-column:1;grid-row:auto;display:flex}.format-3 .compact-sky>.barometer>.panel-heading>span{margin:0}.format-3 .baro-readings{grid-column:1;grid-row:auto}.format-3 .baro-summary{grid-column:1;grid-row:auto}.format-3 .baro-foot{grid-column:1;grid-row:auto;margin:0;padding:0}.format-3 .baro-foot>span{display:inline}.format-3 .baro-foot{display:flex}.format-1 .compact-grid>.barometer{grid-column:1/-1;grid-row:1}.format-1 .compact-grid>.moon{grid-column:1/-1}.format-1 .compact-grid>.barometer .baro-summary{margin-bottom:0}.format-1 .compact-grid>.barometer{min-height:0}.compact-heading>span{font-size:8px;max-width:120px;text-align:right;font-size:11.5px;font-variant-numeric:tabular-nums}.preview-heading>small{font-size:7px;font-size:11.5px;font-variant-numeric:tabular-nums}.preview-heading>span{font-size:9px;font-size:11.5px;font-variant-numeric:tabular-nums}}
+@media(max-width:600px){.compact-sky{padding:14px 5% 24px}.compact-heading{margin-top:21px}.compact-heading h2{font-size:26px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}.compact-heading .kicker{font-size:7px;font-size:11.5px;font-variant-numeric:tabular-nums}.preview-heading{display:block;margin-bottom:15px;padding-bottom:12px}.preview-heading>span{font-size:9px;font-size:11.5px;font-variant-numeric:tabular-nums}.preview-heading>small{display:block;text-align:left;font-size:7px;margin-top:7px;font-size:11.5px;font-variant-numeric:tabular-nums}.mini-label{font-size:7px;line-height:1.7;font-size:11.5px;font-variant-numeric:tabular-nums}.current-date>strong{font-size:12px;margin:9px 0;font-size:12.5px}.sky-current>div{padding-left:13px;padding-right:13px}.planet-chip{font-size:9px;padding:4px 6px;font-size:12.5px}.current-clock time{font-size:24px}.current-clock small{font-size:6px;font-size:11.5px;font-variant-numeric:tabular-nums}.current-clock>p{font-size:8px;line-height:1.6;font-size:11.5px;font-variant-numeric:tabular-nums}.current-moon-heading strong,.format-3 .current-moon-heading strong{font-size:13px;font-size:14.5px}.current-moon-heading p{font-size:9px;font-size:12.5px}.current-moon-heading{gap:11px}.small-moon{height:31px;width:31px}.moon-course{font-size:9px;gap:7px 10px;font-size:12.5px}.moon-course>span{font-size:9px;font-size:12.5px}.moon-course>button{font-size:8px;font-size:12.5px}.current-events{font-size:8px;gap:6px 13px;line-height:1.6;font-size:12.5px}.compact-grid,.format-2 .compact-grid{grid-template-columns:1fr!important}.compact-grid>.metric,.format-2 .compact-grid>.metric,.format-1 .compact-grid>.barometer,.format-1 .compact-grid>.moon,.format-3 .compact-grid>.metric{grid-column:auto;grid-row:auto;border-right:0;border-bottom:1px solid var(--line);min-height:0;padding:18px 0}.format-2 .compact-grid>.barometer{padding:18px 15px;grid-row:1}.format-1 .compact-grid>.barometer{padding:19px 15px;grid-row:1;background:#e8e8db}.compact-grid{border-left:0}.compact-grid>.metric .bar-row,.format-3 .compact-grid>.metric .bar-row{grid-template-columns:74px 1fr 35px;gap:12px}.compact-grid>.metric .bar-list{gap:11px}.compact-grid>.metric .panel-heading{margin-bottom:15px}.compact-grid>.metric .panel-heading h3,.compact-sky>.barometer .panel-heading h3,.format-3 .compact-grid>.metric .panel-heading h3{font-size:14px;font-size:14.5px}.compact-grid>.metric .planet-list strong,.format-3 .compact-grid>.metric .planet-list strong{font-size:10px;font-size:11.5px;font-variant-numeric:tabular-nums}.compact-grid>.metric .planet-list li,.format-3 .compact-grid>.metric .planet-list li{font-size:11px;padding:9px 0;font-size:12.5px}.baro-reading>strong,.format-2 .baro-reading>strong{font-size:30px}.baro-reading>span{font-size:7px;font-size:11.5px;font-variant-numeric:tabular-nums}.baro-readings,.format-2 .baro-readings{gap:15px}.baro-summary,.format-2 .baro-summary{font-size:10px;font-size:12.5px}.baro-foot>span{font-size:7px;font-size:11.5px;font-variant-numeric:tabular-nums}.baro-foot>button,.format-2 .baro-foot>button{font-size:8px;font-size:12.5px}.ticker-label{font-size:7px;max-width:87px;white-space:normal;line-height:1.6;padding:0 10px;letter-spacing:.5px;font-size:11.5px;font-variant-numeric:tabular-nums}.planet-ticker{height:40px}.ticker-item{font-size:10px;gap:7px;font-size:11.5px;font-variant-numeric:tabular-nums}.ticker-copy{gap:26px;padding-right:26px}.reference-note{font-size:7px;line-height:1.8;font-size:11.5px;font-variant-numeric:tabular-nums}.format-3 .current-clock>div{display:block}.format-3 .current-clock small{max-width:none;font-size:6px;font-size:11.5px;font-variant-numeric:tabular-nums}.format-3 .current-clock time{font-size:24px}.format-3 .baro-reading{display:block}.format-3 .baro-reading>strong{text-align:left;margin:10px 0 7px;font-size:29px}.format-3 .mini-track{margin-top:12px}.format-3 .compact-grid>.metric:first-child,.format-3 .compact-grid>.metric:nth-child(odd){padding:18px 0}.format-3 .baro-foot{gap:20px}.format-3 .baro-foot>button{font-size:8px;font-size:12.5px}}
+@media(prefers-reduced-motion:reduce){.ticker-track{animation:none}.ticker-window{overflow-x:auto;mask-image:none}.ticker-copy[aria-hidden]{display:none}}

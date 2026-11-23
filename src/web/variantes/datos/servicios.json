@@ -1,0 +1,298 @@
+{
+  "_ayuda": "Editá este archivo para cambiar textos y precios sin tocar código. precio_ars y precio_usd: número o null (null muestra 'A definir'). tipo_cta: comprar, suscribir, agendar, solicitar. activo: true muestra la tarjeta, false la oculta.",
+  "nota_legal": "Contenido astrológico y educativo. No constituye asesoramiento ni recomendación de inversión.",
+  "areas": [
+    {
+      "id": "mundana",
+      "numero": "01",
+      "titulo": "Mundana y geopolítica",
+      "bajada": "Los ciclos de los países, sus eclipses y sus fechas críticas.",
+      "nota_legal": false,
+      "imagen": "../assets/area-mundana.webp",
+      "imagen_alt": "Esfera armilar de bronce sobre un mapa antiguo"
+    },
+    {
+      "id": "financiera",
+      "numero": "02",
+      "titulo": "Financiera",
+      "bajada": "Ciclos y fechas críticas de los mercados, sin recomendaciones de inversión.",
+      "nota_legal": true,
+      "imagen": "../assets/area-financiera.webp",
+      "imagen_alt": "Mesa de operaciones de noche con gráficos de mercado"
+    },
+    {
+      "id": "empresarial",
+      "numero": "03",
+      "titulo": "Empresarial",
+      "bajada": "La carta de tu empresa, sus socios y sus momentos para decidir.",
+      "nota_legal": false,
+      "imagen": "../assets/area-empresarial.webp",
+      "imagen_alt": "Sala de directorio con vista a la ciudad al atardecer"
+    },
+    {
+      "id": "personal",
+      "numero": "04",
+      "titulo": "Personal",
+      "bajada": "Tu carta aplicada al trabajo, la vocación y tus decisiones.",
+      "nota_legal": false,
+      "imagen": "../assets/area-personal.webp",
+      "imagen_alt": "Persona de espaldas escribiendo junto a una ventana"
+    }
+  ],
+  "servicios": [
+    {
+      "id": "anuario-argentina",
+      "area": "mundana",
+      "nombre": "Anuario de Argentina",
+      "descripcion": "PDF con eclipses, ingresos, fechas críticas y elecciones del año.",
+      "items": [
+        "Eclipses e ingresos sobre la carta de Argentina",
+        "Fechas críticas mes a mes",
+        "Lectura de los períodos electorales"
+      ],
+      "formato": "PDF",
+      "entrega": "Descarga inmediata",
+      "precio_ars": null,
+      "precio_usd": null,
+      "tipo_cta": "comprar",
+      "texto_cta": "Comprar",
+      "activo": true
+    },
+    {
+      "id": "webinar-argentina-mundo",
+      "area": "mundana",
+      "nombre": "Webinar «Argentina y el mundo»",
+      "descripcion": "Encuentro trimestral en vivo, con la grabación incluida.",
+      "items": [
+        "Encuentro en vivo online",
+        "Grabación incluida",
+        "Espacio de preguntas"
+      ],
+      "formato": "En vivo, online",
+      "entrega": "Una vez por trimestre",
+      "precio_ars": null,
+      "precio_usd": null,
+      "tipo_cta": "comprar",
+      "texto_cta": "Inscribirme",
+      "activo": true
+    },
+    {
+      "id": "pais-a-pedido",
+      "area": "mundana",
+      "nombre": "Análisis de un país a pedido",
+      "descripcion": "Ciclos y eclipses sobre un país, para empresas que exportan o invierten.",
+      "items": [
+        "Ciclos y eclipses del país elegido",
+        "Ventanas de tiempo para el negocio",
+        "Informe escrito"
+      ],
+      "formato": "Informe escrito",
+      "entrega": "A definir",
+      "precio_ars": null,
+      "precio_usd": null,
+      "tipo_cta": "solicitar",
+      "texto_cta": "Solicitar",
+      "activo": true
+    },
+    {
+      "id": "informe-mensual-ciclos",
+      "area": "financiera",
+      "nombre": "Informe mensual de ciclos",
+      "descripcion": "Merval, dólar, oro y S&P 500 con sus fechas críticas.",
+      "items": [
+        "Merval, dólar, oro y S&P 500",
+        "Fechas críticas del mes",
+        "Sin recomendaciones de compra o venta"
+      ],
+      "formato": "PDF por email",
+      "entrega": "Cada mes",
+      "precio_ars": null,
+      "precio_usd": null,
+      "tipo_cta": "suscribir",
+      "texto_cta": "Suscribirme",
+      "activo": true
+    },
+    {
+      "id": "clase-ciclos-mercados",
+      "area": "financiera",
+      "nombre": "Clase de ciclos y mercados",
+      "descripcion": "Clase mensual en vivo, con pago por clase.",
+      "items": [
+        "Clase en vivo online",
+        "Pago por clase",
+        "Preguntas en vivo"
+      ],
+      "formato": "En vivo, online",
+      "entrega": "Una vez por mes",
+      "precio_ars": null,
+      "precio_usd": null,
+      "tipo_cta": "comprar",
+      "texto_cta": "Reservar lugar",
+      "activo": true
+    },
+    {
+      "id": "ciclos-personales-dinero",
+      "area": "financiera",
+      "nombre": "Tus ciclos con el dinero",
+      "descripcion": "Consulta personal: cuándo moverse y cuándo esperar.",
+      "items": [
+        "Tu carta leída desde el dinero",
+        "Cuándo moverse y cuándo esperar",
+        "Sesión individual"
+      ],
+      "formato": "Videollamada",
+      "entrega": "Según agenda",
+      "precio_ars": null,
+      "precio_usd": null,
+      "tipo_cta": "agendar",
+      "texto_cta": "Agendar",
+      "activo": true
+    },
+    {
+      "id": "fecha-constitucion",
+      "area": "empresarial",
+      "nombre": "Fecha de constitución o lanzamiento",
+      "descripcion": "Elección de fecha con informe escrito y compatibilidad entre socios.",
+      "items": [
+        "Fechas posibles para constituir o lanzar",
+        "Compatibilidad entre socios",
+        "Informe escrito"
+      ],
+      "formato": "Informe escrito",
+      "entrega": "A definir",
+      "precio_ars": null,
+      "precio_usd": null,
+      "tipo_cta": "solicitar",
+      "texto_cta": "Solicitar",
+      "activo": true
+    },
+    {
+      "id": "carta-empresa-anio",
+      "area": "empresarial",
+      "nombre": "La carta de la empresa y su año",
+      "descripcion": "Análisis y calendario anual, también por área o equipo.",
+      "items": [
+        "Análisis de la carta de la empresa",
+        "Calendario del año",
+        "Opcional: por área o equipo"
+      ],
+      "formato": "Sesión y calendario",
+      "entrega": "A definir",
+      "precio_ars": null,
+      "precio_usd": null,
+      "tipo_cta": "agendar",
+      "texto_cta": "Agendar",
+      "activo": true
+    },
+    {
+      "id": "paquete-anual-pymes",
+      "area": "empresarial",
+      "nombre": "Paquete anual para pymes",
+      "descripcion": "Análisis, ventanas de cada trimestre y seguimiento por email.",
+      "items": [
+        "Análisis de la empresa",
+        "Ventanas de cada trimestre",
+        "Seguimiento por email"
+      ],
+      "formato": "Plan anual",
+      "entrega": "Durante 12 meses",
+      "precio_ars": null,
+      "precio_usd": null,
+      "tipo_cta": "solicitar",
+      "texto_cta": "Consultar",
+      "activo": true
+    },
+    {
+      "id": "carta-laboral",
+      "area": "personal",
+      "nombre": "Carta natal laboral",
+      "descripcion": "Tu carta leída desde la vocación, los talentos y el trabajo.",
+      "items": [
+        "Vocación y talentos en tu carta",
+        "Cómo trabajás y con quién te conviene",
+        "Momentos para cambiar o crecer"
+      ],
+      "formato": "Videollamada",
+      "entrega": "Según agenda",
+      "precio_ars": null,
+      "precio_usd": null,
+      "tipo_cta": "agendar",
+      "texto_cta": "Agendar",
+      "activo": true
+    },
+    {
+      "id": "revolucion-solar",
+      "area": "personal",
+      "nombre": "Revolución solar",
+      "descripcion": "Los temas del año que empieza en tu cumpleaños, con foco en el trabajo.",
+      "items": [
+        "Los temas de tu año personal",
+        "Meses clave para proyectos",
+        "Sesión individual"
+      ],
+      "formato": "Videollamada",
+      "entrega": "Antes de tu cumpleaños",
+      "precio_ars": null,
+      "precio_usd": null,
+      "tipo_cta": "agendar",
+      "texto_cta": "Agendar",
+      "activo": true
+    },
+    {
+      "id": "fechas-personales",
+      "area": "personal",
+      "nombre": "Elección de fechas personales",
+      "descripcion": "El mejor momento disponible para una entrevista, una firma o una mudanza.",
+      "items": [
+        "Fechas y horarios posibles",
+        "Qué cuidar en cada una",
+        "Respuesta por escrito"
+      ],
+      "formato": "Informe escrito",
+      "entrega": "A definir",
+      "precio_ars": null,
+      "precio_usd": null,
+      "tipo_cta": "solicitar",
+      "texto_cta": "Solicitar",
+      "activo": true
+    }
+  ],
+  "membresia": {
+    "id": "membresia",
+    "nombre": "Membresía Anaretico 29",
+    "bajada": "Un encuentro al mes para leer el cielo del mundo, los mercados y las empresas.",
+    "incluye": [
+      "Encuentro en vivo mensual",
+      "Lectura mensual del cielo para el mundo, los mercados y las empresas",
+      "Fechas favorables del mes",
+      "Archivo de grabaciones",
+      "Descuento en consultas y servicios"
+    ],
+    "precios": {
+      "mensual": {
+        "precio_ars": null,
+        "precio_usd": null
+      },
+      "anual": {
+        "precio_ars": null,
+        "precio_usd": null
+      }
+    },
+    "texto_cta": "Sumarme",
+    "activo": true,
+    "preguntas": [
+      {
+        "pregunta": "¿Cómo cancelo?",
+        "respuesta": "A definir: desde tu cuenta o por email, y hasta cuándo seguís teniendo acceso."
+      },
+      {
+        "pregunta": "¿Qué pasa con el archivo si cancelo?",
+        "respuesta": "A definir: si conservás acceso a las grabaciones de los meses pagados."
+      },
+      {
+        "pregunta": "¿Qué medios de pago aceptan?",
+        "respuesta": "Pesos con una pasarela local y dólares con una pasarela internacional. Siempre se paga en la pasarela: nunca manejamos datos de tarjetas."
+      }
+    ]
+  }
+}

@@ -1,0 +1,128 @@
+.astro-section{padding-top:32px;padding-bottom:32px;border-top:1px solid var(--line);background:#e9ecdf}
+.astro-section .section-title{padding-bottom:20px;align-items:center}
+.astro-section .section-title h2{font-size:31px}
+.astro-section .period{font-size:9px;line-height:1.7;text-align:right;font-size:11.5px;font-variant-numeric:tabular-nums}
+.astro-toolbar{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:18px}
+.astro-filters{display:flex;gap:3px;padding:4px;border:1px solid #bac5ae;background:#f3f1e8;border-radius:5px;overflow:auto;scrollbar-width:thin}
+.astro-filters button{font-size:11px;padding:9px 15px;white-space:nowrap;border:0;border-radius:3px;font-size:12.5px}
+.astro-filters button.active{background:#2b4537;color:#f4efde}
+.astro-instruction{font-size:10px;color:#707966;line-height:1.6;font-size:12.5px}
+.astro-shell{--ink:#f4f0df;--sub:#c0c9b4;--rule:#71816a;--paper:#2b4537;--tile:#344f3f;--metal:#d7c08c;--ingress:#bca072;--aspect:#d0b3a1;--station:#b4be9b;--lunation:#e6d5a8;background:var(--paper);color:var(--ink);border:1px solid #526451;border-radius:8px;overflow:hidden}
+.astro-shell-head{padding:20px 25px 18px;display:flex;align-items:center;justify-content:space-between;gap:25px;border-bottom:1px solid #71816a66}
+.astro-shell-head h3{font:400 24px 'Fraunces',Georgia,serif;font-size:21px;font-weight:450;letter-spacing:-.012em}
+.astro-shell-head>p{font:8px/1.7 'Inter',Arial,sans-serif;color:var(--sub);max-width:390px;text-align:right;font-size:11.5px;font-variant-numeric:tabular-nums}
+.astro-panorama{min-width:0}
+.panorama-scroll{overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:var(--metal) var(--paper);padding:0 20px 10px}
+.panorama-scroll:focus-visible{outline:2px solid var(--metal);outline-offset:-3px}
+.panorama-canvas{position:relative;isolation:isolate}
+.astro-axis{position:absolute;inset:0;overflow:visible}
+.axis-rule{stroke:var(--rule);stroke-width:1.5}
+.axis-tick{stroke:var(--rule);stroke-width:1}
+.axis-date{fill:var(--sub);font:10px 'Inter',Arial,sans-serif;font-size:11.5px;font-variant-numeric:tabular-nums}
+.event-wire{fill:none;stroke:var(--event);stroke-width:1;opacity:.8}
+.kind-lunation{--event:var(--lunation)}.kind-aspect{--event:var(--aspect)}.kind-station{--event:var(--station)}.kind-ingress{--event:var(--ingress)}
+.event-wire.kind-station{stroke-dasharray:4 4}
+.axis-node{stroke:var(--paper);stroke-width:2;fill:var(--event)}
+.astro-event{position:absolute;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px;border:1px solid #7d8b71;background:var(--tile);border-radius:5px;transition:background .15s,border-color .15s;color:var(--ink);text-align:center}
+.astro-event:hover{opacity:1;background:#3f5c49;border-color:var(--metal)}
+.astro-event:focus-visible{outline:2px solid var(--metal);outline-offset:4px}
+.event-date{font:10px 'Inter',Arial,sans-serif;color:var(--event);letter-spacing:.5px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.event-date small{display:none}
+.event-symbols{font:20px/1 Georgia,serif;color:var(--event);min-height:20px;font-variant-emoji:text}
+.astro-event>strong{font:400 20px/1.1 'Fraunces',Georgia,serif;letter-spacing:-.02em;font-size:21px;font-weight:450;letter-spacing:-.012em}
+.event-meta-small{font:9px/1.6 'Inter',sans-serif;color:var(--sub);font-size:13px}
+.astro-bottom{border-top:1px solid #71816a66;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;gap:20px}
+.astro-legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:9px;color:var(--sub);font-size:12.5px}
+.astro-legend span{display:flex;align-items:center;gap:7px}.astro-legend i{height:6px;width:6px;border:1px solid var(--event);background:var(--event);border-radius:50%}.astro-legend .kind-ingress i{background:transparent}.astro-legend .kind-station i{border-radius:0;transform:rotate(45deg)}
+.astro-controls{display:flex;align-items:center;gap:7px}.astro-controls>span{font-size:9px;color:var(--sub);margin-right:7px;font-size:12.5px}.astro-controls button{width:31px;height:29px;border:1px solid #71816a99;font-size:17px;border-radius:3px;color:var(--ink);font-size:18px}
+.astro-count{font:8px 'Inter',Arial,sans-serif;color:var(--muted);margin-top:13px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.astro-inspector{display:none}
+/* 02: a bright editorial atlas, with open labels and copper connectors. */
+.timeline-study-2 .astro-section{background:#f1eee5}
+.timeline-study-2 .astro-shell{--ink:#273c31;--sub:#727a67;--rule:#b6c1ac;--paper:#f9f6ec;--tile:#f9f6ec;--metal:#92704e;--ingress:#8c7149;--aspect:#946c54;--station:#63764f;--lunation:#334f3b;border:1px solid #c7ceba;border-radius:0}
+.timeline-study-2 .astro-shell-head{padding-top:21px;padding-bottom:20px;background:#e2e7d7;border-bottom:1px solid #c7ceba}
+.timeline-study-2 .astro-event{border:0;border-radius:0;border-left:2px solid var(--event);padding:10px 13px;align-items:flex-start;text-align:left;background:#eeeee1;gap:5px}
+.timeline-study-2 .astro-event.kind-lunation{background:#dfe5d1;border-left-width:3px}
+.timeline-study-2 .astro-event:hover{background:#e1e5d6}
+.timeline-study-2 .event-symbols{position:absolute;right:12px;top:12px;font-size:17px}
+.timeline-study-2 .event-date{font-size:10px;margin-bottom:7px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.timeline-study-2 .astro-event>strong{font-size:20px;font-size:21px;font-weight:450;letter-spacing:-.012em}
+.timeline-study-2 .astro-bottom{border-top:1px solid #c7ceba;background:#f0f0e4}
+.timeline-study-2 .astro-controls button{border-color:#b8c3ad}
+.timeline-study-2 .astro-shell-head>p{color:#66755b}
+/* 03: a smaller observation desk with a fixed event reader. */
+.timeline-study-3 .astro-shell{--paper:#f6f3e9;--tile:#eeeee1;--ink:#273c31;--sub:#6e7863;--rule:#acb99f;--metal:#9a7b51;--ingress:#97754e;--aspect:#9e7861;--station:#657b50;--lunation:#354f3b;border-color:#b8c4ad;border-radius:5px}
+.timeline-study-3 .astro-shell-head{background:#263f32;color:#f4efde;border-bottom:0}
+.timeline-study-3 .astro-shell-head>p{color:#c3cbb9}
+.timeline-study-3 .observation-layout{display:grid;grid-template-columns:minmax(0,1fr) 245px}
+.timeline-study-3 .astro-event{padding:9px 11px;gap:4px;align-items:flex-start;text-align:left;border:1px solid #c1cab6;background:var(--tile)}
+.timeline-study-3 .astro-event:hover{background:#e1e6d5}
+.timeline-study-3 .event-symbols{position:absolute;right:9px;top:9px;font-size:15px;min-height:16px}
+.timeline-study-3 .astro-event>strong{font:500 12px/1.25 'Inter',sans-serif;letter-spacing:-.02em;font-size:13px}
+.timeline-study-3 .event-meta-small{font-size:8px;font-size:13px}.timeline-study-3 .event-date{font-size:9px;margin-bottom:5px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.timeline-study-3 .astro-event.is-selected{border-color:#334f3b;box-shadow:0 0 0 2px #334f3b18;background:#dfe5d2}
+.timeline-study-3 .astro-inspector{display:block;align-self:stretch;background:#e0e6d6;padding:26px 23px;border-left:1px solid #bdc8b0}
+.astro-inspector>.kicker{font-size:8px;line-height:1.8;color:#62754f;font-size:11.5px;font-variant-numeric:tabular-nums}.inspect-glyph{font:37px Georgia,serif;color:#8f744d;margin:38px 0 21px;font-size:clamp(34px,3.8vw,48px);font-weight:350;letter-spacing:-.025em}.astro-inspector h3{font:400 30px/1.1 'Fraunces',Georgia,serif;color:#273c31;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}.astro-inspector p{font-size:11px;color:#6e7863;margin-top:18px;line-height:1.8;font-size:12.5px}.astro-inspector .text-link{font-size:10px;margin-top:27px;font-size:12.5px}
+.timeline-study-3 .astro-bottom{border-top:1px solid #bdc8b0;background:#f0f0e4}.timeline-study-3 .astro-controls button{border-color:#b8c3ad}
+@media(max-width:800px){.astro-toolbar{display:block}.astro-filters{width:max-content;max-width:100%}.astro-instruction{margin-top:12px}.astro-shell-head{padding:17px 19px}.astro-shell-head h3{font-size:22px;font-size:21px;font-weight:450;letter-spacing:-.012em}.astro-shell-head>p{font-size:7px;max-width:250px;font-size:11.5px;font-variant-numeric:tabular-nums}.astro-bottom{padding:13px 18px;align-items:flex-start}.astro-controls>span{display:none}.timeline-study-3 .observation-layout{grid-template-columns:minmax(0,1fr) 210px}.timeline-study-3 .astro-inspector{padding:23px 19px}.astro-inspector h3{font-size:27px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}}
+@media(max-width:600px){.astro-section{padding-top:26px;padding-bottom:26px}.astro-section .section-title{display:block;padding-bottom:17px}.astro-section .section-title h2{font-size:27px}.astro-section .period{text-align:left;display:block;margin-top:10px;font-size:8px;font-size:11.5px;font-variant-numeric:tabular-nums}.astro-filters{padding:3px;gap:0}.astro-filters button{font-size:9px;padding:9px 10px;font-size:12.5px}.astro-instruction{font-size:9px;font-size:12.5px}.astro-shell{margin:0 -1px}.astro-shell-head{display:block;padding:17px}.astro-shell-head>p{text-align:left;margin-top:8px;max-width:none;font-size:8px;font-size:11.5px;font-variant-numeric:tabular-nums}.panorama-scroll{padding-left:10px;padding-right:10px}.astro-bottom{display:block}.astro-legend{font-size:8px;gap:10px 13px;font-size:12.5px}.astro-controls{margin-top:15px;justify-content:flex-end}.astro-controls>span{display:block;margin-right:auto;font-size:8px;font-size:12.5px}.astro-count{font-size:7px;line-height:1.8;font-size:11.5px;font-variant-numeric:tabular-nums}.timeline-study-3 .observation-layout{grid-template-columns:1fr}.timeline-study-3 .astro-inspector{border:0;border-top:1px solid #bdc8b0;display:grid;grid-template-columns:45px 1fr;gap:10px 17px;padding:18px}.astro-inspector>.kicker{grid-column:1/-1}.inspect-glyph{grid-column:1;grid-row:2;margin:0;font-size:25px;align-self:center;font-size:21px;font-weight:450;letter-spacing:-.012em}.astro-inspector h3{grid-column:2;grid-row:2;font-size:24px;font-size:21px;font-weight:450;letter-spacing:-.012em}.astro-inspector p{grid-column:2;grid-row:3;margin-top:0;font-size:10px;font-size:12.5px}.astro-inspector .text-link{grid-column:2;margin-top:1px;font-size:10px;font-size:12.5px}}
+@media(prefers-reduced-motion:reduce){.astro-event{transition:none}}
+/* Selected homepage: compact observation desk, preserving readable text. */
+.timeline-compact .astro-section{padding-top:23px;padding-bottom:22px}
+.timeline-compact .astro-section .section-title{padding-bottom:12px}
+.timeline-compact .astro-section .section-title h2{font-size:26px}
+.timeline-compact .astro-toolbar{margin-bottom:12px;gap:15px}
+.timeline-compact .astro-filters{padding:3px}
+.timeline-compact .astro-filters button{padding:7px 12px;font-size:10px;font-size:12.5px}
+.timeline-compact .astro-instruction{font-size:9px;font-size:12.5px}
+.timeline-compact .astro-shell-head{padding:12px 18px}
+.timeline-compact .astro-shell-head h3{font-size:21px;font-size:21px;font-weight:450;letter-spacing:-.012em}
+.timeline-compact .astro-shell-head>p{font-size:8px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.timeline-compact .observation-layout{grid-template-columns:minmax(0,1fr) 210px}
+.timeline-compact .panorama-scroll{padding:0 14px 5px}
+.timeline-compact .astro-event{padding:8px 9px;gap:3px}
+.timeline-compact .event-date{font-size:9px;margin-bottom:3px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.timeline-compact .event-symbols{font-size:13px;right:7px;top:7px}
+.timeline-compact .astro-event>strong{font-size:11px;line-height:1.2;font-size:18px;font-weight:450;letter-spacing:-.01em}
+.timeline-compact .event-meta-small{font-size:8px;line-height:1.35;font-size:13px}
+.timeline-compact .astro-inspector{padding:18px}
+.timeline-compact .astro-inspector>.kicker{font-size:8px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.timeline-compact .inspect-glyph{font-size:27px;margin:19px 0 13px;font-size:clamp(26px,2.6vw,32px);font-weight:350;letter-spacing:-.02em}
+.timeline-compact .astro-inspector h3{font-size:25px;font-size:21px;font-weight:450;letter-spacing:-.012em}
+.timeline-compact .astro-inspector p{margin-top:12px;font-size:10px;font-size:12.5px}
+.timeline-compact .astro-inspector .text-link{margin-top:16px;font-size:9px;font-size:12.5px}
+.timeline-compact .astro-bottom{padding:9px 17px}
+.timeline-compact .astro-count{margin-top:8px}
+.timeline-compact .astro-controls button{width:29px;height:27px}
+@media(max-width:800px){
+ .timeline-compact .astro-toolbar{display:flex;flex-wrap:wrap;gap:8px}
+ .timeline-compact .astro-instruction{margin-top:0}
+ .timeline-compact .observation-layout{grid-template-columns:minmax(0,1fr) 185px}
+ .timeline-compact .astro-inspector{padding:16px}
+ .timeline-compact .astro-inspector h3{font-size:24px;font-size:21px;font-weight:450;letter-spacing:-.012em}
+}
+@media(max-width:600px){
+ .timeline-compact .astro-section .section-title h2{font-size:25px}
+ .timeline-compact .astro-section .period{margin-top:6px}
+ .timeline-compact .astro-filters button{padding:7px 9px;font-size:9px;font-size:12.5px}
+ .timeline-compact .astro-shell-head{padding:12px 15px}
+ .timeline-compact .astro-shell-head>p{display:none}
+ .timeline-compact .observation-layout{grid-template-columns:1fr}
+ .timeline-compact .astro-inspector{padding:13px 15px;grid-template-columns:31px 1fr;gap:7px 12px}
+ .timeline-compact .inspect-glyph{font-size:23px;margin:0;font-size:21px;font-weight:450;letter-spacing:-.012em}
+ .timeline-compact .astro-inspector h3{font-size:23px;font-size:21px;font-weight:450;letter-spacing:-.012em}
+ .timeline-compact .astro-inspector p{font-size:10px;margin:0;font-size:12.5px}
+ .timeline-compact .astro-inspector .text-link{margin-top:0;padding:4px 0;font-size:9px;font-size:12.5px}
+ .timeline-compact .astro-bottom{padding:10px 15px}
+ .timeline-compact .astro-controls{margin-top:9px}
+}
+/* Compacta de la portada (08/11/2026): marcas del eje por tipo como en la leyenda, fechas legibles aunque las cruce un hilo, cambio de mes y filtros que entran en el celular */
+.timeline-compact .axis-node.is-hollow{fill:var(--paper);stroke:var(--event);stroke-width:2}
+.timeline-compact .axis-date{paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round}
+.timeline-compact .axis-month{fill:#844a2b;font:600 11.5px 'Inter',Arial,sans-serif;letter-spacing:.14em;paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round}
+.timeline-compact .axis-tick.is-month{stroke:#b97a52;stroke-width:1.5}
+.timeline-compact .astro-controls [aria-disabled="true"]{opacity:.35;cursor:default}
+@media(max-width:600px){.timeline-compact .astro-filters{display:flex;width:100%;box-sizing:border-box}.timeline-compact .astro-filters button{flex:1 1 auto;padding:7px 4px}}
+@media(max-width:360px){.timeline-compact .astro-filters{gap:1px}.timeline-compact .astro-filters button{padding:7px 0;font-size:11px}}
+.timeline-compact .astro-event{padding-left:7px;padding-right:7px}.timeline-compact .event-symbols{right:6px;font-size:12px;letter-spacing:0}
+.timeline-compact .astro-inspector .nw{white-space:nowrap}

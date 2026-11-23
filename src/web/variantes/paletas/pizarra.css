@@ -1,0 +1,10 @@
+/* Paleta Pizarra y cobre: ajustes finos. */
+.rich-hybrid{--bg:#efeae1;--fg:#213034;--muted:#545e5d;--accent:#844a2b;--line:#d8d0c3;--soft:#e6dfd3;background:var(--bg)}
+.rich-hybrid .compact-sky > .barometer{--fg:#213034;--muted:#545e5d;--accent:#844a2b;--line:#d8d0c3}
+.rich-hybrid .focus-card{--fg:#f4f0ea;--muted:#cbd3d4;--accent:#e2b48f;--line:#4d6267;background:#33454a;border-color:#415559;border-top:2px solid #b97a52}
+.rich-hybrid .focus-next{background:#243236;border-top-color:#b97a52}
+.rich-hybrid .kicker,.rich-hybrid .compact-heading .kicker{color:#844a2b}
+.rich-hybrid .planet-ticker{--accent:#844a2b}
+.rich-hybrid .text-link{color:#213034;border-bottom-color:#b97a52}
+.rich-hybrid .astro-event.kind-aspect .event-date{color:#844a2b}
+.rich-hybrid .astro-event.kind-ingress .event-date{color:#6f5a33}
