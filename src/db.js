@@ -34,8 +34,8 @@ function sumarColumnas(d, tabla, columnas) {
 
 // Migraciones idempotentes: corren en cada arranque y no hacen nada si ya están.
 function migrar(d) {
-  // Suscripción con consentimiento (ley 25.326, art. 5): cuándo lo dio, qué
-  // texto vio (versión) y desde qué página. La IP NO se guarda.
+  // Columnas de la suscripción con consentimiento (ya sin uso: la web no guarda
+  // datos de los visitantes). Se dejan para no tocar bases existentes.
   sumarColumnas(d, "suscriptores", [
     ["consentimiento_at", "INTEGER"],
     ["consentimiento_version", "TEXT"],
@@ -189,29 +189,9 @@ export function setAjuste(clave, valor) {
 }
 
 // --- Suscripción -----------------------------------------------------------
-/**
- * Anota un mail ya validado y normalizado. Si ya estaba activo no cambia nada
- * (la respuesta al visitante es la misma: no se revela quién estaba anotado);
- * si se había dado de baja, vuelve con el consentimiento nuevo.
- */
-export function anotarSuscripcion({ email, origen, pagina, consentimientoAt, consentimientoVersion }) {
-  const d = getDb();
-  // Se busca por email_norm: las altas viejas guardaban el mail tal como venía
-  // escrito y la unicidad de verdad es la del mail normalizado.
-  d.transaction(() => {
-    const ya = d.prepare("SELECT id, baja_at FROM suscriptores WHERE email_norm = ? ORDER BY id LIMIT 1").get(email);
-    if (ya && ya.baja_at == null) return;
-    if (ya) {
-      d.prepare(`UPDATE suscriptores SET baja_at = NULL, origen = ?, pagina = ?, consentimiento_at = ?,
-                 consentimiento_version = ? WHERE id = ?`)
-        .run(origen, pagina, consentimientoAt, consentimientoVersion, ya.id);
-      return;
-    }
-    d.prepare(`INSERT INTO suscriptores (email, email_norm, origen, pagina, consentimiento_at, consentimiento_version, created_at)
-               VALUES (?, ?, ?, ?, ?, ?, ?)`)
-      .run(email, email, origen, pagina, consentimientoAt, consentimientoVersion, consentimientoAt);
-  })();
-}
+// La web no junta datos de los visitantes (Fernando, 24/11/2026): no hay alta
+// de suscripción. La tabla `suscriptores` y sus columnas quedan como están (el
+// panel la sigue mostrando, vacía); no se borra nada.
 
 // --- Revista ---------------------------------------------------------------
 export function listarNotas({ carril = null, limite = 20, incluirBorradores = false } = {}) {

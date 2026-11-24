@@ -8,14 +8,19 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { once } from "node:events";
+import vm from "node:vm";
 import { fileURLToPath } from "node:url";
+import { caracteres } from "./woff2-cmap.mjs";
 import { refsHtml, refsCss, fetchsJs, rutasJson, refsSvg, fotosCarrusel, esExterna } from "./web-refs.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const WEB = path.join(HERE, "..", "src", "web");
-const VERSION = "20261123.5";
+const VERSION = "20261124.1";
 const SITIO = "https://www.anaretico29.com";
 const LEGAL = "Contenido astrológico y educativo. No constituye asesoramiento ni recomendación de inversión.";
+const GOOGLE = /fonts\.(?:googleapis|gstatic)\.com/;
+// Los glifos que tienen que salir como texto con las fuentes Noto propias (S11)
+const GLIFOS = "☉☽☿♀♂♃♄♅♆♇♈♉♊♋♌♍♎♏♐♑♒♓□☍→℞☌⚹△";
 
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "web-nueva-"));
 process.env.DB_PATH = path.join(tmp, "prueba.db");
@@ -39,6 +44,7 @@ let ok = 0, fallo = 0;
 const cierto = (nombre, cond, extra = "") => {
   if (cond) ok++; else { fallo++; console.log(`  ✗ ${nombre}${extra ? " — " + extra : ""}`); }
 };
+const igual = (nombre, real, esperado) => cierto(nombre, real === esperado, `dio ${JSON.stringify(real)}, esperaba ${JSON.stringify(esperado)}`);
 
 let galleta = null;
 async function pedir(ruta, { metodo = "GET", sesion = false } = {}) {
@@ -77,7 +83,8 @@ const ORDEN = {
     hojas: v(["styles.css", "compact.css", "rich.css", "combinado.css", "linea-tiempo/panorama.css",
       "paletas/pizarra-auto.css", "paletas/pizarra.css", "tipos/recomendado.css", "esquinas/media.css",
       "arreglos.css", "menu.css", "presentacion.css", "herramientas.css", "canales.css", "oferta.css",
-      "portada.css", "tonos.css", "movimiento.css", "portada-plaza.css", "linea-tiempo/opciones-lt.css"]),
+      "portada.css", "tonos.css", "movimiento.css", "portada-plaza.css", "linea-tiempo/opciones-lt.css",
+      "assets/fuentes/simbolos.css"]),
     scripts: v(["data.js", "app.js", "compact.js", "arreglos.js", "presentacion.js", "herramientas.js",
       "oferta.js", "portada.js", "portada-plaza.js", "menu.js", "movimiento.js", "rich.js",
       "linea-tiempo/opciones-lt.js"]),
@@ -85,7 +92,7 @@ const ORDEN = {
   "sobre-mi.html": {
     hojas: v(["styles.css", "compact.css", "rich.css", "combinado.css", "paletas/pizarra-auto.css",
       "paletas/pizarra.css", "tipos/recomendado.css", "esquinas/media.css", "arreglos.css", "menu.css",
-      "canales.css", "sobre-mi.css", "tonos.css", "movimiento.css"]),
+      "canales.css", "sobre-mi.css", "tonos.css", "movimiento.css", "assets/fuentes/simbolos.css"]),
     scripts: v(["data.js", "app.js", "menu.js", "movimiento.js", "sobre-mi.js"]),
   },
   "proximamente.html": {
@@ -129,6 +136,12 @@ try {
     // AGPL §13: quien usa el sitio por red tiene que poder llegar al código fuente
     cierto(`${ruta} enlaza el código fuente (AGPL) en el pie`,
       /<footer>[\s\S]*<a href="https:\/\/github\.com\/nahuerpcmacservice\/anaretico29"[^>]*>Código fuente \(AGPL\)<\/a><\/small><\/footer>/.test(x.texto));
+    // S12: «Imágenes: Anaretico 29» en lugar de «Fotografías con sus créditos», entre el texto legal y el código fuente
+    cierto(`${ruta} el pie dice «Imágenes: Anaretico 29»`,
+      x.texto.includes(`${LEGAL}<br>Imágenes: Anaretico 29<br><a href="https://github.com/nahuerpcmacservice/anaretico29" rel="noopener">Código fuente (AGPL)</a></small></footer>`));
+    cierto(`${ruta} ya no dice «Fotografías con sus créditos»`, !x.texto.includes("Fotografías con sus créditos"));
+    // S11: nada se le pide a Google desde el navegador
+    cierto(`${ruta} no le pide nada a Google Fonts`, !GOOGLE.test(x.texto));
     cierto(`${ruta} og:image absoluto en ${SITIO}`,
       x.texto.includes(`<meta property="og:image" content="${SITIO}/assets/og-anaretico29.jpg">`));
     const { hojas, scripts } = refsHtml(x.texto);
@@ -199,6 +212,71 @@ try {
   cierto("los scripts salen como JavaScript", unicos.filter((u) => u.split("?")[0].endsWith(".js")).every((u) => /javascript/.test(vistos.get(u).tipo)));
   cierto("las fotos del carrusel están (4 × 3 anchos × 2 formatos)", fotosCarrusel(dataJs.texto).length === 24);
 
+  console.log("— S11: las fuentes salen de acá, no de Google");
+  const conGoogle = unicos.filter((u) => /\.(?:css|js|json|svg)$/.test(u.split("?")[0]) && GOOGLE.test(vistos.get(u).texto));
+  cierto("ningún HTML, CSS, JS ni dato servido nombra fonts.googleapis.com ni fonts.gstatic.com", conGoogle.length === 0, conGoogle.join(", "));
+  const styles = vistos.get(`/styles.css?v=${VERSION}`);
+  cierto("styles.css importa nuestra hoja de Fraunces e Inter", styles && styles.texto.startsWith(`@import url('assets/fuentes/texto.css?v=${VERSION}');`));
+  const fuentes = unicos.filter((u) => u.split("?")[0].endsWith(".woff2"));
+  igual("se piden los 16 archivos woff2 (13 de texto y 3 de símbolos)", fuentes.length, 16);
+  cierto("cada fuente responde 200 como font/woff2", fuentes.every((u) => vistos.get(u).codigo === 200 && vistos.get(u).tipo.startsWith("font/woff2")),
+    fuentes.map((u) => `${u} ${vistos.get(u).codigo} ${vistos.get(u).tipo}`).join(", "));
+  const texto = (await traer("/assets/fuentes/texto.css")).texto;
+  const caras = [...texto.matchAll(/@font-face \{([^}]*)\}/g)].map((m) => m[1]);
+  const cara = (fam, estilo, peso) => caras.filter((c) => c.includes(`font-family: '${fam}'`) && c.includes(`font-style: ${estilo}`) && c.includes(`font-weight: ${peso};`));
+  for (const [fam, estilo, peso, n] of [["Fraunces", "normal", "300 600", 3], ["Fraunces", "italic", "300 500", 3],
+    ["Inter", "normal", "400", 7], ["Inter", "normal", "500", 7], ["Inter", "normal", "600", 7], ["Inter", "normal", "700", 7]]) {
+    const c = cara(fam, estilo, peso);
+    cierto(`${fam} ${estilo} ${peso}: los ${n} subconjuntos de Google, con su unicode-range`, c.length === n && c.every((x) => /unicode-range:/.test(x)) && c.some((x) => x.includes("U+0000-00FF")), `${c.length}`);
+  }
+  const simbolos = (await traer(`/assets/fuentes/simbolos.css?v=${VERSION}`)).texto;
+  cierto("simbolos.css: Noto Sans Symbols, Symbols 2 y Noto Sans, con display block",
+    ["Noto Sans Symbols", "Noto Sans Symbols 2", "Noto Sans"].every((f) => simbolos.includes(`font-family: '${f}';`)) && (simbolos.match(/font-display: block/g) || []).length === 3);
+  const cubiertos = new Set();
+  for (const m of simbolos.matchAll(/src: url\(([^)]+)\)/g)) for (const c of caracteres((await traer(`/assets/fuentes/${m[1]}`)).cuerpo)) cubiertos.add(c);
+  const faltan = [...GLIFOS].filter((g) => !cubiertos.has(g.codePointAt(0)));
+  cierto(`los ${[...GLIFOS].length} glifos (□ ☉ ℞ ☊… ☌ ⚹ △ y los signos) están en las Noto propias`, faltan.length === 0, `faltan ${faltan.join(" ")}`);
+  for (const lic of ["OFL-fraunces.txt", "OFL-inter.txt", "OFL-noto-sans.txt", "OFL-noto-sans-symbols.txt", "OFL-noto-sans-symbols-2.txt"]) {
+    const x = await traer(`/assets/fuentes/${lic}`);
+    cierto(`${lic} se publica junto a las fuentes`, x.codigo === 200 && x.texto.includes("SIL OPEN FONT LICENSE Version 1.1"), `${x.codigo}`);
+  }
+
+  console.log("— S9 y S10: la carta natal sin mail y con la hora obligatoria");
+  {
+    const inicio = servidas["combinado.html"];
+    const form = (/<form novalidate aria-label="Datos para calcular tu carta natal">[\s\S]*?<\/form>/.exec(inicio) || [""])[0];
+    cierto("el formulario de la carta está", form.length > 0);
+    cierto("la hora es obligatoria", form.includes('<label><span>Hora</span><input type="time" name="hora" required aria-describedby="err-hora"><span class="t3-err" id="err-hora" role="alert"></span></label>'));
+    cierto("ya no dice «(opcional)»", !inicio.includes("(opcional)"));
+    cierto("no pide mail", !/type="email"|name="email"|Tu mail|t3-mail|hint-email/.test(form));
+    cierto("el texto de Fernando, sin la promesa del mail",
+      inicio.includes('<p class="t-text">Calculada con tu fecha, hora y lugar de nacimiento. Te la mostramos en pantalla.</p>'));
+    cierto("el botón queda solo", form.includes('<div class="t3-submit"><button type="submit" class="t-btn primary">Ver mi carta →</button></div>'));
+    // herramientas.js con un DOM mínimo: la hora vacía se rechaza con su aviso y no se sale de la página
+    const js = (await traer(`/herramientas.js?v=${VERSION}`)).texto;
+    const correr = (valores) => {
+      const errores = {}, idas = [];
+      const campo = (n) => ({ value: valores[n], addEventListener() {}, setAttribute() {}, focus() { errores.foco = n; } });
+      const elements = { fecha: campo("fecha"), hora: campo("hora"), lugar: campo("lugar") };
+      let enviar = null;
+      const f = { elements, reset() {}, addEventListener: (ev, fn) => { if (ev === "submit") enviar = fn; },
+        querySelector: (q) => { const n = q.replace("#err-", ""); return { set textContent(t) { errores[n] = t; } }; } };
+      const s = { document: { querySelectorAll: (q) => (q === ".tools form" ? [f] : []) }, location: { assign: (u) => idas.push(u) }, URLSearchParams, openDialog() {} };
+      vm.createContext(s);
+      vm.runInContext(js, s);
+      enviar({ preventDefault() {} });
+      return { errores, idas };
+    };
+    const sinHora = correr({ fecha: "1980-05-04", hora: "", lugar: "Rosario, Argentina" });
+    igual("sin hora: «Ingresá tu hora de nacimiento.»", sinHora.errores.hora, "Ingresá tu hora de nacimiento.");
+    cierto("sin hora: el foco va a la hora y no se sale de la página", sinHora.errores.foco === "hora" && sinHora.idas.length === 0);
+    const completo = correr({ fecha: "1980-05-04", hora: "14:30", lugar: "Rosario, Argentina" });
+    cierto("con fecha, hora y lugar: va a Próximamente (la carta es otra etapa)", completo.idas.join() === "/proximamente?p=carta" && completo.errores.hora === "");
+    const sinFecha = correr({ fecha: "", hora: "", lugar: "" });
+    cierto("la fecha y el lugar siguen siendo obligatorios", sinFecha.errores.fecha === "Ingresá tu fecha de nacimiento." && sinFecha.errores.lugar === "Ingresá el lugar de nacimiento." && sinFecha.errores.foco === "fecha");
+    cierto("herramientas.js ya no valida ni nombra un mail", !/mail/i.test(js));
+  }
+
   console.log("— Respaldos y variantes del prototipo NO se publican");
   for (const r of ["/combinado-v1-oliva.html", "/variantes/combinado-v1-oliva.html", "/combinado-v10-antes-entrega.html",
     "/carta-opcion-1.html", "/carta-opciones.html", "/carta-op3.css", "/carta-op3.js", "/recorrido.css",
@@ -217,9 +295,7 @@ try {
     for (const e of refsHtml(servidas[archivo]).enlaces) {
       if (esExterna(e)) continue;
       cierto(`${ruta}: ${e} no es un .html`, !/\.html\b/.test(e));
-      // /suscripcion es el action del formulario de la franja (POST: test-suscripcion.mjs)
-      if (e === "/suscripcion") { cierto(`${ruta}: /suscripcion solo como destino del formulario`, servidas[archivo].includes('<form class="boletin" action="/suscripcion" method="post"')); continue; }
-      const bien = /^\/(?:#[\w-]+)?$/.test(e) || /^\/sobre-mi(?:#[\w-]+)?$/.test(e) || e === "/privacidad" ||
+      const bien = /^\/(?:#[\w-]+)?$/.test(e) || /^\/sobre-mi(?:#[\w-]+)?$/.test(e) ||
         (/^\/proximamente\?p=([\w-]+)$/.test(e) && ids.has(e.split("=")[1]));
       cierto(`${ruta}: ${e} es una página publicada`, bien);
       destinos.add(e.split("#")[0]);

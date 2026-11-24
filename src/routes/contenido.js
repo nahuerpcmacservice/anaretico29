@@ -42,9 +42,8 @@ for (const [vieja, nueva] of Object.entries(CONTENIDO_VIEJO)) {
 router.get("/revista/*resto", (req, res) => res.redirect(302, CONTENIDO_VIEJO["/revista"]));
 router.get("/p/:handle", (req, res) => res.redirect(302, "/proximamente"));
 
-// El alta vieja anotaba sin casilla de consentimiento: esto no guarda nada y
-// vuelve a la franja de canales de la portada. La suscripción de verdad es
-// POST /suscripcion (routes/suscripcion.js).
+// El alta vieja: no guarda nada (la web no junta datos de los visitantes) y
+// vuelve a la franja de canales de la portada.
 router.post("/newsletter", (req, res) => res.redirect(303, "/#canales"));
 
 export default router;

@@ -17,18 +17,21 @@
 //   - regla 4: con Membresía apagada no se generan sus botones principales
 //   - Próximamente sin la franja de aprobación [SOLO MAQUETA] (doc 05 §4.7)
 //   - los scripts que arman enlaces (menú, carta, puertas, Próximamente)
-//   - la suscripción de la franja de canales: POST /suscripcion, casilla de
-//     consentimiento sin tildar, campo señuelo (S5; textos en src/lib/suscripcion.js)
+//   - la web no junta ningún dato de los visitantes (S5, S9): la suscripción
+//     mensual queda apagada (parte «boletin»: no aparece, regla 3 del doc 05) y
+//     la carta natal no pide mail; la hora de nacimiento es obligatoria (S10)
+//   - las fuentes, autoalojadas (S11): las hojas de Google pasan a las de
+//     src/web/assets/fuentes/ (las baja scripts/bajar-fuentes-web.mjs, una vez)
+//   - el pie: «Imágenes: Anaretico 29» (S12) y el enlace al código fuente
 // Cada retoque exige encontrar EXACTAMENTE lo que espera: si el prototipo
 // cambia, la importación se corta en vez de publicar algo a medias.
 import fs from "node:fs";
 import path from "node:path";
 import { refsHtml, refsCss, fetchsJs, rutasJson, refsSvg, fotosCarrusel, esExterna, etiquetas } from "./web-refs.mjs";
 import { WEB_DIR, PAGINAS, destino, pagVisible } from "../src/lib/web-nueva.js";
-import { CONSENTIMIENTO_HTML, AVISOS } from "../src/lib/suscripcion.js";
 
 /** Versión para vaciar la caché de CSS y JS: subirla en cada importación. */
-const VERSION = "20261123.5";
+const VERSION = "20261124.1";
 const CODIGO_FUENTE = "https://github.com/nahuerpcmacservice/anaretico29";
 /** Host canónico (config.js, hostCanonico): el og:image tiene que ser absoluto. */
 const SITIO = "https://www.anaretico29.com";
@@ -39,6 +42,19 @@ const SITIO = "https://www.anaretico29.com";
  * pidió en Próximamente mientras la arma: se le saca el bloqueo.
  */
 const APAGADAS = ["servicios", "research", "academia", "revista", "membresia", "carta"];
+/**
+ * Partes apagadas (regla 3 del doc 05: una parte apagada no aparece en su
+ * página). Fernando, 24/11/2026: "Newsletter apagado por ahora, en
+ * «Próximamente». Sacá la suscripción que guarda mails" y "la carta natal se ve
+ * en pantalla sin pedir mail ni nombre".
+ */
+const PARTES_APAGADAS = { inicio: ["boletin"], carta: ["mail-carta"] };
+/**
+ * Las fuentes autoalojadas (S11): no vienen en la entrega, las baja
+ * scripts/bajar-fuentes-web.mjs a src/web/assets/fuentes/. Se publican tal cual
+ * están ahí (woff2, sus dos hojas y las licencias OFL).
+ */
+const FUENTES = "assets/fuentes";
 /** URL limpia de las entradas de visibilidad.json que se publican. */
 const RUTAS = { inicio: "/", enfoque: "/", recorrido: "/sobre-mi" };
 
@@ -48,8 +64,11 @@ if (!origen || !fs.existsSync(path.join(origen, "variantes", "combinado.html")))
   process.exit(1);
 }
 const ORIGEN = path.resolve(origen);
-const leer = (rel) => fs.readFileSync(path.join(ORIGEN, rel), "utf8");
-const existe = (rel) => fs.existsSync(path.join(ORIGEN, rel)) && fs.statSync(path.join(ORIGEN, rel)).isFile();
+// Lo propio (las fuentes) se lee de src/web/; todo lo demás, de la entrega
+let propios = new Set();
+const base = (rel) => (propios.has(rel) ? WEB_DIR : ORIGEN);
+const leer = (rel) => fs.readFileSync(path.join(base(rel), rel), "utf8");
+const existe = (rel) => fs.existsSync(path.join(base(rel), rel)) && fs.statSync(path.join(base(rel), rel)).isFile();
 const falla = (msg) => { throw new Error(msg); };
 
 /** Resuelve una referencia relativa a un archivo de web/ y devuelve la ruta desde web/. */
@@ -72,6 +91,19 @@ for (const p of D.paginas) {
   if (RUTAS[p.id]) p.ruta = RUTAS[p.id];
 }
 for (const id of APAGADAS) if (!D.paginas.some((p) => p.id === id)) falla(`visibilidad.json no tiene la página ${id}`);
+for (const [pag, ids] of Object.entries(PARTES_APAGADAS)) {
+  const p = D.paginas.find((x) => x.id === pag) || falla(`visibilidad.json no tiene la página ${pag}`);
+  for (const id of ids) ((p.partes || []).find((x) => x.id === id) || falla(`${pag} no tiene la parte ${id}`)).visible = false;
+}
+const boletinApagado = PARTES_APAGADAS.inicio.includes("boletin");
+
+// Las fuentes propias (S11): tienen que estar bajadas antes de importar
+const dirFuentes = path.join(WEB_DIR, FUENTES);
+if (!fs.existsSync(path.join(dirFuentes, "texto.css")) || !fs.existsSync(path.join(dirFuentes, "simbolos.css"))) {
+  falla(`faltan las fuentes en src/web/${FUENTES}: correr antes node scripts/bajar-fuentes-web.mjs`);
+}
+propios = new Set(fs.readdirSync(dirFuentes).filter((f) => /\.(woff2|css|txt)$/.test(f)).map((f) => `${FUENTES}/${f}`));
+if (![...propios].some((f) => f.endsWith(".txt"))) falla(`src/web/${FUENTES} no tiene las licencias OFL`);
 const membresiaApagada = !pagVisible(D.paginas.find((p) => p.id === "membresia"));
 const serviciosApagada = !pagVisible(D.paginas.find((p) => p.id === "servicios"));
 
@@ -92,15 +124,31 @@ function recortar(html, archivo) {
     for (const h of hallados) if (chequeo && !chequeo(h)) falla(`${archivo}: ${nombre} no es lo que esperaba`);
     out = out.replace(re, "");
   };
-  // AGPL §13 (Swiss Ephemeris): el pie de cada página lleva al código fuente publicado
+  // El pie: S12 (el crédito de las imágenes) y AGPL §13 (Swiss Ephemeris), el
+  // enlace al código fuente publicado. El texto legal queda igual.
+  const pie = "<br>Fotografías con sus créditos</small></footer>";
   const cierrePie = out.match(/<\/small><\/footer>/g) || [];
-  if (cierrePie.length !== 1) falla(`${archivo}: esperaba 1 × cierre del pie, encontré ${cierrePie.length}`);
-  out = out.replace("</small></footer>",
-    `<br><a href="${CODIGO_FUENTE}" rel="noopener">Código fuente (AGPL)</a></small></footer>`);
+  if (cierrePie.length !== 1 || out.split(pie).length !== 2) falla(`${archivo}: el pie no termina en «Fotografías con sus créditos»`);
+  out = out.replace(pie, () => `<br>Imágenes: Anaretico 29<br><a href="${CODIGO_FUENTE}" rel="noopener">Código fuente (AGPL)</a></small></footer>`);
+  // S11: los símbolos (Noto Sans Symbols, Symbols 2 y Noto Sans, recortadas a los
+  // glifos del sitio) salen de nuestra hoja, en el mismo lugar que la de Google
+  const google = out.match(/<link rel="stylesheet" href="https:\/\/fonts\.googleapis\.com\/css2\?family=Noto\+Sans\+Symbols&amp;family=Noto\+Sans\+Symbols\+2&amp;family=Noto\+Sans&amp;text=[^"]*&amp;display=block">/g) || [];
+  if (google.length > 1) falla(`${archivo}: más de una hoja de símbolos de Google`);
+  if (google.length) {
+    quitar(/<link rel="preconnect" href="https:\/\/fonts\.googleapis\.com"><link rel="preconnect" href="https:\/\/fonts\.gstatic\.com" crossorigin>/g, 1, "preconnect a Google Fonts");
+    out = out.replace(google[0], () => `<link rel="stylesheet" href="../${FUENTES}/simbolos.css">`);
+  }
+  if (/fonts\.(googleapis|gstatic)\.com/.test(out)) falla(`${archivo}: quedó un pedido a Google Fonts`);
   if (archivo === "combinado.html") {
     // S4: la tarjeta «Carta del momento» nombraba el corte fijo; queda solo su botón (a Próximamente)
     quitar(/<p class="t-text">Por ahora, el cielo del corte de referencia: 20\/10\/2026, 12:00 de Buenos Aires\.<\/p>/g,
       1, "frase del corte en Herramientas");
+    // S5: la suscripción mensual, apagada (parte «boletin»): el formulario no va
+    if (boletinApagado) {
+      quitar(/<form class="boletin" novalidate aria-labelledby="bo-titulo">[\s\S]*?<\/form>/g, 1, "formulario «boletin»",
+        (h) => h.includes("Recibí el cielo del mes en tu mail") && (h.match(/<form\b/g) || []).length === 1);
+    }
+    out = cartaSinMail(out);
   }
   if (archivo === "proximamente.html") {
     // Doc 05 §4.7: la franja de aprobación existe solo para que Fernando aprobara el diseño
@@ -144,6 +192,8 @@ if (!leer("variantes/portada-plaza.js").includes("`${base}portada/${s.id}-${w}.$
   falla("portada-plaza.js ya no arma las fotos como espera fotosCarrusel()");
 }
 for (const f of fotosCarrusel(leer("data.js"))) sumar(f, "data.js (A29_SLIDES)");
+// Las fuentes propias: las hojas, los woff2 y las licencias (styles.css las importa una vez parchado)
+for (const f of propios) sumar(f, "las fuentes autoalojadas");
 // Hojas: url() y @import, resueltos contra la hoja
 for (const rel of [...publicados]) {
   if (!rel.endsWith(".css")) continue;
@@ -281,8 +331,9 @@ function plantillaPortada(html) {
       (x) => (x.match(/<span class="ticker-item">/g) || []).length === 10 && x.includes("Plutón <strong>Acuario 03°04′</strong>"));
   }
   // El barómetro (a las 12:00 del día)
+  // Sin aspectos que cuenten, la tensión es «—» (criterios de Fernando): el «%» va con el número
   p("<strong>60<small>%</small></strong><b>Tensión</b><div class=\"mini-track\"><i style=\"width:60%\"></i></div>",
-    "<strong>{{baroTension}}<small>%</small></strong><b>Tensión</b><div class=\"mini-track\"><i style=\"width:{{baroTension}}%\"></i></div>");
+    "<strong>{{baroTension}}</strong><b>Tensión</b><div class=\"mini-track\"><i style=\"width:{{baroTensionAncho}}%\"></i></div>");
   p("<strong>47<small>%</small></strong><b>Aire</b><div class=\"mini-track\"><i style=\"width:47%\"></i></div>",
     "<strong>{{baroElemento}}<small>%</small></strong><b>{{baroElementoNombre}}</b><div class=\"mini-track\"><i style=\"width:{{baroElemento}}%\"></i></div>");
   p("<strong>64<small>%</small></strong><b>Fija</b><div class=\"mini-track\"><i style=\"width:64%\"></i></div>",
@@ -309,23 +360,19 @@ function plantillaPortada(html) {
 }
 
 /**
- * La suscripción de la franja de canales, conectada de verdad (S5). Se agrega
- * lo justo al formulario del prototipo: a dónde postea, la casilla de
- * consentimiento SIN TILDAR (doc 02 §7.3, regla 1) con el enlace a
- * /privacidad, la página de origen y un campo señuelo oculto para robots.
- * El resto del marcado queda igual.
+ * El formulario de la carta natal (Herramientas) sin mail (S9) y con la hora
+ * obligatoria (S10). Del texto de Fernando se saca solo lo que promete el mail.
  */
-function formSuscripcion(html) {
+function cartaSinMail(html) {
   const A = "combinado.html";
   let t = html;
-  t = parche(t, A, '<form class="boletin" novalidate aria-labelledby="bo-titulo">',
-    '<form class="boletin" action="/suscripcion" method="post" novalidate aria-labelledby="bo-titulo">');
-  t = parche(t, A, '<button type="submit" class="hc-btn primary">Suscribirme</button></div><span class="bo-err" id="bo-err" role="alert"></span></form>',
-    '<button type="submit" class="hc-btn primary">Suscribirme</button></div>'
-    + `<label class="bo-text bo-consentimiento"><input type="checkbox" name="consentimiento" value="si" required> ${CONSENTIMIENTO_HTML}</label>`
-    + '<input type="hidden" name="pagina" value="/">'
-    + '<div class="bo-oculto" aria-hidden="true"><label for="bo-web">No completar este campo</label><input id="bo-web" type="text" name="web" tabindex="-1" autocomplete="off"></div>'
-    + '<span class="bo-err" id="bo-err" role="alert"></span></form>');
+  t = parche(t, A, '<p class="t-text">Calculada con tu fecha, hora y lugar de nacimiento. Te la mostramos y te la enviamos a tu mail.</p>',
+    '<p class="t-text">Calculada con tu fecha, hora y lugar de nacimiento. Te la mostramos en pantalla.</p>');
+  t = parche(t, A, '<label><span>Hora <span class="t3-opt">(opcional)</span></span><input type="time" name="hora"></label>',
+    '<label><span>Hora</span><input type="time" name="hora" required aria-describedby="err-hora"><span class="t3-err" id="err-hora" role="alert"></span></label>');
+  t = parche(t, A, '<label class="t3-mail">Tu mail<input type="email" name="email" placeholder="nombre@correo.com" required autocomplete="email" inputmode="email" aria-describedby="err-email hint-email"><span class="t3-err" id="err-email" role="alert"></span></label>', "");
+  // La aclaración del botón era sobre el mail; «Te la mostramos en pantalla» ya lo dice el texto de arriba
+  t = parche(t, A, '<small id="hint-email">Te la mostramos en pantalla y te enviamos una copia a tu mail. Usamos tu mail únicamente para eso.</small>', "");
   return t;
 }
 
@@ -376,51 +423,16 @@ const PARCHES = {
     t = parche(t, A, "' tránsitos · horarios de Buenos Aires · corte de referencia del 20/10 al 18/11, no es en vivo'", "' tránsitos · horarios de Buenos Aires'");
     return parche(t, A, "No hay tránsitos de este tipo en el corte. Probá con «Todo».", "No hay tránsitos de este tipo en estos días. Probá con «Todo».");
   },
-  // La suscripción: manda el formulario a POST /suscripcion en vez de mostrar la vista previa
+  // S11: Fraunces e Inter, de nuestra hoja (mismas familias, ejes, pesos y subconjuntos)
+  "styles.css": (t) => parche(t, "styles.css",
+    "@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Inter:wght@400;500;600;700&display=swap');",
+    `@import url('${FUENTES}/texto.css?v=${VERSION}');`),
+  // S5: sin formulario de suscripción no queda nada que validar ni que mandar
   "variantes/portada.js": (t) => parcheTramo(t, "portada.js",
     "// Suscripción al cielo del mes: valida el mail y avisa que es una vista previa",
     " f.reset(); i.removeAttribute('aria-invalid');\n });\n})();",
-    `// Suscripción al cielo del mes: valida el mail y la casilla, y la anota en el servidor (POST /suscripcion).
-// Sin JS el formulario hace el mismo POST y el servidor vuelve a #canales con el aviso.
-(() => {
- const f = document.querySelector('.boletin');
- if (!f) return;
- const i = f.elements.email, casilla = f.elements.consentimiento, err = f.querySelector('#bo-err');
- let enviando = false;
- f.addEventListener('submit', async e => {
-  e.preventDefault();
-  if (enviando) return;
-  const v = i.value.trim();
-  const m = !v ? ${JSON.stringify(AVISOS.vacio)} : /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(v) ? '' : ${JSON.stringify(AVISOS.mail)};
-  err.textContent = m; i.setAttribute('aria-invalid', String(!!m));
-  if (m) { i.focus(); return; }
-  if (!casilla.checked) { err.textContent = ${JSON.stringify(AVISOS.consentimiento)}; casilla.focus(); return; }
-  enviando = true;
-  let r = null;
-  try {
-   const res = await fetch(f.action, { method: 'POST', headers: { accept: 'application/json' }, body: new URLSearchParams(new FormData(f)) });
-   r = await res.json();
-  } catch (x) { r = null; }
-  enviando = false;
-  if (!r || !r.ok) {
-   err.textContent = (r && r.mensaje) || ${JSON.stringify(AVISOS.error)};
-   if (r && r.campo === 'email') { i.setAttribute('aria-invalid', 'true'); i.focus(); }
-   else if (r && r.campo === 'consentimiento') casilla.focus();
-   return;
-  }
-  err.textContent = '';
-  const mail = v.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  openDialog('SUSCRIPCIÓN / EL CIELO DEL MES', 'Gracias por sumarte', '<p>Anotamos <strong>' + mail + '</strong> para recibir el cielo del mes.</p>');
-  f.reset(); i.removeAttribute('aria-invalid');
- });
-})();`,
+    "// La suscripción al cielo del mes está apagada (Próximamente): la web no guarda datos de los visitantes.",
     (x) => x.includes("Por ahora es una vista previa: este mail no se guardó ni se envió.")),
-  // El enlace de la casilla: .channels a (canales.css) es la tarjeta de cada red; acá vuelve a ser un enlace de texto
-  "variantes/portada.css": (t) => parche(t, "portada.css",
-    ".bo-oculto{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}\n",
-    ".bo-oculto{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}\n"
-    + ".channels .bo-consentimiento a{display:inline;padding:0;border-radius:0;color:inherit;text-decoration:underline}\n"
-    + ".channels .bo-consentimiento a:hover{background:none}\n"),
   "variantes/menu.js": (t) => {
     t = parche(t, "menu.js", `cta.href = 'membresia.html';`, `cta.href = '${destino("membresia.html", D)}';`);
     // Regla 4: con Membresía apagada el «Sumarme» del encabezado no se genera
@@ -433,6 +445,16 @@ const PARCHES = {
   // Con la carta en Próximamente, el formulario y "Ver la carta de ahora" van a la pantalla: nada de cartas de ejemplo
   "variantes/herramientas.js": (t) => {
     const carta = destino("carta.html", D);
+    const H = "herramientas.js";
+    // S9 y S10: sin mail, con la hora obligatoria (mismo estilo de aviso que la fecha)
+    t = parche(t, H, "// Herramientas. Carta natal: fecha, lugar y mail son obligatorios;", "// Herramientas. Carta natal: fecha, hora y lugar son obligatorios;");
+    t = parche(t, H, "// Sin hora de nacimiento el enlace lleva sinhora=1 (la pantalla muestra la carta sin Ascendente ni casas).\n", "");
+    t = parche(t, H, "nada se guarda y el mail no viaja.", "nada se guarda.");
+    t = parcheTramo(t, H, " fecha:v=>v?'':'Ingresá tu fecha de nacimiento.',", "'Revisá el mail: parece incompleto.')\n",
+      " fecha:v=>v?'':'Ingresá tu fecha de nacimiento.',\n hora:v=>v?'':'Ingresá tu hora de nacimiento.',\n lugar:v=>v.trim()?'':'Ingresá el lugar de nacimiento.'\n",
+      (x) => x.includes(" lugar:v=>v.trim()?'':'Ingresá el lugar de nacimiento.',") && x.includes(" email:v=>"));
+    t = parche(t, H, "if(f.elements.hora&&f.elements.hora.value)q.set('hora',f.elements.hora.value);else q.set('sinhora','1');",
+      "q.set('hora',f.elements.hora.value);");
     t = parche(t, "herramientas.js", `location.assign('carta.html?modo=momento')`, `location.assign('${destino("carta.html?modo=momento", D)}')`);
     if (!carta.startsWith("/proximamente")) falla("herramientas.js: la carta está visible pero no se publica");
     // S4: el diálogo de la carta del momento hablaba del corte fijo del cielo; esa frase no va
@@ -469,9 +491,11 @@ for (const rel of lista) {
   const archivo = path.basename(rel);
   if (rel.startsWith("variantes/") && Object.values(PAGINAS).includes(archivo) && rel === `variantes/${archivo}`) {
     const html = reescribirHtml(htmls[archivo], archivo);
-    escribir(rel, archivo === "combinado.html" ? formSuscripcion(plantillaPortada(html)) : html);
+    escribir(rel, archivo === "combinado.html" ? plantillaPortada(html) : html);
   } else if (rel === "variantes/datos/visibilidad.json") {
     escribir(rel, JSON.stringify(D, null, 1) + "\n");
+  } else if (propios.has(rel)) {
+    // ya está en su lugar (src/web/assets/fuentes): no se copia
   } else if (PARCHES[rel]) {
     escribir(rel, PARCHES[rel](leer(rel)));
   } else {

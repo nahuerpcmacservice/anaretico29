@@ -62,13 +62,46 @@ function radarDe(c) {
   return { otro, asp, fecha: c.radar.fecha };
 }
 
+/** "a", "a y b", "a, b y c". */
+const enLista = (xs) => (xs.length < 2 ? xs.join("") : `${xs.slice(0, -1).join(", ")} y ${xs.at(-1)}`);
+
+/**
+ * El predominio del barómetro con los criterios de Fernando (criterios.js):
+ * todos los empatados arriba; si empatan todos, «Equilibrio».
+ */
+function predominio(rep, nombre) {
+  const pc = String(rep[0].pc);
+  if (rep.equilibrio) return { pc, nombre: "Equilibrio", claves: [] };
+  return { pc, nombre: rep.dominantes.map(nombre).join(" · "), claves: rep.dominantes };
+}
+
+/**
+ * Las marcas del barómetro (tensión, elemento y modalidad predominantes, la
+ * frase) con los criterios de Fernando: tensión «—» sin aspectos que cuenten;
+ * empate → todos los empatados; empatan todos → «Equilibrio».
+ */
+export function barometroTextos(b) {
+  const el = predominio(b.elementos, (k) => META_ELEMENTO[k].nombre);
+  const mo = predominio(b.modalidades, (k) => MODALIDAD[k]);
+  const pcTension = b.tension.porcentaje;
+  return {
+    baroTension: pcTension === null ? "—" : `${pcTension}<small>%</small>`,
+    baroTensionAncho: String(pcTension ?? 0),
+    baroElemento: el.pc,
+    baroElementoNombre: el.nombre,
+    baroModalidad: mo.pc,
+    baroModalidadNombre: mo.nombre,
+    baroResumen: `${el.claves.length ? `Predominio de ${enLista(el.claves.map((k) => META_ELEMENTO[k].nombre.toLowerCase()))}` : "Equilibrio de elementos"}; ` +
+      `${mo.claves.length ? `énfasis en ${enLista(mo.claves.map((k) => META_MODALIDAD[k].sub.toLowerCase()))}` : "equilibrio de modalidades"}.`,
+  };
+}
+
 /** Los valores de las marcas {{clave}} de combinado.html. */
 export function valoresPortada(c) {
   const ref = c.referencia, p = partesBA(ref), h = c.horas;
   const dia = cuerpo(h.regenteDia), hora = cuerpo(h.regenteHora);
   const lunaG = grados(c.lunaPos.longitud);
   const r = radarDe(c);
-  const [elTop] = c.barometro.elementos, [moTop] = c.barometro.modalidades;
   const fin = new Date(c.agenda.fin.getTime() - 1), pi = partesBA(c.agenda.inicio), pf = partesBA(fin);
   const periodo = pi.anio === pf.anio
     ? `${pi.dia} ${MES_CORTO[pi.mes - 1].toUpperCase()} — ${pf.dia} ${MES_CORTO[pf.mes - 1].toUpperCase()} ${pf.anio}`
@@ -102,12 +135,7 @@ export function valoresPortada(c) {
     // La frase vale solo si el aspecto llega antes del cambio de signo
     radarTexto: r && !c.vacia ? "<p>El próximo aspecto mayor de la Luna antes de su cambio de signo.</p>" : "",
     cinta,
-    baroTension: String(c.barometro.tension.porcentaje),
-    baroElemento: String(elTop.pc),
-    baroElementoNombre: META_ELEMENTO[elTop.clave].nombre,
-    baroModalidad: String(moTop.pc),
-    baroModalidadNombre: MODALIDAD[moTop.clave],
-    baroResumen: `Predominio de ${META_ELEMENTO[elTop.clave].nombre.toLowerCase()}; énfasis en ${META_MODALIDAD[moTop.clave].sub.toLowerCase()}.`,
+    ...barometroTextos(c.barometro),
     elementos: c.elementos.map((x) => filaBarra(META_ELEMENTO[x.clave].nombre, META_ELEMENTO[x.clave].sub, x.pc)).join(""),
     modalidades: c.modalidades.map((x) => filaBarra(MODALIDAD[x.clave], META_MODALIDAD[x.clave].sub, x.pc)).join(""),
     retroCuenta: `${c.retrogrados.length} ${c.retrogrados.length === 1 ? "ACTIVO" : "ACTIVOS"}`,

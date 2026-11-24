@@ -75,7 +75,7 @@
      "id": "boletin",
      "etiqueta": "Recibí el cielo del mes en tu mail",
      "selector": "#canales form.boletin",
-     "visible": true
+     "visible": false
     }
    ],
    "ruta": "/"
@@ -471,7 +471,7 @@
      "id": "mail-carta",
      "etiqueta": "También te la enviamos por mail (solo en la carta natal)",
      "selector": "section.ob-mail",
-     "visible": true,
+     "visible": false,
      "condicional": true
     },
     {

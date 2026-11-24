@@ -10,7 +10,6 @@ import contenidoRoutes from "./routes/contenido.js";
 import viejasRoutes from "./routes/viejas.js";
 import webRoutes from "./routes/web.js";
 import panelRoutes from "./routes/panel.js";
-import suscripcionRoutes from "./routes/suscripcion.js";
 import { portero } from "./lib/portero.js";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -28,10 +27,6 @@ router.use("/estatico", express.static(path.join(HERE, "estatico"), {
   maxAge: "365d", immutable: true, fallthrough: true,
 }));
 router.use("/subidas", express.static(config.uploadsDir, { maxAge: "30d", fallthrough: true }));
-
-// La suscripción lee su propio cuerpo con un límite chico (2 KB): va antes del
-// urlencoded general, que si no lo leería primero con el límite del panel.
-router.use(suscripcionRoutes);
 
 router.use(express.urlencoded({ extended: false, limit: "256kb" }));
 

@@ -76,8 +76,6 @@ body.rich-hybrid .strap{display:none!important}
 .channels .bo-err{flex-basis:100%;font:500 14px/1.4 'Inter',Arial,sans-serif;color:#f2c9a4;text-align:right;font-size:14.5px}
 .channels .bo-err:empty{display:none}
 .bo-oculto{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.channels .bo-consentimiento a{display:inline;padding:0;border-radius:0;color:inherit;text-decoration:underline}
-.channels .bo-consentimiento a:hover{background:none}
 /* Quién está atrás: portada del video e iniciales en lugar del marcador */
 .pres .p-video .v-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.75}
 .pres .p-video::after{z-index:0;background:linear-gradient(180deg,#24323699,#24323633 45%,#243236b3)}

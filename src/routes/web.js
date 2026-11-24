@@ -8,8 +8,6 @@ import {
   WEB_DIR, MANIFIESTO, PAGINAS, leerVisibilidad, destinoONull, pagVisible,
 } from "../lib/web-nueva.js";
 import { paginaInicio, datosJs } from "../lib/portada.js";
-import { AVISOS } from "../lib/suscripcion.js";
-import { paginaPrivacidad } from "../lib/privacidad.js";
 
 const router = express.Router();
 
@@ -23,10 +21,11 @@ for (const rel of manifiesto.archivos) {
 }
 const D = leerVisibilidad();
 
-// CSS y JS llevan ?v= en cada referencia: pueden cachearse una semana. Los
-// datos (JSON, el mapa) se revalidan siempre, que los scripts los piden así.
+// CSS y JS llevan ?v= en cada referencia: pueden cachearse una semana, igual
+// que las fuentes (S11). Los datos (JSON, el mapa) se revalidan siempre, que
+// los scripts los piden así.
 const cacheDe = (u) =>
-  /\.(?:css|js|jpe?g|png|webp|avif|svg)$/.test(u) && !u.startsWith("/datos/") ? "7d" : 0;
+  /\.(?:css|js|jpe?g|png|webp|avif|svg|woff2)$/.test(u) && !u.startsWith("/datos/") ? "7d" : 0;
 
 // data.js lleva el cielo del motor (A29_DATA, la línea de tiempo y los
 // diálogos): cambia con cada tramo de caché del cielo, así que se revalida
@@ -44,24 +43,6 @@ router.get(/.*/, (req, res, next) => {
   res.sendFile(archivo, { maxAge: cacheDe(req.path), dotfiles: "deny" }, (err) => { if (err) next(err); });
 });
 
-// El aviso de la suscripción sin JS (routes/suscripcion.js vuelve con
-// ?suscripcion=<código>#canales): va en la zona de aviso del prototipo. Solo se
-// muestra un texto conocido; lo que venga en la URL nunca se refleja.
-const ZONA_AVISO = '<span class="bo-err" id="bo-err" role="alert"></span>';
-function conAviso(html, codigo) {
-  const texto = typeof codigo === "string" && Object.hasOwn(AVISOS, codigo) ? AVISOS[codigo] : "";
-  if (!texto || !html.includes(ZONA_AVISO)) return html;
-  return html.replace(ZONA_AVISO, () => `<span class="bo-err" id="bo-err" role="alert">${texto}</span>`);
-}
-
-// /privacidad: lugar provisorio de la política (src/lib/privacidad.js). noindex
-// también por cabecera, para que siga así el día que se abra el sitio.
-router.get("/privacidad", (req, res) => {
-  if (req.path.endsWith("/")) return res.redirect(301, "/privacidad");
-  res.set("cache-control", "no-cache").set("x-robots-tag", "noindex, nofollow");
-  res.type("html").send(paginaPrivacidad());
-});
-
 const query = (req) => {
   const i = req.originalUrl.indexOf("?");
   return i === -1 ? "" : req.originalUrl.slice(i);
@@ -75,7 +56,7 @@ for (const [ruta, archivo] of Object.entries(PAGINAS)) {
     res.set("cache-control", "no-cache");
     // La portada lleva el cielo del motor: se rellena la plantilla (src/lib/portada.js)
     if (ruta === "/") {
-      return paginaInicio().then((html) => res.type("html").send(conAviso(html, req.query.suscripcion)), next);
+      return paginaInicio().then((html) => res.type("html").send(html), next);
     }
     res.sendFile(abs, (err) => { if (err) next(err); });
   });

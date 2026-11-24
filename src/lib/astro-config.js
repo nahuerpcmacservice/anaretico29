@@ -2,9 +2,9 @@
 // código porque el brief los marca como configuración explícita (regla 09:
 // "Los orbes son configuración, no código. Se van a ajustar").
 
-// Los diez cuerpos, en el orden en que se leen. El PESO es el del reparto
-// ponderado de elementos y modalidades: luminarias 3, personales 2,
-// sociales 1,5, transpersonales 1.
+// Los diez cuerpos, en el orden en que se leen. Los pesos del balance de
+// elementos y modalidades NO son estos: están en criterios.js (Sol 7, Luna 7…).
+// `peso` queda solo para la vieja línea de hitos (efemerides.js, "principal").
 export const CUERPOS = [
   { clave: "sol",       nombre: "Sol",       glifo: "☉", peso: 3   },
   { clave: "luna",      nombre: "Luna",      glifo: "☽", peso: 3   },
@@ -33,15 +33,9 @@ export const SIGNOS = [
   { nombre: "Piscis",      glifo: "♓", elemento: "agua",   modalidad: "mutable"  },
 ];
 
-// Aspectos y ORBES. La conjunción es neutra a propósito: no suma ni a duros ni
-// a blandos, porque su carácter depende de qué dos planetas se juntan.
-export const ASPECTOS = [
-  { clave: "conjuncion", nombre: "conjunción", angulo: 0,   orbe: 8, tipo: "neutro" },
-  { clave: "sextil",     nombre: "sextil",     angulo: 60,  orbe: 4, tipo: "blando" },
-  { clave: "cuadratura", nombre: "cuadratura", angulo: 90,  orbe: 6, tipo: "duro"   },
-  { clave: "trigono",    nombre: "trígono",    angulo: 120, orbe: 6, tipo: "blando" },
-  { clave: "oposicion",  nombre: "oposición",  angulo: 180, orbe: 8, tipo: "duro"   },
-];
+// Aspectos y ORBES: viven en criterios.js (los criterios de Fernando, una sola
+// fuente para la portada y la carta). Se reexportan acá para lo que ya los leía.
+export { ASPECTOS, ORDEN_ELEMENTOS, ORDEN_MODALIDADES } from "./criterios.js";
 
 // El lugar del cielo del día (portada): amanecer, ocaso y horas planetarias.
 // Centro de la ciudad de Buenos Aires; longitud este positiva.
@@ -49,9 +43,3 @@ export const LUGAR_SITIO = { nombre: "Buenos Aires", latitud: -34.6037, longitud
 
 // Los tramos de la lectura de tensión. Mismos cortes que el mockup del brief.
 export const TRAMOS_TENSION = { trabado: 55, normal: 35 };
-
-export const ORDEN_ELEMENTOS = ["fuego", "tierra", "aire", "agua"];
-// OJO con el orden: cardinal y mutable empatan seguido, y el desempate lo
-// resuelve el orden de esta lista (el sort es estable). Cambiarla cambia qué
-// lectura sale en un día empatado.
-export const ORDEN_MODALIDADES = ["cardinal", "fijo", "mutable"];

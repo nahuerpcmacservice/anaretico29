@@ -1,79 +1,49 @@
 // Cálculos derivados del cielo: balance de elementos, modalidades, tensión y
-// las lecturas en castellano. El brief (sección 05) dice que el JavaScript del
-// mockup ES la especificación, así que esto lo replica al número: hay un test
-// que compara contra los valores del mockup (scripts/test-cielo.mjs).
+// las lecturas en castellano. Los criterios (pesos, orbes, porcentajes,
+// dominante, tensión) son los de Fernando y viven en criterios.js: acá solo se
+// les da la forma que esperan la portada y las vistas.
 //
 // Todo acá es PURO: recibe posiciones y devuelve números. No toca el motor de
 // efemérides ni la base. Por eso se puede testear sin server.
+import { TRAMOS_TENSION } from "./astro-config.js";
 import {
-  ASPECTOS, ORDEN_ELEMENTOS, ORDEN_MODALIDADES, TRAMOS_TENSION,
-} from "./astro-config.js";
-import { norm360 } from "./efemerides.js";
+  balance, aspectos as aspectosCriterio, tension as tensionCriterio, PESOS_BAROMETRO,
+} from "./criterios.js";
 
 /**
- * Reparto PONDERADO, no conteo simple: cada cuerpo aporta su peso al elemento
- * (o modalidad) de su signo.
+ * Reparto PONDERADO con los pesos de criterios.js (sin ángulos: 36 puntos):
+ * cada cuerpo aporta todo su peso al elemento (o modalidad) de su signo.
+ * Porcentajes con Math.round(100 × puntos / total), cada uno por su cuenta:
+ * la suma puede dar 99 o 101 (criterio de Fernando).
  *
- * Los porcentajes se redondean con REPARTO EXACTO DE RESTOS: se toma el piso de
- * cada uno y el sobrante se le da a los de mayor parte decimal. Redondear cada
- * uno por su cuenta da sumas de 99 o 101, y un balance que no suma 100 se lee
- * como un error de cálculo aunque no lo sea.
+ * Devuelve los grupos ordenados por puntos ({ clave, puntos, pc, dominante });
+ * en empate manda el orden de la lista (fuego, tierra, aire, agua / cardinal,
+ * fijo, mutable). La lista lleva además `dominantes` (todas las claves
+ * empatadas arriba, comparando puntos y no porcentajes) y `equilibrio` (empatan
+ * todos).
  */
-export function reparto(posiciones, campo, orden) {
-  const total = posiciones.reduce((a, p) => a + p.peso, 0);
-  const crudo = orden.map((clave) => {
-    const peso = posiciones.filter((p) => p[campo] === clave).reduce((a, p) => a + p.peso, 0);
-    return { clave, peso, exacto: total ? (peso / total) * 100 : 0, pc: 0 };
-  });
-  crudo.forEach((x) => { x.pc = Math.floor(x.exacto); });
-  // Sin cuerpos no hay nada que repartir. Sin este corte, el reparto de restos
-  // le da un punto a cada uno y sale un balance inventado sobre una lista vacía.
-  if (!total) return crudo;
-  let falta = 100 - crudo.reduce((a, x) => a + x.pc, 0);
-  crudo.slice()
-    .sort((a, b) => (b.exacto % 1) - (a.exacto % 1))
-    .forEach((x) => { if (falta > 0) { x.pc++; falta--; } });
-  // El sort es ESTABLE: en un empate manda el orden de la lista de entrada, que
-  // es el que fija astro-config. Cardinal y mutable empatan seguido y de ese
-  // desempate depende qué lectura sale.
-  return crudo.sort((a, b) => b.pc - a.pc);
+export function reparto(posiciones, campo, pesos = PESOS_BAROMETRO) {
+  const b = balance(posiciones, campo, pesos);
+  const lista = b.grupos.map((g) => ({ ...g, dominante: b.dominantes.includes(g.clave) }));
+  return Object.assign(lista, { total: b.total, dominantes: b.dominantes, equilibrio: b.equilibrio });
 }
 
-export const elementos = (pos) => reparto(pos, "elemento", ORDEN_ELEMENTOS);
-export const modalidades = (pos) => reparto(pos, "modalidad", ORDEN_MODALIDADES);
+export const elementos = (pos, pesos) => reparto(pos, "elemento", pesos);
+export const modalidades = (pos, pesos) => reparto(pos, "modalidad", pesos);
+
+/** Los aspectos mayores entre los diez planetas, con los orbes de criterios.js. */
+export const aspectos = (posiciones) => aspectosCriterio(posiciones);
 
 /**
- * Todos los aspectos entre pares de cuerpos, con los orbes de astro-config.
- * Con diez cuerpos son 45 pares.
- */
-export function aspectos(posiciones) {
-  const out = [];
-  for (let i = 0; i < posiciones.length; i++) {
-    for (let j = i + 1; j < posiciones.length; j++) {
-      let d = norm360(posiciones[i].longitud - posiciones[j].longitud);
-      if (d > 180) d = 360 - d;
-      const asp = ASPECTOS.find((a) => Math.abs(d - a.angulo) <= a.orbe);
-      if (!asp) continue;
-      out.push({
-        a: posiciones[i], b: posiciones[j], aspecto: asp,
-        separacion: d, orbe: Math.abs(d - asp.angulo),
-      });
-    }
-  }
-  return out;
-}
-
-/**
- * Tensión del cielo: duros sobre el total de duros y blandos. La conjunción
- * queda afuera de la cuenta por neutra — su carácter lo da qué se junta con qué.
+ * Tensión del cielo: tensos (cuadraturas y oposiciones) sobre tensos más
+ * fluidos (trígonos y sextiles); la conjunción queda afuera. Sin aspectos que
+ * cuenten, `porcentaje` es null (la portada muestra «—»). `duros`/`blandos`
+ * son los mismos números con el nombre que usan las vistas viejas.
  */
 export function tension(posiciones) {
   const lista = aspectos(posiciones);
-  const duros = lista.filter((x) => x.aspecto.tipo === "duro").length;
-  const blandos = lista.filter((x) => x.aspecto.tipo === "blando").length;
-  const total = duros + blandos;
-  const porcentaje = total ? Math.round((duros / total) * 100) : 0;
-  return { duros, blandos, total, porcentaje, aspectos: lista };
+  const t = tensionCriterio(lista);
+  return { ...t, duros: t.tensos, blandos: t.fluidos, aspectos: lista };
 }
 
 // --- Lecturas: textos FIJOS indexados por resultado, no texto generado -------

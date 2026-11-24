@@ -21,7 +21,7 @@ import { refsHtml, esExterna } from "./web-refs.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const WEB = path.join(HERE, "..", "src", "web");
-const VERSION = "20261123.5";
+const VERSION = "20261124.1";
 
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "cielo-portada-"));
 process.env.DB_PATH = path.join(tmp, "prueba.db");
@@ -90,9 +90,11 @@ try {
     igual("curso", v.curso, "Luna no vacía de curso");
     igual("radar: hora", v.radarHora, "14:42");
     igual("radar: aspecto", `☽ ${v.radarGlifo} ${v.radarOtro} ${v.radarAspecto} ${v.radarPlaneta}`, "☽ □ ☿ cuadratura Mercurio");
-    igual("barómetro: tensión", v.baroTension, "60");
+    igual("barómetro: tensión", v.baroTension, "60<small>%</small>");
     igual("barómetro: modalidad", `${v.baroModalidad} ${v.baroModalidadNombre}`, "64 Fija");
-    igual("barómetro: elemento", v.baroElementoNombre, "Aire");
+    // Con los pesos de Fernando (36 puntos) el elemento da el 47 % del prototipo (antes, 45 %)
+    igual("barómetro: elemento", `${v.baroElemento} ${v.baroElementoNombre}`, "47 Aire");
+    igual("barómetro: frase", v.baroResumen, "Predominio de aire; énfasis en sostener.");
     igual("retrógrados", v.retroCuenta, "4 ACTIVOS");
     const CINTA = [["☉", "Sol", "Libra 27°14′", false], ["☽", "Luna", "Acuario 18°50′", false], ["☿", "Mercurio", "Escorpio 20°10′", false],
       ["♀", "Venus", "Escorpio 02°53′", true], ["♂", "Marte", "Leo 12°42′", false], ["♃", "Júpiter", "Leo 22°48′", false],
@@ -167,7 +169,7 @@ try {
   igual("hojas en el orden del prototipo", JSON.stringify(hojas.filter((u) => !esExterna(u))), JSON.stringify(v(["styles.css", "compact.css", "rich.css", "combinado.css", "linea-tiempo/panorama.css",
     "paletas/pizarra-auto.css", "paletas/pizarra.css", "tipos/recomendado.css", "esquinas/media.css",
     "arreglos.css", "menu.css", "presentacion.css", "herramientas.css", "canales.css", "oferta.css",
-    "portada.css", "tonos.css", "movimiento.css", "portada-plaza.css", "linea-tiempo/opciones-lt.css"])));
+    "portada.css", "tonos.css", "movimiento.css", "portada-plaza.css", "linea-tiempo/opciones-lt.css", "assets/fuentes/simbolos.css"])));
   igual("scripts en el orden del prototipo", JSON.stringify(scripts.filter((u) => !esExterna(u))), JSON.stringify(v(["data.js", "app.js", "compact.js", "arreglos.js", "presentacion.js", "herramientas.js",
     "oferta.js", "portada.js", "portada-plaza.js", "menu.js", "movimiento.js", "rich.js", "linea-tiempo/opciones-lt.js"])));
 

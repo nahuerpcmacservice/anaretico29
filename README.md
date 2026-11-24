@@ -14,7 +14,8 @@ servidor, sin paso de build.
 ```bash
 npm install
 node scripts/importar-ciudades.mjs --apply   # padrón de ciudades (una vez)
-node scripts/bajar-fuentes.mjs               # fuentes autoalojadas (una vez)
+node scripts/bajar-fuentes.mjs               # fuentes del panel y del cartel (una vez)
+node scripts/bajar-fuentes-web.mjs           # fuentes de la web nueva (una vez; quedan en src/web/assets/fuentes/)
 node scripts/sembrar.mjs                     # contenido de arranque
 ADMIN_PASSWORD=loquesea node server.js       # http://127.0.0.1:3101
 ```
@@ -22,6 +23,10 @@ ADMIN_PASSWORD=loquesea node server.js       # http://127.0.0.1:3101
 El frente público está en `src/web/` y se genera con
 `node scripts/importar-web.mjs <carpeta web/ del diseño>`: copia solo lo que
 publican las páginas y les agrega `?v=` a los CSS y JS.
+
+El sitio no junta datos de los visitantes: no hay suscripción por mail ni
+formularios que guarden algo, y las fuentes se sirven desde el propio sitio
+(el navegador no le pide nada a Google Fonts).
 
 ## Tests
 
@@ -32,7 +37,8 @@ Ninguno necesita internet; los que levantan el router usan un puerto libre de
 node scripts/test-portero.mjs        # sitio cerrado: quién pasa y quién ve el cartel
 node scripts/test-web-nueva.mjs      # páginas, archivos publicados, Próximamente y redirecciones
 node scripts/test-cielo-portada.mjs  # el cielo de hoy y la línea de tiempo, con reloj fijo
-node scripts/test-suscripcion.mjs    # la suscripción mensual y /privacidad
+node scripts/test-suscripcion.mjs    # sin datos de visitantes: no hay suscripción ni /privacidad
+node scripts/test-criterios.mjs      # criterios de cálculo (pesos, orbes, tensión) y la portada
 node scripts/test-cielo.mjs          # cálculos derivados
 node scripts/test-efemerides.mjs     # el motor, cruzado contra astronomy-engine
 node scripts/test-geo.mjs            # ciudades y zona horaria histórica
@@ -42,6 +48,9 @@ node scripts/test-geo.mjs            # ciudades y zona horaria histórica
 
 - **`src/lib/efemerides.js`**: la única fuente de posiciones planetarias.
   Swiss Ephemeris 2.10.03 en WebAssembly, con los archivos DE441.
+- **`src/lib/criterios.js`**: los criterios de cálculo de Anaretico 29 en un
+  solo lugar (pesos del balance de 50 y de 36 puntos, orbes, tensión,
+  dominante y empates, aplicativo/separativo).
 - **`src/lib/cielo.js`**: cálculos derivados (elementos, modalidades, tensión).
 - **`src/lib/geo.js`**: ciudad → coordenadas y huso horario vigente en la
   fecha. Todo local: los datos de nacimiento no salen a ningún tercero.
@@ -56,5 +65,6 @@ node scripts/test-geo.mjs            # ciudades y zona horaria histórica
   logo y la marca «Anaretico 29» son © Fernando Javier Pérez, **todos los
   derechos reservados**. No están incluidos en la AGPL y no pueden reutilizarse
   sin su autorización.
-- Las fuentes tipográficas de `src/estatico/fuentes/` conservan la licencia de
-  sus autores (SIL Open Font License).
+- Las fuentes tipográficas de `src/estatico/fuentes/` y `src/web/assets/fuentes/`
+  conservan la licencia de sus autores (SIL Open Font License 1.1; el texto de
+  cada una está en `src/web/assets/fuentes/OFL-*.txt`).
