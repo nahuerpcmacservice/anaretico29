@@ -1,7 +1,7 @@
 // Carta natal y carta del momento · Diseño 2 "Observatorio" (oscuro, como el Observatorio de la portada y el estilo Terminal de Servicios).
 // Idea: un tablero de cotizaciones. Las posiciones son una fila compacta por cuerpo (glifo, signo, grado, casa, ℞ y velocidad), los aspectos son una
-// matriz planeta por planeta, y el significado de lo que se elige se lee en un panel lateral que se actualiza (en pantallas angostas, debajo de la fila o de la matriz).
-// Usa window.A29Carta de carta.js como biblioteca (datos, textos, ayudas y rueda en SVG); acá solo se arma la pantalla.
+// matriz planeta por planeta. La carta se muestra sola, sin textos de interpretación (S15).
+// Usa window.A29Carta de carta.js como biblioteca (datos, ayudas y rueda en SVG); acá solo se arma la pantalla.
 // Ningún número de la carta se escribe a mano: todo sale del JSON que calcula el servidor (POST /api/carta, GET /api/carta/momento).
 (function () {
  'use strict';
@@ -29,10 +29,8 @@
   if (/^[A-Z]{2}$/.test(ch)) { var e = el('span', 'ob-ang-t', ch); e.setAttribute('aria-hidden', 'true'); return e; }
   return glifo(ch, cls);
  }
- function tx(v) { return v && typeof v === 'object' ? v.texto : v; } // las funciones de textos devuelven {texto, propio} o la oración
  function sr(t) { return el('span', 'ob-sr', t); }
  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
- var uniq = 0;
 
  // El modo se fija antes de cargar: así el momento nunca muestra textos de la carta natal ni el aviso del mail, aunque falle la carga.
  var MODO = A.modoDe();
@@ -56,24 +54,21 @@
   document.title = 'Anaretico 29 · ' + (m ? 'La carta del momento' : 'Tu carta natal');
   if (m) {
    $('[data-bajada]').textContent = i
-    ? 'El cielo de ahora: ' + A.formato.fecha(i.date) + ', ' + i.time + ' de Buenos Aires (' + carta.meta.utc_instant.slice(11, 16) + ' UTC). Las posiciones, casas, balance de elementos y aspectos, con sus posibles significados.'
+    ? 'El cielo de ahora: ' + A.formato.fecha(i.date) + ', ' + i.time + ' de Buenos Aires (' + carta.meta.utc_instant.slice(11, 16) + ' UTC). Las posiciones, casas, balance de elementos y aspectos.'
     : 'Las posiciones, casas, balance de elementos y aspectos del cielo de ahora, para Buenos Aires.';
    $('[data-sello]').textContent = 'Cielo de ahora';
   } else {
-   $('[data-bajada]').textContent = 'Tus posiciones, casas, balance de elementos y aspectos, con sus posibles significados.';
+   $('[data-bajada]').textContent = 'Tus posiciones, casas, balance de elementos y aspectos.';
    $('[data-sello]').textContent = 'Con tus datos';
   }
   var otro = $('[data-otro]');
   otro.hidden = m; otro.textContent = 'Ver la carta del momento'; otro.href = '/carta?modo=momento';
-  $('[data-leer-t]').textContent = m ? 'Cómo leer esta carta' : 'Cómo leer tu carta';
   var nota = $('[data-sinhora-nota]');
   nota.hidden = !sin;
   if (sin) {
    var resto = carta && carta.meta.time_note ? carta.meta.time_note.replace(/^No se conoce la hora de nacimiento:\s*/, '') : '';
    nota.textContent = NOTA_SIN_HORA + '.' + (resto ? ' ' + cap(resto) : '');
   }
-  var cie = $('[data-cierre-t]');
-  if (cie) cie.textContent = m ? 'En una consulta leemos el cielo de un momento con tus preguntas, sin atajos.' : 'En una consulta miramos la carta completa con tu historia y tus preguntas, sin atajos.';
  }
 
  function campo(dl, k, v, ancho) { var d = el('div', 'ob-dr' + (ancho ? ' ob-dr-ancho' : '')); d.appendChild(el('dt', '', k)); d.appendChild(el('dd', '', v)); dl.appendChild(d); }
@@ -107,10 +102,10 @@
  }
 
  // Cinta de posiciones, como un ticker (estática: sin movimiento). Repite lo que dice el tablero, por eso va oculta a lectores de pantalla.
- function cinta(carta, sig, modo) {
+ function cinta(carta) {
   var ul = $('[data-cinta]'); ul.textContent = '';
-  var angs = A.filasAngulos(carta, sig, modo).filter(function (a) { return a.id === 'asc' || a.id === 'mc'; }).map(function (a) { return { g: a.etiqueta, n: a.nombre, gs: a.glifoSigno, p: a.grados, r: false }; });
-  var filas = angs.concat(A.filasCuerpos(carta, sig, modo).map(function (f) { return { g: f.glifo, n: f.nombre, gs: f.glifoSigno, p: f.grados, r: f.retrogrado }; }));
+  var angs = A.filasAngulos(carta).filter(function (a) { return a.id === 'asc' || a.id === 'mc'; }).map(function (a) { return { g: a.etiqueta, n: a.nombre, gs: a.glifoSigno, p: a.grados, r: false }; });
+  var filas = angs.concat(A.filasCuerpos(carta).map(function (f) { return { g: f.glifo, n: f.nombre, gs: f.glifoSigno, p: f.grados, r: f.retrogrado }; }));
   filas.forEach(function (f) {
    var li = el('li', 'ob-tk'); li.title = f.n;
    li.appendChild(glifoAsp(f.g, 'ob-gp'));
@@ -136,149 +131,58 @@
   });
  }
 
- // ---------------------------------------------------------------- selección: un solo lugar de lectura (panel lateral o debajo de la fila)
- var ctx = null;          // { carta, sig, modo, svg, cuerpos, angulos, lista, mapa }
- var reg = {};            // clave -> { btn, slot }
- var sel = null;          // clave elegida
- var ANCHO = window.matchMedia('(min-width:1100px)');
-
- function bloque(etq, texto) { var d = el('div', 'ob-lec-b'); d.appendChild(el('p', 'ob-lec-l', etq)); d.appendChild(el('p', 'ob-lec-t', texto)); return d; }
- function leerContenido(s) {
-  var c = ctx, d = el('div', 'ob-lec'), modo = c.modo, tt = el('h3', 'ob-lec-h'), pos = el('p', 'ob-lec-p');
-  d.appendChild(el('p', 'ob-kick', 'Posible significado · borrador'));
-  if (s.t === 'aspecto') {
-   var a = c.lista[s.i], raw = c.carta.aspects[s.i];
-   var g = el('span', 'ob-lec-g'); g.appendChild(glifoAsp(a.glifoA, 'ob-gp')); var gt = glifo(a.tipoGlifo, 'ob-gt'); gt.style.color = COLORES.aspectos[a.tipo]; g.appendChild(gt); g.appendChild(glifoAsp(a.glifoB, 'ob-gp'));
-   tt.appendChild(g); tt.appendChild(el('span', '', a.nombreA + ' ' + a.tipoNombre.toLowerCase() + ' ' + a.nombreB));
-   d.appendChild(tt);
-   pos.textContent = a.tipoNombre + ' (' + a.angulo + ') · orbe ' + a.orbe + ' · ' + a.fase;
-   d.appendChild(pos);
-   d.appendChild(el('p', 'ob-lec-t', tx(A.textos.aspecto(c.carta, raw, c.sig, modo))));
-   var gen = el('p', 'ob-peq'); gen.appendChild(el('strong', '', a.tipoNombre + ' (' + a.angulo + '): ')); gen.appendChild(document.createTextNode(a.textoTipo)); d.appendChild(gen);
-   return d;
-  }
-  var f = s.t === 'cuerpo' ? c.cuerpos[s.id] : c.angulos[s.id];
-  var gl = s.t === 'cuerpo' ? f.glifo : f.etiqueta;
-  tt.appendChild(glifoAsp(gl, 'ob-gp')); tt.appendChild(el('span', '', f.nombre)); d.appendChild(tt);
-  var partes = [f.signo + ' ' + f.grados];
-  if (s.t === 'cuerpo' && f.casa != null) partes.push('casa ' + f.casa);
-  pos.textContent = partes.join(' · '); d.appendChild(pos);
-  var rol = A.textos.rol(c.carta, s.id, c.sig, modo);
-  if (rol) d.appendChild(el('p', 'ob-lec-t ob-lec-rol', tx(rol)));
-  var b = c.bruto[s.id];
-  if (s.t === 'cuerpo') {
-   d.appendChild(bloque('En ' + f.signo, tx(A.textos.planetaSigno(c.carta, s.id, c.sig, modo))));
-   if (b.house != null) d.appendChild(bloque('En la casa ' + f.casa + (f.casaNombre ? ' · ' + f.casaNombre.toLowerCase() : ''), tx(A.textos.planetaCasa(c.carta, s.id, c.sig, modo))));
-   d.appendChild(el('p', 'ob-peq', 'Movimiento diario: ' + f.velocidad + (f.retrogrado ? ' (retrógrado)' : '') + '.'));
-  } else if (s.id === 'asc' || s.id === 'mc') {
-   d.appendChild(bloque('En ' + f.signo, tx(A.textos.angulo(c.carta, s.id, c.sig, modo))));
-  }
-  return d;
+ // ---------------------------------------------------------------- S15: la carta se muestra sola (Fernando, 24/11/2026)
+ // El dibujo, las posiciones, las casas, el balance y los aspectos, sin textos de interpretación: nada se elige para leer.
+ // Pasar el puntero por una celda de la matriz o por un aspecto de la lista resalta su línea en la rueda.
+ function nombrePunto(glifoTxt, nombre) { // el glifo y el nombre, con la misma caja que tenían los botones del tablero
+  var s = el('span', 'ob-sel ob-sel-dato');
+  s.appendChild(glifoAsp(glifoTxt, 'ob-gp')); s.appendChild(el('span', '', nombre));
+  return s;
  }
-
- function vaciar(n) { while (n.firstChild) n.removeChild(n.firstChild); }
- function seleccionar(s) {
-  var k = s ? s.t + ':' + (s.t === 'aspecto' ? s.i : s.id) : null;
-  if (k === sel) { s = null; k = null; }
-  sel = k;
-  var mx = $('[data-mx-inline]'), panel = $('[data-panel]');
-  Object.keys(reg).forEach(function (c) {
-   var r = reg[c], on = c === k;
-   r.btn.setAttribute('aria-expanded', String(on));
-   r.btn.classList.toggle('is-sel', on);
-   if (r.fila) r.fila.classList.toggle('is-sel', on);
-   if (r.slot !== mx) { var cont = r.slot.firstChild.firstChild; vaciar(cont); r.slot.hidden = !on; if (on) cont.appendChild(leerContenido(s)); }
-  });
-  vaciar(mx); mx.hidden = true;
-  vaciar(panel);
-  if (!s) { panel.appendChild(el('p', 'ob-vacio', 'Elegí un cuerpo del tablero' + (ctx.matriz ? ' o una celda de la matriz' : '') + ' para leer su posible significado.')); }
-  else {
-   panel.appendChild(leerContenido(s));
-   if (s.t === 'aspecto') { mx.appendChild(leerContenido(s)); mx.hidden = false; }
-  }
-  A.resaltar(ctx.svg, s && s.t === 'aspecto' ? s.i : null);
- }
- function enlazar(btn, s, slot) {
-  var k = s.t + ':' + (s.t === 'aspecto' ? s.i : s.id);
-  reg[k] = { btn: btn, slot: slot, fila: btn.closest('tr.ob-fila') };
-  btn.setAttribute('aria-expanded', 'false');
-  btn.setAttribute('aria-controls', ANCHO.matches ? 'ob-panel' : slot.id);
-  btn.addEventListener('click', function () { seleccionar(s); });
- }
- ANCHO.addEventListener && ANCHO.addEventListener('change', function () {
-  Object.keys(reg).forEach(function (c) { var r = reg[c]; r.btn.setAttribute('aria-controls', ANCHO.matches ? 'ob-panel' : r.slot.id); });
- });
- function flechas(btns) { // ↑ ↓ entre las filas del tablero
-  btns.forEach(function (b, i) {
-   b.addEventListener('keydown', function (e) {
-    var j = e.key === 'ArrowDown' ? i + 1 : e.key === 'ArrowUp' ? i - 1 : -1;
-    if (j < 0 || j >= btns.length) return;
-    e.preventDefault(); btns[j].focus();
-   });
-  });
- }
- function boton(glifoTxt, nombre) {
-  var b = el('button', 'ob-sel'); b.type = 'button';
-  b.appendChild(glifoAsp(glifoTxt, 'ob-gp')); b.appendChild(el('span', '', nombre));
-  return b;
- }
- function filaSlot(tr, cols) { // fila de lectura debajo de la fila elegida (solo se ve en pantallas angostas)
-  var id = 'ob-m-' + (++uniq), tm = el('tr', 'ob-mean'); tm.id = id; tm.hidden = true;
-  var td = el('td'); td.colSpan = cols; td.appendChild(el('div', 'ob-mean-c')); tm.appendChild(td);
-  tr.parentNode.insertBefore(tm, tr.nextSibling);
-  return tm;
+ function resaltarAl(n, svg, i) {
+  n.addEventListener('mouseenter', function () { A.resaltar(svg, i); });
+  n.addEventListener('mouseleave', function () { A.resaltar(svg, null); });
  }
 
  // ---------------------------------------------------------------- Posiciones: tablero de cotizaciones
- function tablero(carta, sig, modo, sin) {
-  var tb = $('[data-tabla] tbody'), btns = []; tb.textContent = '';
-  $('[data-col-casa]').hidden = sin;
-  A.filasCuerpos(carta, sig, modo).forEach(function (f) {
+ function tablero(carta) {
+  var tb = $('[data-tabla] tbody'); tb.textContent = '';
+  $('[data-col-casa]').hidden = false;
+  A.filasCuerpos(carta).forEach(function (f) {
    var tr = el('tr', 'ob-fila'); tb.appendChild(tr);
-   var c1 = el('th', 'ob-c-cuerpo'); c1.scope = 'row'; var b = boton(f.glifo, f.nombre); c1.appendChild(b); tr.appendChild(c1); btns.push(b);
+   var c1 = el('th', 'ob-c-cuerpo'); c1.scope = 'row'; c1.appendChild(nombrePunto(f.glifo, f.nombre)); tr.appendChild(c1);
    var c2 = el('td', 'ob-c-signo'); c2.appendChild(glifo(f.glifoSigno, 'ob-gs')); c2.appendChild(el('span', '', f.signo)); tr.appendChild(c2);
    tr.appendChild(el('td', 'ob-r ob-num ob-c-grado', f.grados));
-   if (!sin) tr.appendChild(el('td', 'ob-r ob-num ob-c-casa', f.casa == null ? '' : f.casa));
+   tr.appendChild(el('td', 'ob-r ob-num ob-c-casa', f.casa));
    var c5 = el('td', 'ob-r ob-num ob-c-vel' + (f.retrogrado ? ' is-rx' : ''));
    if (f.retrogrado) { c5.appendChild(glifo(A.glifo.retrogrado, 'ob-rx')); c5.appendChild(sr('Retrógrado, ')); } else c5.appendChild(sr('Directo, '));
    c5.appendChild(el('span', '', f.velocidad)); tr.appendChild(c5);
-   var slot = filaSlot(tr, sin ? 4 : 5);
-   enlazar(b, { t: 'cuerpo', id: f.id }, slot);
-   tr.addEventListener('click', function (e) { if (!e.target.closest('button')) seleccionar({ t: 'cuerpo', id: f.id }); });
   });
-  flechas(btns);
  }
 
  // ---------------------------------------------------------------- Casas y ángulos
- function casasYAngulos(carta, sig, modo, sin) {
-  var tc = $('[data-casas] tbody'), ta = $('[data-angulos] tbody'), btns = []; tc.textContent = ''; ta.textContent = '';
-  $('[data-con-casas]').hidden = sin;
-  var ns = $('[data-sinhora-casas]'); ns.hidden = !sin; ns.textContent = sin ? NOTA_SIN_HORA + ': no hay casas ni ángulos para mostrar. Los planetas, el balance y los aspectos entre planetas sí se calculan.' : '';
-  $('[data-nota-casas]').hidden = sin;
-  if (sin) return;
-  A.filasCasas(carta, sig, modo).forEach(function (h) {
+ function casasYAngulos(carta) {
+  var tc = $('[data-casas] tbody'), ta = $('[data-angulos] tbody'); tc.textContent = ''; ta.textContent = '';
+  $('[data-con-casas]').hidden = false; $('[data-sinhora-casas]').hidden = true; $('[data-nota-casas]').hidden = false;
+  A.filasCasas(carta).forEach(function (h) {
    var tr = el('tr');
    var a = el('th', 'ob-r ob-num', h.casa); a.scope = 'row'; tr.appendChild(a);
-   tr.appendChild(el('td', '', h.nombre));
    var c = el('td', 'ob-num'); c.appendChild(glifo(h.glifoSigno, 'ob-gs')); c.appendChild(el('span', '', h.signo + ' ' + h.grados)); tr.appendChild(c);
    tc.appendChild(tr);
   });
-  A.filasAngulos(carta, sig, modo).forEach(function (a) {
+  A.filasAngulos(carta).forEach(function (a) {
    var tr = el('tr', 'ob-fila'); ta.appendChild(tr);
-   var c0 = el('th', 'ob-c-cuerpo'); c0.scope = 'row'; var b = boton(a.etiqueta, a.nombre); c0.appendChild(b); tr.appendChild(c0); btns.push(b);
+   var c0 = el('th', 'ob-c-cuerpo'); c0.scope = 'row'; c0.appendChild(nombrePunto(a.etiqueta, a.nombre)); tr.appendChild(c0);
    var c1 = el('td', 'ob-num'); c1.appendChild(glifo(a.glifoSigno, 'ob-gs')); c1.appendChild(el('span', '', a.signo + ' ' + a.grados)); tr.appendChild(c1);
-   enlazar(b, { t: 'angulo', id: a.id }, filaSlot(tr, 2));
-   tr.addEventListener('click', function (e) { if (!e.target.closest('button')) seleccionar({ t: 'angulo', id: a.id }); });
   });
-  flechas(btns);
  }
 
  // ---------------------------------------------------------------- Matriz de aspectos (triángulo planeta por planeta)
- function matriz(carta, lista) {
+ function matriz(carta, lista, svg) {
   var puntos = carta.aspect_rules.points.filter(function (id) { return A.punto(carta, id); });
   var mapa = {};
   lista.forEach(function (a) { mapa[a.a + '|' + a.b] = a; mapa[a.b + '|' + a.a] = a; });
-  var th = $('[data-matriz] thead'), tb = $('[data-matriz] tbody'), n = puntos.length, grilla = [], mx = $('[data-mx-inline]');
+  var th = $('[data-matriz] thead'), tb = $('[data-matriz] tbody'), n = puntos.length;
   th.textContent = ''; tb.textContent = '';
   // las referencias ocupan la mitad vacía del triángulo (arriba a la derecha): ancho = la mitad de las columnas de celdas
   $('.ob-mx-w').style.setProperty('--mx-ancho', (Math.floor((n - 1) / 2) / n * 100).toFixed(2) + '%');
@@ -287,62 +191,35 @@
   for (var c = 0; c < n - 1; c++) h0.appendChild(cab(puntos[c], false));
   th.appendChild(h0);
   for (var r = 1; r < n; r++) {
-   var tr = el('tr'); tr.appendChild(cab(puntos[r], true)); grilla[r] = [];
+   var tr = el('tr'); tr.appendChild(cab(puntos[r], true));
    for (var k = 0; k < r; k++) {
     var td = el('td', 'ob-mx-c'), a = mapa[puntos[r] + '|' + puntos[k]];
     if (a) {
-     var b = el('button', 'ob-mx-b'); b.type = 'button';
-     b.setAttribute('aria-label', a.nombreA + ' ' + a.tipoNombre.toLowerCase() + ' ' + a.nombreB + ', orbe ' + a.orbe + ', ' + a.fase);
+     var b = el('span', 'ob-mx-b');
+     b.appendChild(sr(a.nombreA + ' ' + a.tipoNombre.toLowerCase() + ' ' + a.nombreB + ', orbe ' + a.orbe + ', ' + a.fase));
      var g = glifo(a.tipoGlifo, 'ob-mx-g'); g.style.color = COLORES.aspectos[a.tipo]; b.appendChild(g);
      var o = el('span', 'ob-mx-o'); o.setAttribute('aria-hidden', 'true'); o.appendChild(el('span', 'ob-mx-f', MARCA[a.fase] || '')); o.appendChild(document.createTextNode(a.orbe)); b.appendChild(o);
-     td.appendChild(b); grilla[r][k] = b;
-     enlazar(b, { t: 'aspecto', i: a.indice }, mx);
+     td.appendChild(b); resaltarAl(b, svg, a.indice);
     }
     tr.appendChild(td);
    }
    tb.appendChild(tr);
   }
-  // flechas entre celdas: salta las vacías en la dirección elegida
-  grilla.forEach(function (fila, r) {
-   if (!fila) return;
-   fila.forEach(function (b, k) {
-    if (!b) return;
-    b.addEventListener('keydown', function (e) {
-     var dr = e.key === 'ArrowDown' ? 1 : e.key === 'ArrowUp' ? -1 : 0, dk = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-     if (!dr && !dk) return;
-     e.preventDefault();
-     var rr = r + dr, kk = k + dk;
-     while (rr >= 1 && rr < n && kk >= 0 && kk < n - 1) { if (grilla[rr] && grilla[rr][kk]) { grilla[rr][kk].focus(); return; } rr += dr; kk += dk; }
-    });
-   });
-  });
-  return n > 1;
  }
 
  // ---------------------------------------------------------------- Lista de aspectos (para lectores de pantalla y celulares)
- function aspectos(carta, sig, svg, lista, modo) {
+ function aspectos(carta, svg, lista) {
   var cont = $('[data-aspectos]'), cab = cont.querySelector('.ob-asp-cab');
   cont.textContent = ''; if (cab) cont.appendChild(cab);
   lista.forEach(function (a) {
-   var d = el('details', 'ob-asp'), s = el('summary');
+   var d = el('div', 'ob-asp'), s = el('div', 'ob-asp-r');
    var g = el('span', 'ob-asp-g'); g.appendChild(glifoAsp(a.glifoA, 'ob-gp')); var gt = glifo(a.tipoGlifo, 'ob-gt'); gt.style.color = COLORES.aspectos[a.tipo]; g.appendChild(gt); g.appendChild(glifoAsp(a.glifoB, 'ob-gp')); s.appendChild(g);
    s.appendChild(el('span', 'ob-asp-n', a.nombreA + ' ' + a.tipoNombre.toLowerCase() + ' ' + a.nombreB));
    var o = el('span', 'ob-asp-o'); o.appendChild(el('span', 'ob-l', 'orbe ')); o.appendChild(document.createTextNode(a.orbe)); s.appendChild(o);
    var f = el('span', 'ob-asp-f ' + (a.fase === 'aplicativo' ? 'is-ap' : 'is-sp'));
    var mk = el('b', 'ob-mk', MARCA[a.fase] || ''); mk.setAttribute('aria-hidden', 'true'); f.appendChild(mk);
    f.appendChild(el('span', '', cap(a.fase))); s.appendChild(f);
-   s.appendChild(el('span', 'ob-ver-m')); s.lastChild.setAttribute('aria-hidden', 'true');
-   d.appendChild(s);
-   var c = el('div', 'ob-asp-c');
-   c.appendChild(el('p', 'ob-kick', 'Posible significado · borrador'));
-   c.appendChild(el('p', '', tx(A.textos.aspecto(carta, carta.aspects[a.indice], sig, modo))));
-   var gen = el('p', 'ob-peq'); gen.appendChild(el('strong', '', a.tipoNombre + ' (' + a.angulo + '): ')); gen.appendChild(document.createTextNode(a.textoTipo)); c.appendChild(gen);
-   d.appendChild(c);
-   var quita = function () { A.resaltar(svg, d.open ? a.indice : (sel && /^aspecto:/.test(sel) ? +sel.slice(8) : null)); };
-   s.addEventListener('mouseenter', function () { A.resaltar(svg, a.indice); });
-   s.addEventListener('focus', function () { A.resaltar(svg, a.indice); });
-   s.addEventListener('mouseleave', quita); s.addEventListener('blur', quita);
-   d.addEventListener('toggle', quita);
+   d.appendChild(s); resaltarAl(d, svg, a.indice);
    cont.appendChild(d);
   });
   var det = $('[data-lista]');
@@ -350,11 +227,11 @@
  }
 
  // ---------------------------------------------------------------- Balance: barras horizontales, como la profundidad de un mercado
- function barras(cont, filas, dest, grupo, carta, sig, modo) {
+ function barras(cont, filas, dest, carta, grupo) {
   cont.textContent = '';
   filas.forEach(function (f) {
    var r = el('div', 'ob-b' + (f.dominante ? ' is-dom' : ''));
-   var n = el('div', 'ob-b-n'); n.appendChild(el('strong', '', f.nombre)); n.appendChild(el('small', '', f.palabra));
+   var n = el('div', 'ob-b-n'); n.appendChild(el('strong', '', f.nombre));
    if (f.dominante) n.appendChild(el('em', 'ob-b-dom', 'Predomina'));
    r.appendChild(n);
    var t = el('div', 'ob-b-t'); t.style.setProperty('--n', f.total); t.setAttribute('role', 'img'); t.setAttribute('aria-label', f.nombre + ': ' + f.cantidad + ' de ' + f.total + ' puntos, ' + f.porcentaje + '%');
@@ -367,68 +244,58 @@
    r.appendChild(g);
    cont.appendChild(r);
   });
-  var t = A.textos.balance(carta, sig, grupo, modo);
   dest.textContent = '';
-  dest.appendChild(el('strong', '', t.titulo + ' '));
-  dest.appendChild(document.createTextNode(t.texto));
+  dest.appendChild(el('strong', '', A.dominante(carta, grupo)));
  }
 
- // Cómo leer: los pasos dependen de la pantalla (tablero y matriz) y de si hay hora
- function comoLeer(modo, sin) {
-  var ol = $('[data-leer]'); ol.textContent = '';
-  var pasos = [
-   ['La rueda. ', sin
-    ? 'Sin la hora de nacimiento no hay Ascendente ni casas: la rueda muestra los signos y los planetas en su posición. Los signos avanzan en sentido contrario a las agujas del reloj.'
-    : 'El Ascendente (AC) queda a la izquierda y los signos avanzan en sentido contrario a las agujas del reloj. Las doce casas se numeran desde el Ascendente.'],
-   ['El tablero de posiciones. ', 'Cada fila es un cuerpo: el planeta es una función (pensar, sentir, actuar); el signo, el modo en que se expresa' + (sin ? '.' : '; la casa, el área de la vida donde se nota.')],
-   ['Aspectos y orbe. ', 'Las líneas de la rueda y las celdas de la matriz unen planetas que forman, con cierto margen (orbe), un ángulo de 0°, 60°, 90°, 120° o 180°. El orbe es cuánto se aparta de ese ángulo exacto: cuanto menor, más fuerte.'],
-   ['Retrógrado (℞︎). ', 'Visto desde la Tierra, el planeta parece ir hacia atrás. En la lectura suele señalar un tema que se revisa o se vive más hacia adentro.'],
-   ['Posibles significados. ', 'Son lecturas orientativas, no sentencias: una carta describe tendencias y recursos, y no decide lo que va a pasar.']
-  ];
-  pasos.forEach(function (p) { var li = el('li'); li.appendChild(el('strong', '', p[0])); li.appendChild(document.createTextNode(p[1])); ol.appendChild(li); });
+ // S18: «si la carta no se puede calcular completa, no se muestra». Con alguna parte que falte (o que no sea un número) no se dibuja nada:
+ // ni la rueda ni tablas a medias; queda el aviso de sinCarta().
+ function finito(x) { return typeof x === 'number' && isFinite(x); }
+ function completa(c) {
+  return !!(c && c.meta && c.meta.input && c.meta.hora_conocida !== false
+   && Array.isArray(c.bodies) && c.bodies.length === 12 && c.bodies.every(function (b) { return finito(b.longitude) && finito(b.speed) && finito(b.house); })
+   && Array.isArray(c.angles) && c.angles.length === 4 && c.angles.every(function (a) { return finito(a.longitude); })
+   && Array.isArray(c.houses) && c.houses.length === 12 && c.houses.every(function (h) { return finito(h.cusp); })
+   && Array.isArray(c.aspects) && c.aspect_rules && Array.isArray(c.aspect_rules.points)
+   && c.balance && finito(c.balance.total) && Array.isArray(c.balance.elements) && Array.isArray(c.balance.modalities));
  }
 
  function pintar(r) {
-  var modo = r.modo, carta = r.carta, sig = r.significados, sin = modo === 'natal' && A.sinHora(carta);
-  encabezado(modo, sin, carta);
-  datos(modo, sin, carta); cinta(carta, sig, modo); leyenda($('[data-leyenda]')); leyenda($('[data-leyenda-mx]'));
+  var modo = r.modo, carta = r.carta;
+  if (!completa(carta)) { var x = new Error('carta incompleta'); x.incompleta = true; throw x; }
+  encabezado(modo, false, carta);
+  datos(modo, false, carta); cinta(carta); leyenda($('[data-leyenda]')); leyenda($('[data-leyenda-mx]'));
   var svg = $('[data-rueda]');
   A.dibujarRueda(svg, carta, { colores: COLORES }, modo);
-  var lista = A.listaAspectos(carta, sig, modo), cuerpos = {}, angulos = {}, bruto = {};
-  A.filasCuerpos(carta, sig, modo).forEach(function (f) { cuerpos[f.id] = f; });
-  A.filasAngulos(carta, sig, modo).forEach(function (f) { angulos[f.id] = f; });
-  carta.bodies.concat(carta.angles).forEach(function (b) { bruto[b.id] = b; });
-  reg = {}; sel = null;
-  ctx = { carta: carta, sig: sig, modo: modo, svg: svg, cuerpos: cuerpos, angulos: angulos, bruto: bruto, lista: lista, matriz: true };
-  tablero(carta, sig, modo, sin); casasYAngulos(carta, sig, modo, sin);
-  ctx.matriz = matriz(carta, lista);
+  var lista = A.listaAspectos(carta);
+  tablero(carta); casasYAngulos(carta);
+  matriz(carta, lista, svg);
   $('[data-regla]').textContent = carta.balance.rule;
   $('[data-difiere]').hidden = true; // el mismo criterio que la portada (Fernando, 24/11/2026)
-  barras($('[data-elementos]'), A.filasBalance(carta, sig, 'elements', modo), $('[data-dom-elementos]'), 'elements', carta, sig, modo);
-  barras($('[data-modalidades]'), A.filasBalance(carta, sig, 'modalities', modo), $('[data-dom-modalidades]'), 'modalities', carta, sig, modo);
+  barras($('[data-elementos]'), A.filasBalance(carta, 'elements'), $('[data-dom-elementos]'), carta, 'elements');
+  barras($('[data-modalidades]'), A.filasBalance(carta, 'modalities'), $('[data-dom-modalidades]'), carta, 'modalities');
   $('[data-regla-aspectos]').textContent = carta.aspect_rules.rule;
   $('[data-n-aspectos]').textContent = carta.aspects.length + ' aspectos, del más exacto al menos exacto.';
-  aspectos(carta, sig, svg, lista, modo);
-  comoLeer(modo, sin);
+  aspectos(carta, svg, lista);
   raiz.classList.add('is-listo');
   var pdf = $('[data-pdf]'); if (pdf) pdf.hidden = modo !== 'natal';
   var cargando = $('[data-cargando]'); if (cargando) cargando.hidden = true;
-  seleccionar(null);
-  if (ANCHO.matches) seleccionar({ t: 'cuerpo', id: 'sun' }); // en pantalla ancha el panel arranca con el Sol
  }
 
+ // S16 (Fernando: «Carta del momento: sin botón de PDF. Se muestra la carta y nada más.»): el botón y su nota salen de la página.
+ if (MODO !== 'natal') { var sinPdf = $('[data-pdf]'); if (sinPdf) sinPdf.remove(); }
  // S14: el PDF es la impresión del navegador («Guardar como PDF») con la hoja @media print de carta-op2.css: nada sale a otro servicio.
  function paraImprimir() { var d = $('[data-lista]'); if (d) d.open = true; }
  window.addEventListener('beforeprint', paraImprimir);
  var bpdf = $('[data-pdf-btn]');
  if (bpdf) bpdf.addEventListener('click', function () { paraImprimir(); window.print(); });
 
- // Sin carta (datos rechazados, el límite de la semana o un error): solo el aviso y el cierre, nada a medias.
+ // Sin carta (datos rechazados, el límite de la semana, una carta incompleta o un error): solo el aviso, nada a medias.
  var LIMITE_TXT = 'Ya calculaste tus 2 cartas de esta semana. Si querés una lectura completa, agendá una consulta';
  var WHATSAPP = 'https://wa.me/5491153144378';
  function sinCarta(err) {
   raiz.querySelector('.ob-top').classList.add('ob-top-sola'); // sin la rueda, la cabecera en una columna (carta-op2.css)
-  Array.prototype.forEach.call(raiz.querySelectorAll('.ob-lado, .ob-ficha, .ob-cinta, .ob-mesa-w, #balance, #como-leer'), function (n) { n.style.display = 'none'; });
+  Array.prototype.forEach.call(raiz.querySelectorAll('.ob-lado, .ob-ficha, .ob-cinta, .ob-mesa-w, #balance'), function (n) { n.style.display = 'none'; });
   var c = $('[data-cargando]'), p, a;
   if (!c) return;
   c.hidden = false; c.textContent = '';

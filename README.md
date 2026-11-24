@@ -35,7 +35,17 @@ formularios que guarden algo, y las fuentes se sirven desde el propio sitio
   en JSON devuelve la carta natal; `GET /api/carta/momento`, la del momento
   (Buenos Aires, el minuto en curso; se puede cachear hasta que termina ese
   minuto). Los errores vuelven con 400 y `{ "campo", "mensaje" }`; **sin hora
-  no hay carta**.
+  no hay carta**. Nacimientos desde 1900 (antes: «Por ahora calculo desde 1900
+  en adelante.»).
+- **La carta va completa o no va.** Más allá de los círculos polares las casas
+  Placidus no existen: la respuesta es 400 con «Para este lugar de nacimiento
+  no es posible calcular las casas de la carta.» y la página muestra solo ese
+  mensaje (sin rueda ni tablas), igual que cuando falta la hora. Si cualquier
+  otra parte no se pudo calcular, tampoco se muestra nada. Un rechazo no cuenta
+  para el límite.
+- **La carta se muestra sola**: la rueda, las posiciones, los aspectos (matriz
+  y lista), las casas, el balance y los datos usados, sin textos de
+  interpretación ni invitaciones a una consulta.
 - Los datos de nacimiento **no viajan en ninguna dirección que llegue al
   servidor**: el formulario de la portada lleva a `/carta#fecha=…&hora=…&lugar=…`
   (lo que va después del `#` no se manda) y la página pide la carta por POST.
@@ -45,8 +55,9 @@ formularios que guarden algo, y las fuentes se sirven desde el propio sitio
 - Criterios: tropical, Placidus, casa por intervalos entre cúspides, balance
   de 50 puntos, aspectos solo entre los diez planetas con orbes 8/8/6/6/4
   (`src/lib/criterios.js`).
-- **«Descargar mi carta en PDF»** usa la impresión del navegador (hoja
-  `@media print`); no hay servicios de terceros.
+- **«Descargar mi carta en PDF»** (solo en la carta natal; la del momento no
+  lleva PDF) usa la impresión del navegador (hoja `@media print`); no hay
+  servicios de terceros.
 - **Límite**: 2 cartas natales cada 7 días por navegador, contadas en el
   navegador (`localStorage`, ventana corrida de 7 días; volver a calcular los
   mismos datos no cuenta otra vez). La carta del momento no tiene límite.
@@ -65,7 +76,7 @@ node scripts/test-criterios.mjs      # criterios de cálculo (pesos, orbes, tens
 node scripts/test-cielo.mjs          # cálculos derivados
 node scripts/test-efemerides.mjs     # el motor, cruzado contra astronomy-engine
 node scripts/test-geo.mjs            # ciudades y zona horaria histórica
-node scripts/test-carta.mjs          # la carta: referencias, orbes, casas, balance, API, pantalla, PDF y límite
+node scripts/test-carta.mjs          # la carta: referencias, orbes, casas, balance, API, pantalla, PDF, límite, 1900 y latitud polar
 ```
 
 ## Las piezas que importan

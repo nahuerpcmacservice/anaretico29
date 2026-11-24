@@ -26,7 +26,10 @@
 //   - la carta (T8): carta.html, la opción 2 «Observatorio» elegida, conectada
 //     a la API (POST /api/carta, GET /api/carta/momento) en vez de a las cartas
 //     de ejemplo, sin los rótulos de prototipo, con «Descargar mi carta en PDF»
-//     (impresión del navegador) y el límite de 2 cartas natales por semana
+//     (impresión del navegador) y el límite de 2 cartas natales por semana;
+//     desde T9 la carta se muestra sola, sin textos de interpretación ni
+//     frases de contacto (S15, datos/significados.json ya no se publica), el
+//     momento sin PDF (S16) y sin carta a medias si falta una parte (S18)
 // Cada retoque exige encontrar EXACTAMENTE lo que espera: si el prototipo
 // cambia, la importación se corta en vez de publicar algo a medias.
 import fs from "node:fs";
@@ -35,7 +38,7 @@ import { refsHtml, refsCss, fetchsJs, rutasJson, refsSvg, fotosCarrusel, esExter
 import { WEB_DIR, PAGINAS, destino, pagVisible } from "../src/lib/web-nueva.js";
 
 /** Versión para vaciar la caché de CSS y JS: subirla en cada importación. */
-const VERSION = "20261124.4";
+const VERSION = "20261124.5";
 const CODIGO_FUENTE = "https://github.com/nahuerpcmacservice/anaretico29";
 /** Host canónico (config.js, hostCanonico): el og:image tiene que ser absoluto. */
 const SITIO = "https://www.anaretico29.com";
@@ -200,9 +203,9 @@ for (const archivo of Object.values(PAGINAS)) {
     }
   }
 }
-// Los textos de la carta: carta.js los pide con new URL('datos/' + nombre, …), que fetchsJs() no lee
+// Los textos de la carta (datos/significados.json) ya no se publican (S15): la carta se muestra sola.
+// carta.js los pedía con new URL('datos/' + nombre, …), que fetchsJs() no lee; el retoque de carta.js saca ese pedido.
 if (!leer("variantes/carta.js").includes("pedir('significados.json')")) falla("carta.js ya no pide significados.json como se espera");
-sumar("variantes/datos/significados.json", "carta.js (A29Carta.cargar)");
 // Las fotos del carrusel: portada-plaza.js las arma desde data.js
 if (!leer("variantes/portada-plaza.js").includes("`${base}portada/${s.id}-${w}.${ext} ${w}w`")) {
   falla("portada-plaza.js ya no arma las fotos como espera fotosCarrusel()");
@@ -405,7 +408,7 @@ function cartaPublicada(html) {
   p('<meta property="og:title" content="Anaretico 29 · Tu carta natal (ejemplo) · Opción 2">', '<meta property="og:title" content="Anaretico 29 · Tu carta natal">');
   p('<meta property="og:description" content="Carta natal y carta del momento de Anaretico 29. Prototipo con datos de ejemplo.">',
     '<meta property="og:description" content="Carta natal y carta del momento de Anaretico 29.">');
-  p(" balance de elementos y aspectos con sus posibles significados. Prototipo con datos de ejemplo.\">", " balance de elementos y aspectos con sus posibles significados.\">");
+  p(" balance de elementos y aspectos con sus posibles significados. Prototipo con datos de ejemplo.\">", " balance de elementos y aspectos.\">");
   // El aviso de prototipo se quita al publicar (doc 03 §4.1): la carta ya no es de ejemplo
   p('<div class="ob-proto" role="note"><div class="ob-wrap"><strong>Carta de ejemplo</strong><span data-proto-d>Prototipo con datos de ejemplo calculados con Swiss Ephemeris.</span></div></div>\n', "");
   p('<p class="ob-kicker" data-kicker>Carta natal · ejemplo</p>', '<p class="ob-kicker" data-kicker>Carta natal</p>');
@@ -418,6 +421,46 @@ function cartaPublicada(html) {
     '<p class="ob-peq">Se abre la ventana de impresión del navegador: elegí «Guardar como PDF».</p></div>\n</div>');
   const resto = /.{0,40}(?:ejemplo|Opción 2|Prototipo|sinhora=|sinhora-link|ob-mail).{0,40}/.exec(t);
   if (resto) falla(`${A}: quedó un rótulo de prototipo: ${resto[0]}`);
+  return cartaSola(t);
+}
+
+/**
+ * S15 (Fernando, 24/11/2026): «La carta se muestra sola, sin textos de
+ * interpretación y sin ninguna frase que invite a contactarme. Queda el dibujo,
+ * las posiciones, el balance y los aspectos.» Salen los avisos de «posible
+ * significado», el panel «Lectura de lo elegido» y su lugar debajo de la
+ * matriz, la columna «Área» de las casas, «Cómo leer tu carta» y el cierre
+ * «Una lectura más cercana» (consulta por WhatsApp y «Ver servicios»). Quedan
+ * los títulos y los rótulos mínimos para leer los datos. El menú, los canales,
+ * el pie y el aviso del límite (S14, pedido por Fernando) no se tocan.
+ */
+function cartaSola(html) {
+  const A = "carta.html";
+  let t = html;
+  const p = (buscar, poner) => { t = parche(t, A, buscar, poner); };
+  const fuera = (re, nombre, chequeo) => {
+    const h = t.match(re) || [];
+    if (h.length !== 1 || !chequeo(h[0])) falla(`${A}: esperaba 1 × ${nombre}, encontré ${h.length}`);
+    t = t.replace(re, "");
+  };
+  p('<p class="ob-bajada" data-bajada>Tus posiciones, casas, balance de elementos y aspectos, con sus posibles significados.</p>',
+    '<p class="ob-bajada" data-bajada>Tus posiciones, casas, balance de elementos y aspectos.</p>');
+  fuera(/<p class="ob-nota"><span class="ob-n-lado">Elegí una fila: [^<]*<\/span><span class="ob-n-abajo">[^<]*<\/span><\/p>/g, "«Elegí una fila…»",
+    (h) => h.includes("posible significado"));
+  p('<p class="ob-nota"><span data-n-aspectos></span> Textos en borrador, en revisión.</p>', '<p class="ob-nota"><span data-n-aspectos></span></p>');
+  fuera(/<span class="ob-n-lado ob-n-mx">Cada celda cruza dos puntos: el símbolo del aspecto y el orbe\. Elegí una para leer su posible significado en el panel\.<\/span><span class="ob-n-abajo ob-n-mx">[^<]*<\/span>/g,
+    "«Cada celda cruza dos puntos…»", (h) => h.includes("debajo de la matriz"));
+  p('<p class="ob-nota ob-mx-ayuda"></p>', '<p class="ob-nota ob-mx-ayuda">Cada celda cruza dos puntos: el símbolo del aspecto y el orbe.</p>');
+  p('<div class="ob-mx-lectura" data-mx-inline id="ob-mx-lectura" hidden></div>\n', "");
+  p('<p class="ob-nota" data-nota-casas>Casas Placidus: cada una marca un área de la vida.</p>', '<p class="ob-nota" data-nota-casas>Casas Placidus.</p>');
+  p('<caption class="ob-sr">Las doce casas con su área y su cúspide</caption><thead><tr><th scope="col" class="ob-r">Casa</th><th scope="col">Área</th>',
+    '<caption class="ob-sr">Las doce casas con su cúspide</caption><thead><tr><th scope="col" class="ob-r">Casa</th>');
+  fuera(/<aside class="ob-panel" id="ob-panel"[\s\S]*?<\/aside>\n/g, "panel «Lectura de lo elegido»", (h) => h.includes("Lectura de lo elegido"));
+  fuera(/<section class="ob-sec" id="como-leer"[\s\S]*?<\/section>\n/g, "«Cómo leer tu carta»", (h) => h.includes("Cómo leer tu carta") && (h.match(/<section\b/g) || []).length === 1);
+  fuera(/<section class="ob-cierre"[\s\S]*?<\/section>\n/g, "cierre «Una lectura más cercana»",
+    (h) => h.includes("Agendá una consulta") && h.includes("Ver servicios") && (h.match(/<section\b/g) || []).length === 1);
+  const queda = /.{0,40}(?:signific|borrador|consulta|wa\.me|Lectura de|Cómo leer|data-panel|data-leer|data-cierre).{0,40}/i.exec(t);
+  if (queda) falla(`${A}: quedó un texto de interpretación o de contacto: ${queda[0]}`);
   return t;
 }
 
@@ -427,10 +470,7 @@ function cartaPublicada(html) {
  * del # (nunca en una dirección que llegue al servidor); el límite de 2 cartas
  * natales cada 7 días se cuenta acá, en el navegador (S14).
  */
-const CARGAR_CARTA = ` function pedir(nombre) {
-  return fetch(new URL('datos/' + nombre, BASE).href, { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error(nombre + ': ' + r.status); return r.json(); });
- }
- // La carta la calcula el servidor (src/lib/carta.js). Si rechaza los datos (400), la promesa falla con { mensaje, campo } y no se dibuja nada.
+const CARGAR_CARTA = ` // La carta la calcula el servidor (src/lib/carta.js). Si rechaza los datos (400), la promesa falla con { mensaje, campo } y no se dibuja nada.
  function api(url, opciones) {
   return fetch(url, opciones).then(function (r) {
    return r.json().catch(function () { return {}; }).then(function (j) {
@@ -473,27 +513,246 @@ const CARGAR_CARTA = ` function pedir(nombre) {
   return api('/api/carta', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(e), cache: 'no-store' })
    .then(function (c) { limite.guardar(limite.anotar(limite.leer(), h, Date.now())); return c; });
  }
- // cargar('natal' | 'momento') o cargar() para leer ?modo= de la URL. Devuelve una promesa con { modo, carta, significados, sinHora }.
+ // cargar('natal' | 'momento') o cargar() para leer ?modo= de la URL. Devuelve una promesa con { modo, carta, sinHora }.
+ // S15: la carta se muestra sola, sin textos de interpretación: no se pide ningún archivo de textos.
  function cargar(modo) {
   modo = modoDe(modo);
   var carta = modo === 'momento' ? api('/api/carta/momento', {}) : pedirNatal();
-  return Promise.all([carta, pedir('significados.json')])
-   .then(function (r) { return { modo: modo, carta: r[0], significados: r[1], sinHora: sinHora(r[0]) }; });
+  return carta.then(function (c) { return { modo: modo, carta: c, sinHora: sinHora(c) }; });
  }`;
 
-/** carta-op2.js: ante un error o el límite no queda la carta a medias; y el botón del PDF. */
-const SIN_CARTA = ` // S14: el PDF es la impresión del navegador («Guardar como PDF») con la hoja @media print de carta-op2.css: nada sale a otro servicio.
+/**
+ * carta.js sin los textos (S15): las ayudas de datos arman las filas solo con la
+ * carta del servidor (posiciones, casas, ángulos, balance y aspectos), sin
+ * datos/significados.json. Reemplaza el tramo «textos» y «ayudas de datos».
+ */
+const DATOS_CARTA = ` // ---------------------------------------------------------------- ayudas de datos (filas listas para mostrar)
+ // S15 (Fernando, 24/11/2026): la carta se muestra sola. Las filas llevan solo datos de la carta; no hay textos de interpretación.
+ // Todas aceptan un último parámetro opcional modo; si falta, se toma de carta.meta.kind.
+ function modoCarta(carta, modo) { return modo === 'momento' || modo === 'natal' ? modo : (carta && carta.meta && carta.meta.kind === 'momento' ? 'momento' : 'natal'); }
+ function lista(a) { return a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' y ' + a[a.length - 1]; }
+ var ANGULO_ASP = { conjunction: '0°', sextile: '60°', square: '90°', trine: '120°', opposition: '180°' };
+ // grupo: 'elements' | 'modalities'. El elemento (o la modalidad) que predomina con sus puntos, o «Equilibrio.» si empatan todos.
+ function dominante(carta, grupo) {
+  var b = carta.balance, dom = b['dominant_' + grupo];
+  if (b['balanced_' + grupo]) return 'Equilibrio.';
+  var filas = b[grupo].filter(function (x) { return dom.indexOf(x.id) >= 0; });
+  return (filas.length > 1 ? 'Predominan ' : 'Predomina ') + lista(filas.map(function (f) { return f.name + ' (' + f.count + ' de ' + b.total + ')'; })) + '.';
+ }
+ function filasCuerpos(carta) {
+  return carta.bodies.map(function (b) {
+   return {
+    id: b.id, glifo: glifoCuerpo(b.id), nombre: b.name, signoId: b.sign, glifoSigno: glifoSigno(b.sign), signo: b.sign_name,
+    grados: grados(b), longitud: b.longitude, casa: b.house,
+    retrogrado: b.retrograde, movimiento: b.retrograde ? 'Retrógrado' : 'Directo', velocidad: velTexto(b.speed)
+   };
+  });
+ }
+ function filasCasas(carta) {
+  return carta.houses.map(function (h) {
+   return { casa: h.house, glifoSigno: glifoSigno(h.sign), signo: h.sign_name, grados: grados(h), cuspide: h.cusp };
+  });
+ }
+ function filasAngulos(carta) {
+  return carta.angles.map(function (a) {
+   return { id: a.id, etiqueta: ETIQ_ANG[a.id], nombre: a.name, glifoSigno: glifoSigno(a.sign), signo: a.sign_name, grados: grados(a), casa: a.house };
+  });
+ }
+ // grupo: 'elements' | 'modalities'
+ function filasBalance(carta, grupo) {
+  var b = carta.balance, dom = b['dominant_' + grupo];
+  return b[grupo].map(function (x) {
+   return {
+    id: x.id, nombre: x.name, cantidad: x.count, total: b.total, porcentaje: Math.round(x.percent),
+    dominante: dom.indexOf(x.id) >= 0 && !b['balanced_' + grupo],
+    puntos: x.points.map(function (p) { return { id: p, glifo: glifoCuerpo(p), nombre: nombre(carta, p) }; })
+   };
+  });
+ }
+ function listaAspectos(carta) {
+  return carta.aspects.map(function (a, i) {
+   return {
+    indice: i, a: a.a, b: a.b, nombreA: nombre(carta, a.a), nombreB: nombre(carta, a.b), glifoA: glifoCuerpo(a.a), glifoB: glifoCuerpo(a.b),
+    tipo: a.type, tipoNombre: a.type_name, tipoGlifo: glifoAspecto(a.type), angulo: ANGULO_ASP[a.type], orbe: a.orb_dm, orbeNumero: a.orb, fase: a.phase
+   };
+  });
+ }
+ function descripcion(carta, modo) {`;
+
+/**
+ * carta-op2.js sin textos de interpretación (S15): las filas, la matriz y la
+ * lista de aspectos son datos (nada se elige para leer, no hay panel), el
+ * balance dice solo qué predomina, y «Cómo leer» no va. Si a la carta le falta
+ * alguna parte, no se dibuja nada (S18). Reemplaza el tramo desde la selección
+ * hasta el final de pintar().
+ */
+const PANTALLA_SOLA = ` // ---------------------------------------------------------------- S15: la carta se muestra sola (Fernando, 24/11/2026)
+ // El dibujo, las posiciones, las casas, el balance y los aspectos, sin textos de interpretación: nada se elige para leer.
+ // Pasar el puntero por una celda de la matriz o por un aspecto de la lista resalta su línea en la rueda.
+ function nombrePunto(glifoTxt, nombre) { // el glifo y el nombre, con la misma caja que tenían los botones del tablero
+  var s = el('span', 'ob-sel ob-sel-dato');
+  s.appendChild(glifoAsp(glifoTxt, 'ob-gp')); s.appendChild(el('span', '', nombre));
+  return s;
+ }
+ function resaltarAl(n, svg, i) {
+  n.addEventListener('mouseenter', function () { A.resaltar(svg, i); });
+  n.addEventListener('mouseleave', function () { A.resaltar(svg, null); });
+ }
+
+ // ---------------------------------------------------------------- Posiciones: tablero de cotizaciones
+ function tablero(carta) {
+  var tb = $('[data-tabla] tbody'); tb.textContent = '';
+  $('[data-col-casa]').hidden = false;
+  A.filasCuerpos(carta).forEach(function (f) {
+   var tr = el('tr', 'ob-fila'); tb.appendChild(tr);
+   var c1 = el('th', 'ob-c-cuerpo'); c1.scope = 'row'; c1.appendChild(nombrePunto(f.glifo, f.nombre)); tr.appendChild(c1);
+   var c2 = el('td', 'ob-c-signo'); c2.appendChild(glifo(f.glifoSigno, 'ob-gs')); c2.appendChild(el('span', '', f.signo)); tr.appendChild(c2);
+   tr.appendChild(el('td', 'ob-r ob-num ob-c-grado', f.grados));
+   tr.appendChild(el('td', 'ob-r ob-num ob-c-casa', f.casa));
+   var c5 = el('td', 'ob-r ob-num ob-c-vel' + (f.retrogrado ? ' is-rx' : ''));
+   if (f.retrogrado) { c5.appendChild(glifo(A.glifo.retrogrado, 'ob-rx')); c5.appendChild(sr('Retrógrado, ')); } else c5.appendChild(sr('Directo, '));
+   c5.appendChild(el('span', '', f.velocidad)); tr.appendChild(c5);
+  });
+ }
+
+ // ---------------------------------------------------------------- Casas y ángulos
+ function casasYAngulos(carta) {
+  var tc = $('[data-casas] tbody'), ta = $('[data-angulos] tbody'); tc.textContent = ''; ta.textContent = '';
+  $('[data-con-casas]').hidden = false; $('[data-sinhora-casas]').hidden = true; $('[data-nota-casas]').hidden = false;
+  A.filasCasas(carta).forEach(function (h) {
+   var tr = el('tr');
+   var a = el('th', 'ob-r ob-num', h.casa); a.scope = 'row'; tr.appendChild(a);
+   var c = el('td', 'ob-num'); c.appendChild(glifo(h.glifoSigno, 'ob-gs')); c.appendChild(el('span', '', h.signo + ' ' + h.grados)); tr.appendChild(c);
+   tc.appendChild(tr);
+  });
+  A.filasAngulos(carta).forEach(function (a) {
+   var tr = el('tr', 'ob-fila'); ta.appendChild(tr);
+   var c0 = el('th', 'ob-c-cuerpo'); c0.scope = 'row'; c0.appendChild(nombrePunto(a.etiqueta, a.nombre)); tr.appendChild(c0);
+   var c1 = el('td', 'ob-num'); c1.appendChild(glifo(a.glifoSigno, 'ob-gs')); c1.appendChild(el('span', '', a.signo + ' ' + a.grados)); tr.appendChild(c1);
+  });
+ }
+
+ // ---------------------------------------------------------------- Matriz de aspectos (triángulo planeta por planeta)
+ function matriz(carta, lista, svg) {
+  var puntos = carta.aspect_rules.points.filter(function (id) { return A.punto(carta, id); });
+  var mapa = {};
+  lista.forEach(function (a) { mapa[a.a + '|' + a.b] = a; mapa[a.b + '|' + a.a] = a; });
+  var th = $('[data-matriz] thead'), tb = $('[data-matriz] tbody'), n = puntos.length;
+  th.textContent = ''; tb.textContent = '';
+  // las referencias ocupan la mitad vacía del triángulo (arriba a la derecha): ancho = la mitad de las columnas de celdas
+  $('.ob-mx-w').style.setProperty('--mx-ancho', (Math.floor((n - 1) / 2) / n * 100).toFixed(2) + '%');
+  var h0 = el('tr'), corner = el('td', 'ob-mx-h'); corner.appendChild(sr('Planeta o punto')); h0.appendChild(corner);
+  function cab(id, fila) { var c = el('th', 'ob-mx-h'); c.scope = fila ? 'row' : 'col'; c.title = A.nombre(carta, id); c.appendChild(glifoAsp(A.glifo.cuerpo(id), 'ob-gp')); c.appendChild(sr(A.nombre(carta, id))); return c; }
+  for (var c = 0; c < n - 1; c++) h0.appendChild(cab(puntos[c], false));
+  th.appendChild(h0);
+  for (var r = 1; r < n; r++) {
+   var tr = el('tr'); tr.appendChild(cab(puntos[r], true));
+   for (var k = 0; k < r; k++) {
+    var td = el('td', 'ob-mx-c'), a = mapa[puntos[r] + '|' + puntos[k]];
+    if (a) {
+     var b = el('span', 'ob-mx-b');
+     b.appendChild(sr(a.nombreA + ' ' + a.tipoNombre.toLowerCase() + ' ' + a.nombreB + ', orbe ' + a.orbe + ', ' + a.fase));
+     var g = glifo(a.tipoGlifo, 'ob-mx-g'); g.style.color = COLORES.aspectos[a.tipo]; b.appendChild(g);
+     var o = el('span', 'ob-mx-o'); o.setAttribute('aria-hidden', 'true'); o.appendChild(el('span', 'ob-mx-f', MARCA[a.fase] || '')); o.appendChild(document.createTextNode(a.orbe)); b.appendChild(o);
+     td.appendChild(b); resaltarAl(b, svg, a.indice);
+    }
+    tr.appendChild(td);
+   }
+   tb.appendChild(tr);
+  }
+ }
+
+ // ---------------------------------------------------------------- Lista de aspectos (para lectores de pantalla y celulares)
+ function aspectos(carta, svg, lista) {
+  var cont = $('[data-aspectos]'), cab = cont.querySelector('.ob-asp-cab');
+  cont.textContent = ''; if (cab) cont.appendChild(cab);
+  lista.forEach(function (a) {
+   var d = el('div', 'ob-asp'), s = el('div', 'ob-asp-r');
+   var g = el('span', 'ob-asp-g'); g.appendChild(glifoAsp(a.glifoA, 'ob-gp')); var gt = glifo(a.tipoGlifo, 'ob-gt'); gt.style.color = COLORES.aspectos[a.tipo]; g.appendChild(gt); g.appendChild(glifoAsp(a.glifoB, 'ob-gp')); s.appendChild(g);
+   s.appendChild(el('span', 'ob-asp-n', a.nombreA + ' ' + a.tipoNombre.toLowerCase() + ' ' + a.nombreB));
+   var o = el('span', 'ob-asp-o'); o.appendChild(el('span', 'ob-l', 'orbe ')); o.appendChild(document.createTextNode(a.orbe)); s.appendChild(o);
+   var f = el('span', 'ob-asp-f ' + (a.fase === 'aplicativo' ? 'is-ap' : 'is-sp'));
+   var mk = el('b', 'ob-mk', MARCA[a.fase] || ''); mk.setAttribute('aria-hidden', 'true'); f.appendChild(mk);
+   f.appendChild(el('span', '', cap(a.fase))); s.appendChild(f);
+   d.appendChild(s); resaltarAl(d, svg, a.indice);
+   cont.appendChild(d);
+  });
+  var det = $('[data-lista]');
+  if (window.matchMedia('(max-width:720px)').matches) det.open = true; // en el celular no hay matriz: la lista es la vista de los aspectos
+ }
+
+ // ---------------------------------------------------------------- Balance: barras horizontales, como la profundidad de un mercado
+ function barras(cont, filas, dest, carta, grupo) {
+  cont.textContent = '';
+  filas.forEach(function (f) {
+   var r = el('div', 'ob-b' + (f.dominante ? ' is-dom' : ''));
+   var n = el('div', 'ob-b-n'); n.appendChild(el('strong', '', f.nombre));
+   if (f.dominante) n.appendChild(el('em', 'ob-b-dom', 'Predomina'));
+   r.appendChild(n);
+   var t = el('div', 'ob-b-t'); t.style.setProperty('--n', f.total); t.setAttribute('role', 'img'); t.setAttribute('aria-label', f.nombre + ': ' + f.cantidad + ' de ' + f.total + ' puntos, ' + f.porcentaje + '%');
+   for (var k = 0; k < f.total; k++) t.appendChild(el('i', k < f.cantidad ? 'on' : ''));
+   r.appendChild(t);
+   var c = el('div', 'ob-b-c'); c.appendChild(el('b', '', f.cantidad + ' / ' + f.total)); c.appendChild(el('span', '', f.porcentaje + ' %')); r.appendChild(c);
+   var g = el('div', 'ob-b-p');
+   if (!f.puntos.length) g.textContent = 'Ningún punto';
+   f.puntos.forEach(function (p) { var s = el('span', 'ob-b-pt'); s.title = p.nombre; if (/^[A-Z]{2}$/.test(p.glifo)) s.appendChild(el('span', 'ob-ang-t', p.glifo)); else s.appendChild(glifo(p.glifo)); s.appendChild(sr(p.nombre + ' ')); g.appendChild(s); });
+   r.appendChild(g);
+   cont.appendChild(r);
+  });
+  dest.textContent = '';
+  dest.appendChild(el('strong', '', A.dominante(carta, grupo)));
+ }
+
+ // S18: «si la carta no se puede calcular completa, no se muestra». Con alguna parte que falte (o que no sea un número) no se dibuja nada:
+ // ni la rueda ni tablas a medias; queda el aviso de sinCarta().
+ function finito(x) { return typeof x === 'number' && isFinite(x); }
+ function completa(c) {
+  return !!(c && c.meta && c.meta.input && c.meta.hora_conocida !== false
+   && Array.isArray(c.bodies) && c.bodies.length === 12 && c.bodies.every(function (b) { return finito(b.longitude) && finito(b.speed) && finito(b.house); })
+   && Array.isArray(c.angles) && c.angles.length === 4 && c.angles.every(function (a) { return finito(a.longitude); })
+   && Array.isArray(c.houses) && c.houses.length === 12 && c.houses.every(function (h) { return finito(h.cusp); })
+   && Array.isArray(c.aspects) && c.aspect_rules && Array.isArray(c.aspect_rules.points)
+   && c.balance && finito(c.balance.total) && Array.isArray(c.balance.elements) && Array.isArray(c.balance.modalities));
+ }
+
+ function pintar(r) {
+  var modo = r.modo, carta = r.carta;
+  if (!completa(carta)) { var x = new Error('carta incompleta'); x.incompleta = true; throw x; }
+  encabezado(modo, false, carta);
+  datos(modo, false, carta); cinta(carta); leyenda($('[data-leyenda]')); leyenda($('[data-leyenda-mx]'));
+  var svg = $('[data-rueda]');
+  A.dibujarRueda(svg, carta, { colores: COLORES }, modo);
+  var lista = A.listaAspectos(carta);
+  tablero(carta); casasYAngulos(carta);
+  matriz(carta, lista, svg);
+  $('[data-regla]').textContent = carta.balance.rule;
+  $('[data-difiere]').hidden = true; // el mismo criterio que la portada (Fernando, 24/11/2026)
+  barras($('[data-elementos]'), A.filasBalance(carta, 'elements'), $('[data-dom-elementos]'), carta, 'elements');
+  barras($('[data-modalidades]'), A.filasBalance(carta, 'modalities'), $('[data-dom-modalidades]'), carta, 'modalities');
+  $('[data-regla-aspectos]').textContent = carta.aspect_rules.rule;
+  $('[data-n-aspectos]').textContent = carta.aspects.length + ' aspectos, del más exacto al menos exacto.';
+  aspectos(carta, svg, lista);
+  raiz.classList.add('is-listo');
+  var pdf = $('[data-pdf]'); if (pdf) pdf.hidden = modo !== 'natal';
+  var cargando = $('[data-cargando]'); if (cargando) cargando.hidden = true;
+ }
+`;
+
+/** carta-op2.js: ante un error o el límite no queda la carta a medias; y el botón del PDF, solo en la natal. */
+const SIN_CARTA = ` // S16 (Fernando: «Carta del momento: sin botón de PDF. Se muestra la carta y nada más.»): el botón y su nota salen de la página.
+ if (MODO !== 'natal') { var sinPdf = $('[data-pdf]'); if (sinPdf) sinPdf.remove(); }
+ // S14: el PDF es la impresión del navegador («Guardar como PDF») con la hoja @media print de carta-op2.css: nada sale a otro servicio.
  function paraImprimir() { var d = $('[data-lista]'); if (d) d.open = true; }
  window.addEventListener('beforeprint', paraImprimir);
  var bpdf = $('[data-pdf-btn]');
  if (bpdf) bpdf.addEventListener('click', function () { paraImprimir(); window.print(); });
 
- // Sin carta (datos rechazados, el límite de la semana o un error): solo el aviso y el cierre, nada a medias.
+ // Sin carta (datos rechazados, el límite de la semana, una carta incompleta o un error): solo el aviso, nada a medias.
  var LIMITE_TXT = 'Ya calculaste tus 2 cartas de esta semana. Si querés una lectura completa, agendá una consulta';
  var WHATSAPP = 'https://wa.me/5491153144378';
  function sinCarta(err) {
   raiz.querySelector('.ob-top').classList.add('ob-top-sola'); // sin la rueda, la cabecera en una columna (carta-op2.css)
-  Array.prototype.forEach.call(raiz.querySelectorAll('.ob-lado, .ob-ficha, .ob-cinta, .ob-mesa-w, #balance, #como-leer'), function (n) { n.style.display = 'none'; });
+  Array.prototype.forEach.call(raiz.querySelectorAll('.ob-lado, .ob-ficha, .ob-cinta, .ob-mesa-w, #balance'), function (n) { n.style.display = 'none'; });
   var c = $('[data-cargando]'), p, a;
   if (!c) return;
   c.hidden = false; c.textContent = '';
@@ -529,7 +788,16 @@ const CSS_CARTA = `
 @media (max-width:720px){.ob-b-t{gap:1px}}
 /* Sin carta (el límite o un error) no hay rueda: la cabecera en una columna, como en pantallas menores */
 @media (min-width:1280px){.ob-top.ob-top-sola{grid-template-columns:minmax(0,1fr);grid-template-rows:auto;row-gap:28px}.ob-top.ob-top-sola .ob-intro{grid-column:1;grid-row:1}}
-/* S14: «Descargar mi carta en PDF» */
+/* S15: sin el panel «Lectura de lo elegido», la mesa en una columna en todos los anchos (la regla del prototipo hasta 1099 px) */
+.ob-mesa{display:block}
+/* S15: las filas, las celdas y los aspectos son datos: nada se elige para leer */
+.ob .ob-sel-dato,.ob .ob-mx-b{cursor:default}
+.ob-pos tr.ob-fila,.ob-angulos tr.ob-fila{cursor:auto}
+/* S15: cada aspecto de la lista es una fila de datos, con la misma grilla que tenía su <summary> */
+.ob-asp-r{display:grid;grid-template-columns:8em minmax(0,1fr) 7em 11.5em 32px;align-items:center;gap:4px 18px;padding:12px 14px;min-height:60px}
+.ob-asp-r:hover{background:var(--ob-panel)}
+@media (max-width:720px){.ob-asp-r{grid-template-columns:minmax(0,1fr) 32px;gap:3px 10px;padding:14px}}
+/* S14: «Descargar mi carta en PDF» (solo en la carta natal; S16) */
 .ob-pdf{margin-top:24px}
 .ob-pdf .ob-peq{margin:10px 0 0}
 .ob .ob-pdf .ob-btn{cursor:pointer}
@@ -538,10 +806,9 @@ const CSS_CARTA = `
  @page{size:A4;margin:12mm}
  html,body{background:#243236!important}
  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
- .skip,.strap,header nav,header button,#canales,dialog,.ob-enlaces,.ob-pdf,.ob-panel,.ob-acciones,.ob-estado,.ob-mx-lectura,tr.ob-mean,.ob-ver-m,.ob-sec-h .ob-nota>span{display:none!important}
+ .skip,.strap,header nav,header button,#canales,dialog,.ob-enlaces,.ob-pdf,.ob-estado,.ob-ver-m{display:none!important}
  header{position:static!important;box-shadow:none!important}
- .ob-mesa{display:block!important}
- .ob-ticket,.ob-tablero,.ob-rueda,.ob-b,.ob-asp,tr,.ob-leer li{break-inside:avoid}
+ .ob-ticket,.ob-tablero,.ob-rueda,.ob-b,.ob-asp,tr{break-inside:avoid}
  .ob-svg{max-width:180mm;margin-inline:auto!important}
 }`;
 
@@ -615,16 +882,19 @@ const PARCHES = {
     const A = "carta.js";
     t = parcheTramo(t, A, "// Carta natal y carta del momento: pantalla de resultado (prototipo, datos de ejemplo).", "Ningún número de la carta se escribe a mano acá.\n",
       "// Carta natal y carta del momento: window.A29Carta, la biblioteca de la pantalla carta.html (opción 2 «Observatorio»):\n" +
-      "// carga de datos, textos, ayudas de datos y rueda en SVG. NO toca el DOM de la página.\n" +
-      "// La carta la calcula el servidor (POST /api/carta, GET /api/carta/momento) y los textos salen de datos/significados.json (borrador).\n" +
+      "// carga de datos, ayudas de datos y rueda en SVG. NO toca el DOM de la página.\n" +
+      "// La carta la calcula el servidor (POST /api/carta, GET /api/carta/momento). Sin textos de interpretación (S15).\n" +
       "// Ningún número de la carta se escribe a mano acá.\n",
       (x) => x.includes("(B) Diseño 1") && x.includes("carta-ejemplo.json"));
     t = parcheTramo(t, A, " function pedir(nombre) {", "sinHora: sinHora(r[0]) }; });\n }", CARGAR_CARTA,
       (x) => x.includes("'carta-momento-ejemplo.json'") && x.includes("'carta-sinhora-ejemplo.json'") && x.includes("pedir('significados.json')"));
-    // Fernando: si empatan todos los grupos, «Equilibrio» (y ninguno «Predomina»)
-    t = parche(t, A, "  var filas = b[grupo].filter(function (x) { return dom.indexOf(x.id) >= 0; });\n",
-      "  var filas = b[grupo].filter(function (x) { return dom.indexOf(x.id) >= 0; });\n  if (b['balanced_' + grupo]) return { titulo: 'Equilibrio.', texto: '' };\n");
-    t = parche(t, A, "    dominante: dom.indexOf(x.id) >= 0,", "    dominante: dom.indexOf(x.id) >= 0 && !b['balanced_' + grupo],");
+    // S15: sin archivo de textos no hace falta saber de dónde se cargó el script
+    t = parche(t, A, " var BASE = (document.currentScript && document.currentScript.src) || location.href;\n", "");
+    // S15: fuera los textos de interpretación; las filas, solo con datos (Fernando: si empatan todos los grupos, «Equilibrio»)
+    t = parcheTramo(t, A, " // ---------------------------------------------------------------- textos (posibles significados)\n", " function descripcion(carta, modo) {", DATOS_CARTA,
+      (x) => x.includes("function tAspecto(") && x.includes("function listaAspectos(") && x.includes("sig.aspectos_tipos"));
+    t = parche(t, A, "  textos: { rol: tRol, planetaSigno: tPlanetaSigno, planetaCasa: tPlanetaCasa, angulo: tAngulo, aspecto: tAspecto, balance: tBalance },\n",
+      "  dominante: dominante,\n");
     t = parche(t, A, "' de ejemplo, zodíaco tropical'", "', zodíaco tropical'");
     t = parche(t, A, "(modo === 'momento' ? 'Rueda de la carta del momento (ejemplo)' : 'Rueda de la carta natal (ejemplo)')",
       "(modo === 'momento' ? 'Rueda de la carta del momento' : 'Rueda de la carta natal')");
@@ -634,12 +904,25 @@ const PARCHES = {
     if (t.split(corte).length !== 2 || !t.slice(t.indexOf(corte)).includes("[data-carta-almanaque]")) falla(`${A}: no encuentro la parte (B) «Almanaque»`);
     t = t.slice(0, t.indexOf(corte)) + "\n";
     if (/ejemplo/.test(t)) falla(`${A}: quedó una carta de ejemplo`);
+    const queda = /.{0,40}(?:signific|\bsig\b|textos\.\w).{0,40}/i.exec(t);
+    if (queda) falla(`${A}: quedaron textos de interpretación: ${queda[0]}`);
     return t;
   },
   "variantes/carta-op2.js": (t) => {
     const A = "carta-op2.js";
     t = parche(t, A, "// Ningún número de la carta se escribe a mano: todo sale de datos/carta-ejemplo.json, datos/carta-momento-ejemplo.json o datos/carta-sinhora-ejemplo.json.",
       "// Ningún número de la carta se escribe a mano: todo sale del JSON que calcula el servidor (POST /api/carta, GET /api/carta/momento).");
+    // S15: la cabecera describía el panel de lectura, que ya no va
+    t = parche(t, A, "// matriz planeta por planeta, y el significado de lo que se elige se lee en un panel lateral que se actualiza (en pantallas angostas, debajo de la fila o de la matriz).\n" +
+      "// Usa window.A29Carta de carta.js como biblioteca (datos, textos, ayudas y rueda en SVG); acá solo se arma la pantalla.",
+      "// matriz planeta por planeta. La carta se muestra sola, sin textos de interpretación (S15).\n" +
+      "// Usa window.A29Carta de carta.js como biblioteca (datos, ayudas y rueda en SVG); acá solo se arma la pantalla.");
+    t = parche(t, A, " function tx(v) { return v && typeof v === 'object' ? v.texto : v; } // las funciones de textos devuelven {texto, propio} o la oración\n", "");
+    // S15: la cinta ya no recibe los textos
+    t = parche(t, A, " function cinta(carta, sig, modo) {", " function cinta(carta) {");
+    t = parche(t, A, "A.filasAngulos(carta, sig, modo).filter(", "A.filasAngulos(carta).filter(");
+    t = parche(t, A, "A.filasCuerpos(carta, sig, modo).map(function (f) { return { g: f.glifo,", "A.filasCuerpos(carta).map(function (f) { return { g: f.glifo,");
+    t = parche(t, A, " var uniq = 0;\n", "");
     // S10: la hora es obligatoria, no hay carta sin hora
     t = parche(t, A, " var SIN_HORA_URL = MODO === 'natal' && new URLSearchParams(location.search).get('sinhora') === '1';",
       " var SIN_HORA_URL = false; // la hora de nacimiento es obligatoria (S10): no hay carta sin hora");
@@ -651,30 +934,32 @@ const PARCHES = {
       "  document.title = 'Anaretico 29 · ' + (m ? 'La carta del momento' : 'Tu carta natal');\n" +
       "  if (m) {\n" +
       "   $('[data-bajada]').textContent = i\n" +
-      "    ? 'El cielo de ahora: ' + A.formato.fecha(i.date) + ', ' + i.time + ' de Buenos Aires (' + carta.meta.utc_instant.slice(11, 16) + ' UTC). Las posiciones, casas, balance de elementos y aspectos, con sus posibles significados.'\n" +
+      "    ? 'El cielo de ahora: ' + A.formato.fecha(i.date) + ', ' + i.time + ' de Buenos Aires (' + carta.meta.utc_instant.slice(11, 16) + ' UTC). Las posiciones, casas, balance de elementos y aspectos.'\n" +
       "    : 'Las posiciones, casas, balance de elementos y aspectos del cielo de ahora, para Buenos Aires.';\n" +
       "   $('[data-sello]').textContent = 'Cielo de ahora';\n" +
       "  } else {\n" +
-      "   $('[data-bajada]').textContent = 'Tus posiciones, casas, balance de elementos y aspectos, con sus posibles significados.';\n" +
+      "   $('[data-bajada]').textContent = 'Tus posiciones, casas, balance de elementos y aspectos.';\n" +
       "   $('[data-sello]').textContent = 'Con tus datos';\n" +
       "  }\n" +
       "  var otro = $('[data-otro]');\n" +
       "  otro.hidden = m; otro.textContent = 'Ver la carta del momento'; otro.href = '/carta?modo=momento';\n",
       (x) => x.includes("'Corte fijo · no en vivo'") && x.includes("$('[data-solo=\"natal\"]').hidden = m;") && x.includes("(ejemplo) · Opción 2"));
+    // S15: «Cómo leer» y el cierre de la consulta no van
+    t = parche(t, A, "  $('[data-leer-t]').textContent = m ? 'Cómo leer esta carta' : 'Cómo leer tu carta';\n", "");
+    t = parche(t, A, "  var cie = $('[data-cierre-t]');\n  if (cie) cie.textContent = m ? 'En una consulta leemos el cielo de un momento con tus preguntas, sin atajos.' : 'En una consulta miramos la carta completa con tu historia y tus preguntas, sin atajos.';\n", "");
     t = parche(t, A, "   campo(dl, 'Fecha del corte', A.formato.fecha(i.date));", "   campo(dl, 'Fecha', A.formato.fecha(i.date));");
     t = parche(t, A, "   campo(dl, 'Hora del corte', i.time + ' (hora de Buenos Aires)');", "   campo(dl, 'Hora', i.time + ' (hora de Buenos Aires)');");
     t = parche(t, A, "   p.appendChild(document.createTextNode(partes + '. Esta es una vista previa: la carta que ves se calculó con los datos del ejemplo (' + A.formato.fecha(i.date) + ', ' + (A.sinHora(carta) ? 'sin hora' : i.time) + ', ' + i.place + '). Con la calculadora conectada, se calcula con los tuyos.'));",
       "   p.appendChild(document.createTextNode(partes + '.'));");
-    // Fernando: la carta usa el mismo criterio que la portada (50 puntos), así que la nota de «puede diferir» ya no es cierta
-    t = parche(t, A, "  $('[data-difiere]').textContent = 'Este conteo (1 punto por planeta' + (sin ? '' : ' y ángulo') + ') puede diferir del balance ponderado de la portada.';",
-      "  $('[data-difiere]').hidden = true; // el mismo criterio que la portada (Fernando, 24/11/2026)");
-    // Fernando: el Ascendente y el Medio Cielo no forman aspectos
-    t = parche(t, A, "'Las líneas de la rueda y las celdas de la matriz unen planetas' + (sin ? '' : ' (y los ángulos AC y MC)') + ' que forman,",
-      "'Las líneas de la rueda y las celdas de la matriz unen planetas que forman,");
-    // S14: el botón del PDF, solo en la carta natal y cuando ya está dibujada
-    t = parche(t, A, "  raiz.classList.add('is-listo');\n", "  raiz.classList.add('is-listo');\n  var pdf = $('[data-pdf]'); if (pdf) pdf.hidden = modo !== 'natal';\n");
+    // S15 y S18: de la selección hasta el final de pintar(), la pantalla sin textos de interpretación y sin cartas a medias. Ahí quedan
+    // también el balance con el criterio de la portada (Fernando: sin la nota «puede diferir») y el botón del PDF solo en la natal (S14).
+    t = parcheTramo(t, A, " // ---------------------------------------------------------------- selección: un solo lugar de lectura (panel lateral o debajo de la fila)\n",
+      "  if (ANCHO.matches) seleccionar({ t: 'cuerpo', id: 'sun' }); // en pantalla ancha el panel arranca con el Sol\n }\n", PANTALLA_SOLA,
+      (x) => x.includes("'Posible significado · borrador'") && x.includes("function comoLeer(") && x.includes("function pintar(") && x.includes("A.textos."));
     t = parcheTramo(t, A, " encabezado(MODO, SIN_HORA_URL, null); // antes de pedir los datos", "})();", SIN_CARTA,
       (x) => x.includes("No pudimos cargar la carta de ejemplo."));
+    const queda = /.{0,40}(?:signific|borrador|textos\.\w|\bsig\b|Cómo leer|data-panel|data-leer|data-cierre|data-mx-inline|ob-mean).{0,40}/i.exec(t);
+    if (queda) falla(`${A}: quedó un texto de interpretación: ${queda[0]}`);
     return t;
   },
   "variantes/carta-op2.css": (t) => {

@@ -347,7 +347,16 @@
 @media (max-width:720px){.ob-b-t{gap:1px}}
 /* Sin carta (el límite o un error) no hay rueda: la cabecera en una columna, como en pantallas menores */
 @media (min-width:1280px){.ob-top.ob-top-sola{grid-template-columns:minmax(0,1fr);grid-template-rows:auto;row-gap:28px}.ob-top.ob-top-sola .ob-intro{grid-column:1;grid-row:1}}
-/* S14: «Descargar mi carta en PDF» */
+/* S15: sin el panel «Lectura de lo elegido», la mesa en una columna en todos los anchos (la regla del prototipo hasta 1099 px) */
+.ob-mesa{display:block}
+/* S15: las filas, las celdas y los aspectos son datos: nada se elige para leer */
+.ob .ob-sel-dato,.ob .ob-mx-b{cursor:default}
+.ob-pos tr.ob-fila,.ob-angulos tr.ob-fila{cursor:auto}
+/* S15: cada aspecto de la lista es una fila de datos, con la misma grilla que tenía su <summary> */
+.ob-asp-r{display:grid;grid-template-columns:8em minmax(0,1fr) 7em 11.5em 32px;align-items:center;gap:4px 18px;padding:12px 14px;min-height:60px}
+.ob-asp-r:hover{background:var(--ob-panel)}
+@media (max-width:720px){.ob-asp-r{grid-template-columns:minmax(0,1fr) 32px;gap:3px 10px;padding:14px}}
+/* S14: «Descargar mi carta en PDF» (solo en la carta natal; S16) */
 .ob-pdf{margin-top:24px}
 .ob-pdf .ob-peq{margin:10px 0 0}
 .ob .ob-pdf .ob-btn{cursor:pointer}
@@ -356,9 +365,8 @@
  @page{size:A4;margin:12mm}
  html,body{background:#243236!important}
  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
- .skip,.strap,header nav,header button,#canales,dialog,.ob-enlaces,.ob-pdf,.ob-panel,.ob-acciones,.ob-estado,.ob-mx-lectura,tr.ob-mean,.ob-ver-m,.ob-sec-h .ob-nota>span{display:none!important}
+ .skip,.strap,header nav,header button,#canales,dialog,.ob-enlaces,.ob-pdf,.ob-estado,.ob-ver-m{display:none!important}
  header{position:static!important;box-shadow:none!important}
- .ob-mesa{display:block!important}
- .ob-ticket,.ob-tablero,.ob-rueda,.ob-b,.ob-asp,tr,.ob-leer li{break-inside:avoid}
+ .ob-ticket,.ob-tablero,.ob-rueda,.ob-b,.ob-asp,tr{break-inside:avoid}
  .ob-svg{max-width:180mm;margin-inline:auto!important}
 }

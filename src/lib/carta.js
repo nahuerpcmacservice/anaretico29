@@ -15,6 +15,9 @@
 //   - aplicativo / separativo / exacto (< 1″) según las velocidades.
 //
 // La hora de nacimiento es obligatoria (S10): sin hora no se calcula nada.
+// Y la carta va completa o no va (S18, Fernando: «si la carta no se puede
+// calcular completa, no se muestra»): sin casas Placidus (latitud polar) o con
+// cualquier parte que no se pudo calcular, no sale ninguna carta.
 // No se guarda nada y no se escribe nada en los registros (S9): los errores de
 // validación vuelven al que pidió y no se loguean.
 import fs from "node:fs";
@@ -32,6 +35,30 @@ import { TZ_SITIO } from "../config.js";
 /** Un error de lo que mandó la persona: va de vuelta con su campo, nunca al registro. */
 export class ErrorCarta extends Error {
   constructor(campo, mensaje) { super(mensaje); this.campo = campo; }
+}
+
+/** S18, con las palabras de Fernando: en lugar del error técnico, cuando las casas no se pueden calcular. */
+export const MENSAJE_SIN_CASAS = "Para este lugar de nacimiento no es posible calcular las casas de la carta.";
+
+const finito = (x) => typeof x === "number" && Number.isFinite(x);
+
+/**
+ * S18: la carta va completa o no va. Sin las doce cúspides o los cuatro
+ * ángulos es el mensaje de las casas (400, lo ve la persona); si falta otra
+ * parte (un cuerpo, el balance, los aspectos) es un error del motor (500,
+ * «No pudimos calcular la carta»). En ningún caso sale una carta a medias.
+ */
+export function verificarCompleta(c) {
+  const casasOk = Array.isArray(c?.houses) && c.houses.length === 12 && c.houses.every((h) => finito(h.cusp))
+    && Array.isArray(c?.angles) && c.angles.length === 4 && c.angles.every((a) => finito(a.longitude));
+  if (!casasOk) throw new ErrorCarta("lugar", MENSAJE_SIN_CASAS);
+  const resto = Array.isArray(c.bodies) && c.bodies.length === 12
+    && c.bodies.every((b) => finito(b.longitude) && finito(b.latitude) && finito(b.speed) && Number.isInteger(b.house))
+    && Array.isArray(c.aspects) && c.aspects.every((a) => finito(a.orb))
+    && c.balance && finito(c.balance.total) && Array.isArray(c.balance.elements) && Array.isArray(c.balance.modalities)
+    && [...(c.balance.elements || []), ...(c.balance.modalities || [])].every((g) => finito(g.count) && finito(g.percent));
+  if (!resto) throw new Error("carta incompleta: falta una parte del cálculo");
+  return c;
 }
 
 // --- Nombres del contrato (doc 02 §4) ----------------------------------------
@@ -170,8 +197,11 @@ async function armar({ kind, instante, offsetMin, lugar, local }) {
     versionMotor(), jdDe(instante),
   ]);
   // Más allá del círculo polar Placidus no existe y Swiss Ephemeris pasa a
-  // Porphyry: la carta no se arma con un sistema que nadie eligió.
-  if (cas.sustituido) throw new ErrorCarta("lugar", "En esa latitud no se pueden calcular las casas Placidus.");
+  // Porphyry: la carta no se arma con un sistema que nadie eligió (S18).
+  if (cas.sustituido || !Array.isArray(cas.cuspides) || cas.cuspides.length !== 12 || !cas.cuspides.every(finito)
+    || !finito(cas.ascendente) || !finito(cas.medioCielo)) {
+    throw new ErrorCarta("lugar", MENSAJE_SIN_CASAS);
+  }
   const cusps = cas.cuspides;
   const ascSigno = signoDe(cas.ascendente);
   const signoEntero = (lon) => ((signoDe(lon) - ascSigno + 12) % 12) + 1;
@@ -193,7 +223,7 @@ async function armar({ kind, instante, offsetMin, lugar, local }) {
   const balanceJson = balanceCarta([...crudos.map((c) => ({ id: c.id, longitude: c.lon })),
     { id: "asc", longitude: cas.ascendente }, { id: "mc", longitude: cas.medioCielo }]);
 
-  return {
+  return verificarCompleta({
     meta: {
       ejemplo: false,
       kind,
@@ -218,7 +248,7 @@ async function armar({ kind, instante, offsetMin, lugar, local }) {
     aspects,
     balance: balanceJson,
     aspect_rules: reglasAspectos(),
-  };
+  });
 }
 
 // --- Entrada de la carta natal --------------------------------------------------

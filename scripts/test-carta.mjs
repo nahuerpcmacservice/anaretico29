@@ -1,4 +1,6 @@
-// Test de la carta natal y de la carta del momento (T8: S9, S10, S13, S14).
+// Test de la carta natal y de la carta del momento (T8: S9, S10, S13, S14;
+// T9: S15 sin textos de interpretación ni frases de contacto, S16 el momento sin
+// PDF, S17 desde 1900, S18 latitud polar → mensaje claro y ninguna carta).
 //
 //   1. El cálculo (src/lib/carta.js) contra las cartas de referencia del doc 02
 //      §8 (posiciones dentro de 1′, Ascendente, Medio Cielo, cúspides, casa de
@@ -16,8 +18,12 @@
 //      Google, sin respaldos, el botón del PDF, el límite de 2 cartas por
 //      semana (la función de conteo, corrida tal cual se sirve) y
 //      /proximamente?p=carta → /carta.
+//   5. La pantalla corrida tal cual se sirve (carta.js + carta-op2.js sobre un
+//      DOM mínimo, contra la API de verdad): la natal y la del momento sin
+//      textos de interpretación, el PDF solo en la natal, y la latitud polar
+//      (o una carta incompleta) sin rueda ni tablas, como cuando falta la hora.
 //
-// Sin red: la base es un SQLite descartable con cinco ciudades.
+// Sin red: la base es un SQLite descartable con siete ciudades.
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -103,6 +109,98 @@ function casaEsperada(lon, cusps) {
 }
 const gm = (p) => `${p.degree}°${String(p.minute).padStart(2, "0")}′`;
 
+/**
+ * La pantalla /carta corrida tal cual se sirve: carta.js y carta-op2.js sobre un DOM mínimo (solo lo que usan), con fetch a la API
+ * de verdad. La rueda se cuenta (dibujarRueda), no se mide. Devuelve lo que quedó a la vista de cada caso.
+ */
+async function pantallas({ cartaJs, op2, base, n1 }) {
+  class Nodo {
+    constructor(tag) {
+      this.tagName = tag; this.hijos = []; this.attrs = {}; this.propio = ""; this.hidden = false; this.quitado = false; this.parentNode = null;
+      this.style = { setProperty() {}, display: "" }; this.cl = new Set(); this.oyentes = {};
+      const cl = this.cl;
+      this.classList = { add: (c) => cl.add(c), remove: (c) => cl.delete(c), contains: (c) => cl.has(c), toggle: (c, on) => { if (on === undefined ? !cl.has(c) : on) cl.add(c); else cl.delete(c); } };
+    }
+    set className(v) { this.cl.clear(); for (const c of String(v).split(/\s+/).filter(Boolean)) this.cl.add(c); }
+    get className() { return [...this.cl].join(" "); }
+    set textContent(v) { this.hijos = []; this.propio = v == null ? "" : String(v); }
+    get textContent() { return this.propio + this.hijos.map((h) => h.textContent).join(""); }
+    appendChild(n) { if (n.parentNode) n.parentNode.removeChild(n); n.parentNode = this; this.hijos.push(n); return n; }
+    insertBefore(n, ref) { if (n.parentNode) n.parentNode.removeChild(n); n.parentNode = this; const i = ref ? this.hijos.indexOf(ref) : -1; if (i < 0) this.hijos.push(n); else this.hijos.splice(i, 0, n); return n; }
+    removeChild(n) { this.hijos = this.hijos.filter((h) => h !== n); n.parentNode = null; return n; }
+    remove() { this.quitado = true; if (this.parentNode) this.parentNode.removeChild(this); }
+    get firstChild() { return this.hijos[0] || null; }
+    get lastChild() { return this.hijos[this.hijos.length - 1] || null; }
+    get nextSibling() { const p = this.parentNode; return p ? p.hijos[p.hijos.indexOf(this) + 1] || null : null; }
+    setAttribute(k, v) { this.attrs[k] = String(v); }
+    getAttribute(k) { return k in this.attrs ? this.attrs[k] : null; }
+    removeAttribute(k) { delete this.attrs[k]; }
+    addEventListener(t, f) { (this.oyentes[t] ||= []).push(f); }
+    querySelector() { return null; }
+    querySelectorAll() { return []; }
+    closest() { return null; }
+    todos() { return [this, ...this.hijos.flatMap((h) => h.todos())]; }
+  }
+  const correr = async ({ search = "", hash = "", guardadoAntes = null, respuesta = null }) => {
+    const nodos = new Map(), cont = new Nodo("div"), raiz = new Nodo("main");
+    raiz.querySelector = (sel) => {
+      if (!nodos.has(sel)) { const n = new Nodo("div"); cont.appendChild(n); nodos.set(sel, n); }
+      const n = nodos.get(sel);
+      return n.quitado ? null : n;
+    };
+    raiz.querySelectorAll = (lista) => lista.split(",").map((x) => raiz.querySelector(x.trim())).filter(Boolean);
+    const guardado = new Map(guardadoAntes ? [["a29-cartas-natales", JSON.stringify(guardadoAntes)]] : []);
+    let dibujos = 0;
+    const s = {
+      document: {
+        currentScript: null, title: "",
+        querySelector: (sel) => (sel === "[data-carta-observatorio]" ? raiz : null),
+        createElement: (t) => new Nodo(t), createElementNS: (_, t) => new Nodo(t),
+        createTextNode: (t) => { const n = new Nodo("#text"); n.propio = String(t); return n; },
+      },
+      location: { href: "https://www.anaretico29.com/carta" + search + hash, search, hash, pathname: "/carta", replace() {}, reload() {} },
+      localStorage: { getItem: (k) => (guardado.has(k) ? guardado.get(k) : null), setItem: (k, v) => guardado.set(k, String(v)), removeItem: (k) => guardado.delete(k) },
+      fetch: (u, o) => (respuesta ? Promise.resolve(respuesta(String(u), o)) : fetch(base + u, o)),
+      matchMedia: () => ({ matches: false, addEventListener() {} }),
+      addEventListener() {}, print() {},
+      URLSearchParams, URL, Promise, JSON, Date, Math, String, Array, Object, Error, Number, isFinite, console: { error() {}, log() {} },
+    };
+    s.window = s;
+    vm.createContext(s);
+    vm.runInContext(cartaJs, s);
+    s.window.A29Carta.dibujarRueda = () => { dibujos++; };
+    vm.runInContext(op2, s);
+    const cargando = () => nodos.get("[data-cargando]");
+    for (let i = 0; i < 200 && !raiz.cl.has("is-listo") && !(cargando() && cargando().propio); i++) await new Promise((r) => setTimeout(r, 25));
+    const vivos = [...nodos.entries()].filter(([, n]) => !n.quitado && n.style.display !== "none");
+    const texto = vivos.flatMap(([, n]) => n.todos()).map((x) => [x.propio, ...Object.values(x.attrs), x.title || "", x.href || ""].join(" ")).join(" ");
+    const pdf = nodos.get("[data-pdf]");
+    const enlace = (() => { const c = cargando(); const p = c && c.nextSibling; const a = p && p.hijos[0]; return a ? `${a.textContent} → ${a.href}` : ""; })();
+    const tb = (sel) => (nodos.get(sel) ? nodos.get(sel).hijos : []);
+    return {
+      listo: raiz.cl.has("is-listo"), dibujos, texto,
+      error: raiz.cl.has("is-listo") ? "" : (cargando() ? cargando().propio : ""),
+      esError: !!(cargando() && cargando().cl.has("is-error")),
+      ocultas: [".ob-lado", ".ob-ficha", ".ob-cinta", ".ob-mesa-w", "#balance"].filter((x) => nodos.get(x) && nodos.get(x).style.display === "none"),
+      enlace,
+      pdf: !pdf ? "sin tocar" : pdf.quitado ? "quitado" : pdf.hidden ? "oculto" : "visible",
+      limite: JSON.parse(guardado.get("a29-cartas-natales") || "[]").length,
+      filas: (sel) => tb(sel).length,
+      celdas: (sel) => [...new Set(tb(sel).map((tr) => tr.hijos.length))],
+      textoDe: (sel) => (nodos.get(sel) ? nodos.get(sel).textContent : ""),
+    };
+  };
+  const otra = [{ h: "aaaaaaaa", t: Date.now() - 1000 }];
+  const incompleta = JSON.parse(JSON.stringify(n1)); incompleta.houses = [];
+  return {
+    natal: await correr({ hash: "#fecha=1985-03-15&hora=14%3A30&lugar=Buenos+Aires" }),
+    momento: await correr({ search: "?modo=momento" }),
+    polar: await correr({ hash: "#fecha=1990-05-12&hora=08%3A30&lugar=Longyearbyen", guardadoAntes: otra }),
+    sinHora: await correr({ hash: "#fecha=1990-05-12&hora=&lugar=Buenos+Aires", guardadoAntes: otra }),
+    incompleta: await correr({ hash: "#fecha=1985-03-15&hora=14%3A30&lugar=Buenos+Aires", respuesta: () => ({ ok: true, status: 200, json: async () => incompleta }) }),
+  };
+}
+
 let http = null;
 try {
   const { initDb, getDb } = await import("../src/db.js");
@@ -115,6 +213,9 @@ try {
     [2519240, "Córdoba", "ES", "Andalucía", 37.89155, -4.77275, "Europe/Madrid", 328428],
     [3838583, "Rosario", "AR", "Santa Fe", -32.94682, -60.63932, "America/Argentina/Cordoba", 1173533],
     [5128581, "New York City", "US", "New York", 40.71427, -74.00597, "America/New_York", 8804190],
+    // S18: más allá de los círculos polares Placidus no existe
+    [2729907, "Longyearbyen", "SJ", null, 78.2232, 15.6267, "Arctic/Longyearbyen", 2060],
+    [6696480, "McMurdo Station", "AQ", null, -77.846, 166.676, "Antarctica/McMurdo", 1258],
   ];
   const { normalizar } = await import("../src/lib/geo.js");
   for (const [id, nombre, pais, admin1, lat, lon, tz, poblacion] of CIUDADES) {
@@ -309,6 +410,38 @@ try {
     { campo: "hora", mensaje: "Esa hora no existió en ese lugar: ese día se adelantaron los relojes. Revisá la hora de nacimiento." });
   igual("campos que no son texto cuentan como vacíos", await rechazo({ fecha: ["1985-03-15"], hora: 1430, lugar: "Buenos Aires" }), { campo: "fecha", mensaje: "Ingresá tu fecha de nacimiento." });
 
+  console.log("— S17: nacimientos desde 1900");
+  igual("1899-12-31: rechazado con un mensaje claro", await rechazo({ fecha: "1899-12-31", hora: "23:59", lugar: "Buenos Aires" }),
+    { campo: "fecha", mensaje: "Por ahora calculo desde 1900 en adelante." });
+  const n1900 = await carta.calcularNatal({ fecha: "1900-01-01", hora: "00:00", lugar: "Buenos Aires" });
+  igual("1900-01-01 00:00: se calcula completa", [n1900.meta.input.date, n1900.meta.input.time, n1900.bodies.length, n1900.houses.length, n1900.angles.length],
+    ["1900-01-01", "00:00", 12, 12, 4]);
+
+  console.log("— S18: latitud polar, sin casas Placidus → mensaje claro y ninguna carta");
+  const POLAR = "Para este lugar de nacimiento no es posible calcular las casas de la carta.";
+  igual("Longyearbyen (78° N)", await rechazo({ fecha: "1990-05-12", hora: "08:30", lugar: "Longyearbyen" }), { campo: "lugar", mensaje: POLAR });
+  igual("McMurdo (78° S)", await rechazo({ fecha: "1990-05-12", hora: "20:00", lugar: "McMurdo Station" }), { campo: "lugar", mensaje: POLAR });
+  cierto("la regla de completitud se exporta", typeof carta.verificarCompleta === "function");
+  if (typeof carta.verificarCompleta === "function") {
+    const tira = (c) => { try { carta.verificarCompleta(c); return null; } catch (e) { return e instanceof carta.ErrorCarta ? { campo: e.campo, mensaje: e.message } : { otro: true }; } };
+    const copia = () => JSON.parse(JSON.stringify(n1));
+    igual("una carta completa pasa", tira(copia()), null);
+    const sinCusp = copia(); sinCusp.houses[4].cusp = null;
+    igual("una cúspide que no se calculó: el mismo mensaje de las casas", tira(sinCusp), { campo: "lugar", mensaje: POLAR });
+    const sinCasas = copia(); sinCasas.houses = sinCasas.houses.slice(0, 11);
+    igual("11 casas: el mismo mensaje de las casas", tira(sinCasas), { campo: "lugar", mensaje: POLAR });
+    const sinAsc = copia(); sinAsc.angles[0].longitude = NaN;
+    igual("un ángulo que no se calculó: el mismo mensaje de las casas", tira(sinAsc), { campo: "lugar", mensaje: POLAR });
+    const sinLuna = copia(); sinLuna.bodies[1].longitude = NaN;
+    igual("un planeta que no se calculó: no hay carta (error del motor, no de la persona)", tira(sinLuna), { otro: true });
+    const sinQuiron = copia(); sinQuiron.bodies = sinQuiron.bodies.slice(0, 11);
+    igual("un cuerpo de menos: no hay carta", tira(sinQuiron), { otro: true });
+    const sinBalance = copia(); sinBalance.balance.total = NaN;
+    igual("un balance que no se calculó: no hay carta", tira(sinBalance), { otro: true });
+    const sinAspectos = copia(); delete sinAspectos.aspects;
+    igual("sin la lista de aspectos: no hay carta", tira(sinAspectos), { otro: true });
+  }
+
   // ===========================================================================
   console.log("— 7. La API y la pantalla, servidas");
   const express = (await import("express")).default;
@@ -351,7 +484,14 @@ try {
     var porGet = await pedir("/api/carta?fecha=1977-08-09&hora=06:41&lugar=Rosario");
     var roto = await pedir("/api/carta", { metodo: "POST", json: '{"fecha":"1977-08-09","hora":"06:41","lugar":"Rosario"' });
     var mom = await pedir("/api/carta/momento");
+    var polar = await pedir("/api/carta", { metodo: "POST", json: { fecha: "1990-05-12", hora: "08:30", lugar: "Longyearbyen" } });
+    var antes1899 = await pedir("/api/carta", { metodo: "POST", json: { fecha: "1899-12-31", hora: "10:00", lugar: "Buenos Aires" } });
+    var en1900 = await pedir("/api/carta", { metodo: "POST", json: { fecha: "1900-01-01", hora: "00:00", lugar: "Buenos Aires" } });
   } finally { soltar(); }
+  igual("S18: latitud polar → 400 con el mensaje exacto, sin carta, no-store", [polar.codigo, polar.cuerpo, polar.cab.get("cache-control"), polar.texto.includes("bodies")],
+    [400, { campo: "lugar", mensaje: "Para este lugar de nacimiento no es posible calcular las casas de la carta." }, "no-store", false]);
+  igual("S17: 1899 → 400 claro; 1900-01-01 → 200", [antes1899.codigo, antes1899.cuerpo, en1900.codigo, en1900.cuerpo?.meta?.input?.date],
+    [400, { campo: "fecha", mensaje: "Por ahora calculo desde 1900 en adelante." }, 200, "1900-01-01"]);
   igual("POST /api/carta: 200", r.codigo, 200);
   cierto("POST /api/carta: JSON", (r.cab.get("content-type") || "").startsWith("application/json"));
   igual("POST /api/carta: no-store y sin referer", [r.cab.get("cache-control"), r.cab.get("referrer-policy")], ["no-store", "no-referrer"]);
@@ -409,7 +549,7 @@ try {
   igual("título", (/<title>([^<]*)<\/title>/.exec(html) || [])[1], "Anaretico 29 · Tu carta natal");
   cierto("og:title y descripciones sin «ejemplo»", html.includes('<meta property="og:title" content="Anaretico 29 · Tu carta natal">')
     && html.includes('<meta property="og:description" content="Carta natal y carta del momento de Anaretico 29.">')
-    && html.includes('<meta name="description" content="Tu carta natal y la carta del momento: rueda, posiciones, casas, balance de elementos y aspectos con sus posibles significados.">'));
+    && html.includes('<meta name="description" content="Tu carta natal y la carta del momento: rueda, posiciones, casas, balance de elementos y aspectos.">'));
   cierto("S11: /carta no le pide nada a Google", !/fonts\.(googleapis|gstatic)\.com|google/i.test(html));
   const { hojas, scripts, recursos, enlaces } = refsHtml(html);
   const V = JSON.parse(fs.readFileSync(path.join(WEB, "publicado.json"), "utf8")).version;
@@ -430,7 +570,8 @@ try {
     "/carta-opcion-1.html", "/carta-opcion-2.html", "/carta-opcion-3.html", "/carta-opciones.html", "/carta.css", "/carta-op3.css", "/carta-op3.js"]) {
     igual(`${u} da 404`, (await pedir(u)).codigo, 404);
   }
-  igual("los textos de significados se publican", (await pedir("/datos/significados.json")).codigo, 200);
+  igual("S15: los textos de significados ya no se publican (404)", (await pedir("/datos/significados.json")).codigo, 404);
+  cierto("S15: publicado.json no lista significados.json", ![...publicado].some((u) => u.includes("significados")));
   const enlacesLocales = enlaces.filter((e) => !esExterna(e));
   cierto("los enlaces de /carta van a páginas publicadas o a Próximamente", enlacesLocales.every((e) => /^\/(?:#[\w-]+)?$|^\/sobre-mi$|^\/carta\?modo=momento$|^\/proximamente\?p=[\w-]+$/.test(e)), enlacesLocales.join(" "));
 
@@ -451,7 +592,33 @@ try {
   cierto("el botón arma la impresión con window.print()", /data-pdf-btn[\s\S]*window\.print\(\)/.test(op2));
   const print = (/@media print\{([\s\S]*)\}\s*$/.exec(css) || [])[1] || "";
   cierto("carta-op2.css trae la hoja de impresión", print.length > 0);
-  cierto("la impresión saca el menú, los canales, el panel y los botones", ["header nav", "#canales", ".ob-panel", ".ob-pdf", ".ob-acciones", ".strap"].every((s) => print.includes(s)));
+  cierto("la impresión saca el menú, los canales y los botones", ["header nav", "#canales", ".ob-pdf", ".strap"].every((s) => print.includes(s)));
+
+  console.log("— S15: la carta se muestra sola (sin textos de interpretación ni frases que inviten a contactar a Fernando)");
+  const PROHIBIDO = [/signific/i, /borrador/i, /Lectura de lo elegido/, /Cómo leer/, /Una lectura más cercana/, /Ver servicios/, /Una consulta/, /En una consulta/,
+    /Elí una fila|Elegí una fila|Tocá una fila|Elegí una celda|Elegí un cuerpo/, /data-panel|data-mx-inline|data-leer|data-cierre|ob-cierre|ob-mean|ob-lec\b|ob-lec-/,
+    /cada una marca un área/, /Área</, /se expresa |se ubica en el terreno/];
+  for (const [nombre, texto] of [["carta.html", html], ["carta.js", cartaJs], ["carta-op2.js", op2]]) {
+    const hallados = PROHIBIDO.filter((re) => re.test(texto)).map(String);
+    cierto(`${nombre}: sin textos de interpretación`, hallados.length === 0, hallados.join(" "));
+  }
+  // El menú del sitio («Servicios», /#agenda de la línea de tiempo), los canales y el pie quedan (L21): se mira el contenido de la carta, <main>
+  const principal = html.slice(html.indexOf("<main"), html.indexOf("</main>"));
+  igual("carta.html: ninguna frase de contacto (consulta, WhatsApp, agendá, servicios)", [/consulta/i.test(html), /wa\.me|whatsapp/i.test(html), /agend/i.test(principal), /servicios/i.test(principal), principal.length > 1000],
+    [false, false, false, false, true]);
+  igual("carta.js: ninguna frase de contacto", [/consulta|wa\.me|whatsapp|agend/i.test(cartaJs)], [false]);
+  igual("carta-op2.js: lo único de contacto es el aviso del límite y su botón (S14)", [(op2.match(/consulta/gi) || []).length, (op2.match(/wa\.me/g) || []).length, (op2.match(/agend/gi) || []).length],
+    [2, 1, 2]);
+  cierto("carta.js ya no pide ningún archivo de textos", !/datos\/|pedir\(/.test(cartaJs));
+  cierto("las casas, sin la columna «Área»", html.includes('<caption class="ob-sr">Las doce casas con su cúspide</caption><thead><tr><th scope="col" class="ob-r">Casa</th><th scope="col">Cúspide</th></tr></thead>'));
+  cierto("quedan la rueda, las posiciones, los aspectos (matriz y lista), las casas, el balance y los datos",
+    ["data-rueda", 'id="posiciones"', "data-matriz", "data-aspectos", 'id="casas"', 'id="balance"', "data-datos"].every((x) => html.includes(x)));
+  cierto("sin el panel, la mesa queda en una columna (la regla del prototipo hasta 1099 px, en todos los anchos)",
+    css.lastIndexOf(".ob-mesa{display:block}") > css.indexOf(".ob-mesa{display:grid") && !/<aside class="ob-panel"/.test(html));
+
+  console.log("— S16: la carta del momento sin PDF; la natal con «Descargar mi carta en PDF»");
+  cierto("el botón y su nota viven solo dentro de [data-pdf]", /<div class="ob-pdf" data-pdf hidden><button type="button" class="ob-btn" data-pdf-btn>Descargar mi carta en PDF<\/button><p class="ob-peq">[^<]*PDF[^<]*<\/p><\/div>/.test(html)
+    && (html.match(/PDF/g) || []).length === 2);
   cierto("la impresión conserva los colores de la rueda y el pie legal", /print-color-adjust:exact/.test(print) && !/footer\{display:none/.test(print));
 
   console.log("— S14: el límite de 2 cartas natales cada 7 días (contado en el navegador)");
@@ -525,7 +692,7 @@ try {
   try { await vacio.A.cargar("natal"); } catch (e) { err = e; }
   cierto("/carta sin datos no calcula nada (la página vuelve al formulario)", err && err.sinDatos === true && !vacio.pedidos.some((p) => p.u.includes("/api/carta")));
   cierto("la página, sin datos, vuelve al formulario", op2.includes("location.replace('/#herramientas')"));
-  cierto("ante un error o el límite, la página no deja la carta a medias", /\.ob-lado, \.ob-ficha, \.ob-cinta, \.ob-mesa-w, #balance, #como-leer/.test(op2));
+  cierto("ante un error o el límite, la página no deja la carta a medias", /\.ob-lado, \.ob-ficha, \.ob-cinta, \.ob-mesa-w, #balance'/.test(op2));
   // A3: si cambian los datos después del #, la página se calcula de nuevo como al abrirla (los mismos datos no gastan otro lugar: misma huella)
   const hc0 = navegador({ hash: datos, respuesta: bien });
   const k0 = typeof hc0.A.claveNatal === "function" ? hc0.A.claveNatal() : null;
@@ -539,6 +706,27 @@ try {
   cierto("sin carta, la cabecera en una sola columna (la clase en la grilla y su regla en carta-op2.css)",
     /function sinCarta\(err\) \{\n  raiz\.querySelector\('\.ob-top'\)\.classList\.add\('ob-top-sola'\);/.test(op2)
     && /@media \(min-width:1280px\)\{\.ob-top\.ob-top-sola\{grid-template-columns:minmax\(0,1fr\);grid-template-rows:auto;row-gap:28px\}\.ob-top\.ob-top-sola \.ob-intro\{grid-column:1;grid-row:1\}\}/.test(css));
+
+  console.log("— La pantalla corrida tal cual se sirve (DOM mínimo, API de verdad)");
+  const resP = await pantallas({ cartaJs, op2, base: BASE, n1 });
+  const { natal: pN, momento: pM, polar: pP, sinHora: pH, incompleta: pI } = resP;
+  const LIMPIO = (t) => !/signific|borrador|consulta|agend|whatsapp|wa\.me|servicios|lectura|Cómo leer|se expresa|terreno/i.test(t);
+  igual("natal: se dibuja una vez y queda lista", [pN.listo, pN.dibujos, pN.error], [true, 1, ""]);
+  cierto("natal: nada de lo que se muestra interpreta ni invita a contactar", LIMPIO(pN.texto), pN.texto.slice(0, 300));
+  igual("natal: 12 cuerpos, 12 casas (número y cúspide, sin área) y 4 ángulos", [pN.filas("[data-tabla] tbody"), pN.filas("[data-casas] tbody"), pN.celdas("[data-casas] tbody"), pN.filas("[data-angulos] tbody")], [12, 12, [2], 4]);
+  igual("natal: el balance dice solo qué predomina", [/^Predominan? .+\(\d+ de 50\)\.$/.test(pN.textoDe("[data-dom-elementos]")), /^Predominan? .+\(\d+ de 50\)\.$/.test(pN.textoDe("[data-dom-modalidades]"))], [true, true]);
+  igual("natal: el PDF está y se muestra", [pN.pdf], ["visible"]);
+  igual("natal: gasta un lugar del límite", pN.limite, 1);
+  igual("momento: se dibuja una vez y queda lista", [pM.listo, pM.dibujos, pM.error], [true, 1, ""]);
+  cierto("momento: nada de lo que se muestra interpreta ni invita a contactar", LIMPIO(pM.texto), pM.texto.slice(0, 300));
+  igual("S16: momento sin botón ni nota del PDF (salen de la página)", pM.pdf, "quitado");
+  igual("S18: latitud polar: el mensaje exacto, sin rueda ni carta", [pP.listo, pP.dibujos, pP.error, pP.esError],
+    [false, 0, "Para este lugar de nacimiento no es posible calcular las casas de la carta.", true]);
+  igual("S18: latitud polar: todas las partes de la carta ocultas", pP.ocultas, [".ob-lado", ".ob-ficha", ".ob-cinta", ".ob-mesa-w", "#balance"]);
+  igual("S18: latitud polar: no gasta un lugar del límite (tenía 1, sigue 1)", pP.limite, 1);
+  igual("S18: la misma presentación que cuando falta la hora", [pP.ocultas, pP.esError, pP.enlace, pP.listo, pP.dibujos], [pH.ocultas, pH.esError, pH.enlace, pH.listo, pH.dibujos]);
+  igual("sin hora: su mensaje y «Volver al formulario»", [pH.error, pH.enlace], ["Ingresá tu hora de nacimiento.", "Volver al formulario → /#herramientas"]);
+  igual("S18 en general: una carta a la que le faltan las casas no se dibuja (nada a medias)", [pI.listo, pI.dibujos, pI.ocultas.length, pI.filas("[data-tabla] tbody")], [false, 0, 5, 0]);
 
   console.log("— El formulario de la portada lleva a /carta con los datos después del #");
   const herr = (await pedir(`/herramientas.js?v=${V}`)).texto;

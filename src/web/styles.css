@@ -1,4 +1,4 @@
-@import url('assets/fuentes/texto.css?v=20261124.4');
+@import url('assets/fuentes/texto.css?v=20261124.5');
 * { box-sizing:border-box }
 html { scroll-behavior:smooth;scroll-padding-top:24px }
 body { --bg:#f6f4ef;--fg:#252a26;--muted:#6b706a;--line:#d6d5cd;--accent:#755744;--soft:#eeece5;--moon-light:#bdad8c;--moon-dark:#444941;margin:0;background:var(--bg);color:var(--fg);font-family:'Inter',Arial,sans-serif;font-size:14px;-webkit-font-smoothing:antialiased;font-size:14.5px}

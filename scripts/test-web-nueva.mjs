@@ -16,7 +16,7 @@ import { refsHtml, refsCss, fetchsJs, rutasJson, refsSvg, fotosCarrusel, esExter
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const WEB = path.join(HERE, "..", "src", "web");
-const VERSION = "20261124.4";
+const VERSION = "20261124.5";
 const SITIO = "https://www.anaretico29.com";
 const LEGAL = "Contenido astrológico y educativo. No constituye asesoramiento ni recomendación de inversión.";
 const GOOGLE = /fonts\.(?:googleapis|gstatic)\.com/;

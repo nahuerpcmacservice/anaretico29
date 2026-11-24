@@ -1,10 +1,9 @@
 // Carta natal y carta del momento: window.A29Carta, la biblioteca de la pantalla carta.html (opción 2 «Observatorio»):
-// carga de datos, textos, ayudas de datos y rueda en SVG. NO toca el DOM de la página.
-// La carta la calcula el servidor (POST /api/carta, GET /api/carta/momento) y los textos salen de datos/significados.json (borrador).
+// carga de datos, ayudas de datos y rueda en SVG. NO toca el DOM de la página.
+// La carta la calcula el servidor (POST /api/carta, GET /api/carta/momento). Sin textos de interpretación (S15).
 // Ningún número de la carta se escribe a mano acá.
 (function () {
  'use strict';
- var BASE = (document.currentScript && document.currentScript.src) || location.href;
  var VS = '\uFE0E'; // selector de variacion 15: fuerza presentacion como texto (nunca emoji)
  var SIGNOS = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
  // Los signos salen de U+2648 a U+2653; el resto de la familia Noto (ver el <link> de carta.html).
@@ -37,9 +36,6 @@
  // ---------------------------------------------------------------- datos
  function modoDe(m) { if (m === undefined) m = new URLSearchParams(location.search).get('modo'); return m === 'momento' ? 'momento' : 'natal'; }
  function sinHora(carta) { return !!(carta && carta.meta && carta.meta.hora_conocida === false); }
- function pedir(nombre) {
-  return fetch(new URL('datos/' + nombre, BASE).href, { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error(nombre + ': ' + r.status); return r.json(); });
- }
  // La carta la calcula el servidor (src/lib/carta.js). Si rechaza los datos (400), la promesa falla con { mensaje, campo } y no se dibuja nada.
  function api(url, opciones) {
   return fetch(url, opciones).then(function (r) {
@@ -83,12 +79,12 @@
   return api('/api/carta', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(e), cache: 'no-store' })
    .then(function (c) { limite.guardar(limite.anotar(limite.leer(), h, Date.now())); return c; });
  }
- // cargar('natal' | 'momento') o cargar() para leer ?modo= de la URL. Devuelve una promesa con { modo, carta, significados, sinHora }.
+ // cargar('natal' | 'momento') o cargar() para leer ?modo= de la URL. Devuelve una promesa con { modo, carta, sinHora }.
+ // S15: la carta se muestra sola, sin textos de interpretación: no se pide ningún archivo de textos.
  function cargar(modo) {
   modo = modoDe(modo);
   var carta = modo === 'momento' ? api('/api/carta/momento', {}) : pedirNatal();
-  return Promise.all([carta, pedir('significados.json')])
-   .then(function (r) { return { modo: modo, carta: r[0], significados: r[1], sinHora: sinHora(r[0]) }; });
+  return carta.then(function (c) { return { modo: modo, carta: c, sinHora: sinHora(c) }; });
  }
  function punto(carta, id) {
   var i, l = carta.bodies.concat(carta.angles || []);
@@ -97,116 +93,54 @@
  }
  function nombre(carta, id) { var p = punto(carta, id); return p ? p.name : id; }
 
- // ---------------------------------------------------------------- textos (posibles significados)
- // Todas reciben modo ('natal' | 'momento'); si falta, sale de carta.meta.kind. En modo 'momento' no se usa NUNCA un texto propio de la carta natal
- // y todo habla del cielo de ese momento, sin dirigirse a nadie. Los textos armados con las piezas generales no repiten el rol del punto:
- // el rol se muestra una sola vez con textos.rol().
- function modoCarta(carta, modo) { return modo === 'momento' || modo === 'natal' ? modo : (carta && carta.meta && carta.meta.kind === 'momento' ? 'momento' : 'natal'); }
- function info(sig, id) { return sig.planetas[id] || sig.angulos[id] || {}; }
- function conArt(sig, id) { var i = info(sig, id); return (i.articulo ? i.articulo + ' ' : '') + (i.nombre || id); } // "el Sol", "Plutón"
- function conArtCap(sig, id) { return cap(conArt(sig, id)); }
- function temaDe(sig, id, modo) { var i = info(sig, id); return (modo === 'momento' && i.tema_momento) || i.tema; }
- function deArea(area) { return area.indexOf('el ') === 0 ? 'del ' + area.slice(3) : 'de ' + area; } // "del hogar", "de la vocación"
- function lista(a) { return a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' y ' + a[a.length - 1]; }
-
- function tRol(carta, id, sig, modo) {
-  modo = modoCarta(carta, modo);
-  var i = info(sig, id);
-  return (modo === 'momento' && i.momento) || i.funcion || '';
- }
- function tPlanetaSigno(carta, id, sig, modo) {
-  modo = modoCarta(carta, modo);
-  var b = punto(carta, id), t = modo === 'natal' && sig.planeta_en_signo[id + '-' + b.sign];
-  if (t) return { texto: t, propio: true };
-  return { texto: conArtCap(sig, id) + ' en ' + b.sign_name + ' se expresa ' + sig.signos[b.sign].modo + '.', propio: false };
- }
- function tPlanetaCasa(carta, id, sig, modo) {
-  modo = modoCarta(carta, modo);
-  var b = punto(carta, id);
-  if (!b || b.house == null) return { texto: '', propio: false };
-  var t = modo === 'natal' && sig.planeta_en_casa[id + '-' + b.house];
-  if (t) return { texto: t, propio: true };
-  return { texto: conArtCap(sig, id) + ' en la casa ' + b.house + ' se ubica en el terreno ' + deArea((modo === 'momento' && sig.casas[b.house].area_momento) || sig.casas[b.house].area) + '.', propio: false };
- }
- function tAngulo(carta, id, sig, modo) {
-  modo = modoCarta(carta, modo);
-  var a = punto(carta, id), t = modo === 'natal' && sig.angulo_en_signo[id + '-' + a.sign];
-  if (t) return { texto: t, propio: true };
-  return { texto: conArtCap(sig, id) + ' en ' + a.sign_name + ' se expresa ' + sig.signos[a.sign].modo + '.', propio: false };
- }
- // Devuelve la oración completa. Es un objeto String que además lleva .texto y .propio (por si el que llama espera { texto, propio }).
- function tAspecto(carta, asp, sig, modo) {
-  modo = modoCarta(carta, modo);
-  var t = modo === 'natal' && sig.aspectos[asp.a + '-' + asp.b + '-' + asp.type], texto, propio = !!t;
-  if (t) texto = t;
-  else {
-   var ty = sig.aspectos_tipos[asp.type], plural = info(sig, asp.a).plural !== false, enl = ty.enlace ? ty.enlace[plural ? 1 : 0] : 'se vincula con';
-   texto = (conArtCap(sig, asp.a) + ' y ' + conArt(sig, asp.b) + ' ' + ty.frase + ': ' + temaDe(sig, asp.a, modo) + ' ' + enl + ' ' + temaDe(sig, asp.b, modo) + '.').replace(/ a el /g, ' al ');
-  }
-  var o = new String(texto); o.texto = texto; o.propio = propio;
-  return o;
- }
- // grupo: 'elements' | 'modalities'. Devuelve { titulo, texto } del elemento (o la modalidad) predominante.
- function tBalance(carta, sig, grupo, modo) {
-  modo = modoCarta(carta, modo);
-  var b = carta.balance, el = grupo === 'elements', tabla = sig[el ? 'elementos' : 'modalidades'], dom = b['dominant_' + (el ? 'elements' : 'modalities')];
-  var filas = b[grupo].filter(function (x) { return dom.indexOf(x.id) >= 0; });
-  if (b['balanced_' + grupo]) return { titulo: 'Equilibrio.', texto: '' };
-  return {
-   titulo: (filas.length > 1 ? 'Predominan ' : 'Predomina ') + lista(filas.map(function (f) { return f.name + ' (' + f.count + ' de ' + b.total + ')'; })) + '.',
-   texto: filas.map(function (f) { var t = tabla[f.id] || {}; return (modo === 'momento' && t.momento) || t.texto || ''; }).join(' ')
-  };
- }
- function textoTipo(ty, modo) { return (modo === 'momento' && ty.momento) || ty.texto; }
-
  // ---------------------------------------------------------------- ayudas de datos (filas listas para mostrar)
+ // S15 (Fernando, 24/11/2026): la carta se muestra sola. Las filas llevan solo datos de la carta; no hay textos de interpretación.
  // Todas aceptan un último parámetro opcional modo; si falta, se toma de carta.meta.kind.
- function filasCuerpos(carta, sig, modo) {
-  modo = modoCarta(carta, modo);
+ function modoCarta(carta, modo) { return modo === 'momento' || modo === 'natal' ? modo : (carta && carta.meta && carta.meta.kind === 'momento' ? 'momento' : 'natal'); }
+ function lista(a) { return a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' y ' + a[a.length - 1]; }
+ var ANGULO_ASP = { conjunction: '0°', sextile: '60°', square: '90°', trine: '120°', opposition: '180°' };
+ // grupo: 'elements' | 'modalities'. El elemento (o la modalidad) que predomina con sus puntos, o «Equilibrio.» si empatan todos.
+ function dominante(carta, grupo) {
+  var b = carta.balance, dom = b['dominant_' + grupo];
+  if (b['balanced_' + grupo]) return 'Equilibrio.';
+  var filas = b[grupo].filter(function (x) { return dom.indexOf(x.id) >= 0; });
+  return (filas.length > 1 ? 'Predominan ' : 'Predomina ') + lista(filas.map(function (f) { return f.name + ' (' + f.count + ' de ' + b.total + ')'; })) + '.';
+ }
+ function filasCuerpos(carta) {
   return carta.bodies.map(function (b) {
-   var s = tPlanetaSigno(carta, b.id, sig, modo), c = tPlanetaCasa(carta, b.id, sig, modo);
    return {
     id: b.id, glifo: glifoCuerpo(b.id), nombre: b.name, signoId: b.sign, glifoSigno: glifoSigno(b.sign), signo: b.sign_name,
-    grados: grados(b), longitud: b.longitude, casa: b.house, casaNombre: b.house == null ? '' : (sig.casas[b.house] || {}).nombre || '',
-    retrogrado: b.retrograde, movimiento: b.retrograde ? 'Retrógrado' : 'Directo', velocidad: velTexto(b.speed),
-    rol: tRol(carta, b.id, sig, modo),
-    textoSigno: s.texto, textoCasa: c.texto, propioSigno: s.propio, propioCasa: c.propio
+    grados: grados(b), longitud: b.longitude, casa: b.house,
+    retrogrado: b.retrograde, movimiento: b.retrograde ? 'Retrógrado' : 'Directo', velocidad: velTexto(b.speed)
    };
   });
  }
- function filasCasas(carta, sig) {
+ function filasCasas(carta) {
   return carta.houses.map(function (h) {
-   return { casa: h.house, nombre: (sig.casas[h.house] || {}).nombre || '', area: (sig.casas[h.house] || {}).area || '', glifoSigno: glifoSigno(h.sign), signo: h.sign_name, grados: grados(h), cuspide: h.cusp };
+   return { casa: h.house, glifoSigno: glifoSigno(h.sign), signo: h.sign_name, grados: grados(h), cuspide: h.cusp };
   });
  }
- function filasAngulos(carta, sig, modo) {
-  modo = modoCarta(carta, modo);
+ function filasAngulos(carta) {
   return carta.angles.map(function (a) {
-   var t = tAngulo(carta, a.id, sig, modo);
-   return { id: a.id, etiqueta: ETIQ_ANG[a.id], nombre: a.name, glifoSigno: glifoSigno(a.sign), signo: a.sign_name, grados: grados(a), casa: a.house, rol: tRol(carta, a.id, sig, modo), texto: t.texto, propio: t.propio };
+   return { id: a.id, etiqueta: ETIQ_ANG[a.id], nombre: a.name, glifoSigno: glifoSigno(a.sign), signo: a.sign_name, grados: grados(a), casa: a.house };
   });
  }
  // grupo: 'elements' | 'modalities'
- function filasBalance(carta, sig, grupo, modo) {
-  modo = modoCarta(carta, modo);
-  var b = carta.balance, tabla = sig[grupo === 'elements' ? 'elementos' : 'modalidades'], dom = b['dominant_' + (grupo === 'elements' ? 'elements' : 'modalities')];
+ function filasBalance(carta, grupo) {
+  var b = carta.balance, dom = b['dominant_' + grupo];
   return b[grupo].map(function (x) {
-   var t = tabla[x.id] || {};
    return {
-    id: x.id, nombre: x.name, cantidad: x.count, total: b.total, porcentaje: Math.round(x.percent), palabra: t.palabra || '', texto: (modo === 'momento' && t.momento) || t.texto || '',
+    id: x.id, nombre: x.name, cantidad: x.count, total: b.total, porcentaje: Math.round(x.percent),
     dominante: dom.indexOf(x.id) >= 0 && !b['balanced_' + grupo],
     puntos: x.points.map(function (p) { return { id: p, glifo: glifoCuerpo(p), nombre: nombre(carta, p) }; })
    };
   });
  }
- function listaAspectos(carta, sig, modo) {
-  modo = modoCarta(carta, modo);
+ function listaAspectos(carta) {
   return carta.aspects.map(function (a, i) {
-   var t = tAspecto(carta, a, sig, modo), ty = sig.aspectos_tipos[a.type];
    return {
     indice: i, a: a.a, b: a.b, nombreA: nombre(carta, a.a), nombreB: nombre(carta, a.b), glifoA: glifoCuerpo(a.a), glifoB: glifoCuerpo(a.b),
-    tipo: a.type, tipoNombre: a.type_name, tipoGlifo: glifoAspecto(a.type), angulo: ty.angulo, orbe: a.orb_dm, orbeNumero: a.orb, fase: a.phase,
-    texto: t.texto, propio: t.propio, textoTipo: textoTipo(ty, modo)
+    tipo: a.type, tipoNombre: a.type_name, tipoGlifo: glifoAspecto(a.type), angulo: ANGULO_ASP[a.type], orbe: a.orb_dm, orbeNumero: a.orb, fase: a.phase
    };
   });
  }
@@ -700,7 +634,7 @@
  window.A29Carta = {
   cargar: cargar, dibujarRueda: dibujarRueda, resaltar: resaltar, descripcion: descripcion,
   filasCuerpos: filasCuerpos, filasCasas: filasCasas, filasAngulos: filasAngulos, filasBalance: filasBalance, listaAspectos: listaAspectos,
-  textos: { rol: tRol, planetaSigno: tPlanetaSigno, planetaCasa: tPlanetaCasa, angulo: tAngulo, aspecto: tAspecto, balance: tBalance },
+  dominante: dominante,
   sinHora: sinHora,
   glifo: { cuerpo: glifoCuerpo, signo: glifoSigno, aspecto: glifoAspecto, retrogrado: RETRO + VS },
   formato: { grados: grados, posicion: posTexto, fecha: fechaAR, coordenadas: coordTexto, utc: utcTexto, velocidad: velTexto },
