@@ -67,12 +67,18 @@ router.post("/api/carta", express.json({ limit: "2kb" }), (req, res, next) => {
   ).catch(next);
 });
 
-// Un JSON roto (o demasiado grande) no llega a la cuenta y no se registra
+// Un cuerpo que no se puede leer (JSON roto o demasiado grande, un juego de
+// caracteres o una codificación que no se lee, un pedido cortado…) no llega a
+// la cuenta y no se registra: el error del lector puede traer el cuerpo.
+// express.json marca todos sus errores con un `type` y un estado 4xx.
 router.use("/api/carta", (err, req, res, next) => {
-  if (err && (err.type === "entity.parse.failed" || err.type === "entity.too.large")) {
-    return sinGuardar(res).status(400).json({ campo: "", mensaje: "No pudimos leer los datos. Volvé al formulario y probá de nuevo." });
+  if (!err || typeof err.type !== "string" || !(err.status >= 400 && err.status < 500)) return next(err);
+  sinGuardar(res);
+  if (err.type === "entity.parse.failed" || err.type === "entity.too.large") {
+    return res.status(400).json({ campo: "", mensaje: "No pudimos leer los datos. Volvé al formulario y probá de nuevo." });
   }
-  next(err);
+  if (err.status === 415) return res.status(415).json({ campo: "", mensaje: "La carta se pide desde la página." });
+  res.status(err.status).json({ campo: "", mensaje: "No pudimos leer los datos. Volvé al formulario y probá de nuevo." });
 });
 
 // La del momento es la misma para todos durante el minuto: se puede cachear

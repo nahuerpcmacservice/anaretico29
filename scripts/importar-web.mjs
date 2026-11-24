@@ -35,7 +35,7 @@ import { refsHtml, refsCss, fetchsJs, rutasJson, refsSvg, fotosCarrusel, esExter
 import { WEB_DIR, PAGINAS, destino, pagVisible } from "../src/lib/web-nueva.js";
 
 /** Versión para vaciar la caché de CSS y JS: subirla en cada importación. */
-const VERSION = "20261124.3";
+const VERSION = "20261124.4";
 const CODIGO_FUENTE = "https://github.com/nahuerpcmacservice/anaretico29";
 /** Host canónico (config.js, hostCanonico): el og:image tiene que ser absoluto. */
 const SITIO = "https://www.anaretico29.com";
@@ -463,6 +463,8 @@ const CARGAR_CARTA = ` function pedir(nombre) {
   leer: function () { try { return JSON.parse(localStorage.getItem(limite.clave) || '[]'); } catch (e) { return []; } },
   guardar: function (lista) { try { localStorage.setItem(limite.clave, JSON.stringify(lista)); } catch (e) { /* sin localStorage no hay tope */ } }
  };
+ // La huella de los datos que hay ahora después del # ('' si no hay datos, como en el ancla #inicio): carta-op2.js recalcula cuando cambia.
+ function claveNatal() { var e = entradaNatal(); return e.fecha || e.hora || e.lugar ? limite.huella(e) : ''; }
  function pedirNatal() {
   var e = entradaNatal(), h, x;
   if (!e.fecha && !e.hora && !e.lugar) { x = new Error('sin datos'); x.sinDatos = true; return Promise.reject(x); }
@@ -490,6 +492,7 @@ const SIN_CARTA = ` // S14: el PDF es la impresión del navegador («Guardar com
  var LIMITE_TXT = 'Ya calculaste tus 2 cartas de esta semana. Si querés una lectura completa, agendá una consulta';
  var WHATSAPP = 'https://wa.me/5491153144378';
  function sinCarta(err) {
+  raiz.querySelector('.ob-top').classList.add('ob-top-sola'); // sin la rueda, la cabecera en una columna (carta-op2.css)
   Array.prototype.forEach.call(raiz.querySelectorAll('.ob-lado, .ob-ficha, .ob-cinta, .ob-mesa-w, #balance, #como-leer'), function (n) { n.style.display = 'none'; });
   var c = $('[data-cargando]'), p, a;
   if (!c) return;
@@ -506,6 +509,11 @@ const SIN_CARTA = ` // S14: el PDF es la impresión del navegador («Guardar com
   if (a) { p.appendChild(a); c.parentNode.insertBefore(p, c.nextSibling); }
  }
 
+ // Si cambian los datos después del # con la página abierta, se calcula de nuevo como al abrirla (con el mismo límite): la carta anterior
+ // no queda en pantalla ni se imprime. Los mismos datos (misma huella) o un ancla de la página (#inicio) no recalculan.
+ var CLAVE = A.claveNatal();
+ window.addEventListener('hashchange', function () { var k = A.claveNatal(); if (MODO === 'natal' && k && k !== CLAVE) location.reload(); });
+
  encabezado(MODO, SIN_HORA_URL, null); // antes de pedir los datos
  A.cargar().then(pintar).catch(function (err) {
   if (err && err.sinDatos) { location.replace('/#herramientas'); return; } // /carta sin datos: al formulario de la portada
@@ -519,6 +527,8 @@ const CSS_CARTA = `
 /* Anaretico 29 (T8). El balance de 50 puntos de Fernando son 50 casillas: separación más fina para que entren */
 .ob-b-t{gap:2px}
 @media (max-width:720px){.ob-b-t{gap:1px}}
+/* Sin carta (el límite o un error) no hay rueda: la cabecera en una columna, como en pantallas menores */
+@media (min-width:1280px){.ob-top.ob-top-sola{grid-template-columns:minmax(0,1fr);grid-template-rows:auto;row-gap:28px}.ob-top.ob-top-sola .ob-intro{grid-column:1;grid-row:1}}
 /* S14: «Descargar mi carta en PDF» */
 .ob-pdf{margin-top:24px}
 .ob-pdf .ob-peq{margin:10px 0 0}
@@ -618,7 +628,7 @@ const PARCHES = {
     t = parche(t, A, "' de ejemplo, zodíaco tropical'", "', zodíaco tropical'");
     t = parche(t, A, "(modo === 'momento' ? 'Rueda de la carta del momento (ejemplo)' : 'Rueda de la carta natal (ejemplo)')",
       "(modo === 'momento' ? 'Rueda de la carta del momento' : 'Rueda de la carta natal')");
-    t = parche(t, A, "  nombre: nombre, punto: punto, modoDe: modoDe\n };", "  nombre: nombre, punto: punto, modoDe: modoDe,\n  limite: limite\n };");
+    t = parche(t, A, "  nombre: nombre, punto: punto, modoDe: modoDe\n };", "  nombre: nombre, punto: punto, modoDe: modoDe,\n  limite: limite, claveNatal: claveNatal\n };");
     // La parte (B) es la opción 1 «Almanaque», descartada (guía §2.2): no se publica
     const corte = "\n// ====================================================================== (B) Diseño 1 \"Almanaque\"";
     if (t.split(corte).length !== 2 || !t.slice(t.indexOf(corte)).includes("[data-carta-almanaque]")) falla(`${A}: no encuentro la parte (B) «Almanaque»`);

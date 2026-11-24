@@ -321,8 +321,8 @@ try {
   http = server.listen(0, "127.0.0.1");
   await once(http, "listening");
   const BASE = `http://127.0.0.1:${http.address().port}`;
-  const pedir = async (ruta, { metodo = "GET", json, ip, tipo } = {}) => {
-    const headers = {};
+  const pedir = async (ruta, { metodo = "GET", json, ip, tipo, cabeceras } = {}) => {
+    const headers = { ...(cabeceras || {}) };
     if (json !== undefined) headers["content-type"] = tipo || "application/json";
     if (ip) headers["x-forwarded-for"] = ip;
     const r = await fetch(BASE + ruta, { method: metodo, redirect: "manual", headers, body: json === undefined ? undefined : (typeof json === "string" ? json : JSON.stringify(json)) });
@@ -369,6 +369,18 @@ try {
   cierto("el momento se puede cachear hasta un minuto", maxAge > 0 && maxAge <= 60, mom.cab.get("cache-control"));
   igual("nada se escribió en la base", filas(), antes);
   cierto("nada se escribió en la consola con datos de nacimiento", !registro.some((l) => /1985|1977|Rosario|Buenos Aires|14:30|06:41|Inventado/.test(l)), registro.join(" | "));
+
+  // A2: cualquier error del lector del cuerpo (juego de caracteres o codificación que no lee) es un 4xx corto en JSON, sin pasar por el registro de errores
+  const errores = [];
+  console.error = (...a) => { errores.push(a.map(String).join(" ")); };
+  let latin9, rara;
+  try {
+    latin9 = await pedir("/api/carta", { metodo: "POST", json: { fecha: "1985-03-15", hora: "14:30", lugar: "Buenos Aires" }, tipo: "application/json; charset=latin9" });
+    rara = await pedir("/api/carta", { metodo: "POST", json: { fecha: "1985-03-15", hora: "14:30", lugar: "Buenos Aires" }, cabeceras: { "content-encoding": "x-rara" } });
+  } finally { soltar(); }
+  const forma = (x) => [x.codigo, (x.cab.get("content-type") || "").split(";")[0], x.cab.get("cache-control"), x.cuerpo && Object.keys(x.cuerpo).sort(), typeof x.cuerpo?.mensaje, x.texto.includes("1985")];
+  igual("charset o codificación que no se lee: 415 en JSON, no-store, y nada en el registro de errores", [forma(latin9), forma(rara), errores],
+    [[415, "application/json", "no-store", ["campo", "mensaje"], "string", false], [415, "application/json", "no-store", ["campo", "mensaje"], "string", false], []]);
 
   console.log("— Freno de robots: en memoria, sin guardar la IP");
   frenoRobots.configurar({ max: 3, ventanaMs: 60_000 });
@@ -514,6 +526,19 @@ try {
   cierto("/carta sin datos no calcula nada (la página vuelve al formulario)", err && err.sinDatos === true && !vacio.pedidos.some((p) => p.u.includes("/api/carta")));
   cierto("la página, sin datos, vuelve al formulario", op2.includes("location.replace('/#herramientas')"));
   cierto("ante un error o el límite, la página no deja la carta a medias", /\.ob-lado, \.ob-ficha, \.ob-cinta, \.ob-mesa-w, #balance, #como-leer/.test(op2));
+  // A3: si cambian los datos después del #, la página se calcula de nuevo como al abrirla (los mismos datos no gastan otro lugar: misma huella)
+  const hc0 = navegador({ hash: datos, respuesta: bien });
+  const k0 = typeof hc0.A.claveNatal === "function" ? hc0.A.claveNatal() : null;
+  hc0.s.location.hash = "#fecha=1985-03-15&hora=14%3A30&lugar=++buenos+AIRES"; const kMismo = k0 && hc0.A.claveNatal();
+  hc0.s.location.hash = "#fecha=1990-05-12&hora=08%3A30&lugar=C%C3%B3rdoba"; const kOtro = k0 && hc0.A.claveNatal();
+  hc0.s.location.hash = "#inicio"; const kAncla = k0 && hc0.A.claveNatal();
+  igual("hashchange: otros datos recalculan como al abrir; los mismos o un ancla (#inicio) no",
+    [k0 === ha, kMismo === ha, kOtro === hb, kAncla, /addEventListener\('hashchange', function \(\) \{ var k = A\.claveNatal\(\); if \(MODO === 'natal' && k && k !== CLAVE\) location\.reload\(\); \}\)/.test(op2)],
+    [true, true, true, "", true]);
+  // A4: en el aviso sin carta (el límite) la cabecera pasa a una columna: sin la rueda no queda la mitad izquierda vacía
+  cierto("sin carta, la cabecera en una sola columna (la clase en la grilla y su regla en carta-op2.css)",
+    /function sinCarta\(err\) \{\n  raiz\.querySelector\('\.ob-top'\)\.classList\.add\('ob-top-sola'\);/.test(op2)
+    && /@media \(min-width:1280px\)\{\.ob-top\.ob-top-sola\{grid-template-columns:minmax\(0,1fr\);grid-template-rows:auto;row-gap:28px\}\.ob-top\.ob-top-sola \.ob-intro\{grid-column:1;grid-row:1\}\}/.test(css));
 
   console.log("— El formulario de la portada lleva a /carta con los datos después del #");
   const herr = (await pedir(`/herramientas.js?v=${V}`)).texto;

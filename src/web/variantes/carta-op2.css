@@ -345,6 +345,8 @@
 /* Anaretico 29 (T8). El balance de 50 puntos de Fernando son 50 casillas: separación más fina para que entren */
 .ob-b-t{gap:2px}
 @media (max-width:720px){.ob-b-t{gap:1px}}
+/* Sin carta (el límite o un error) no hay rueda: la cabecera en una columna, como en pantallas menores */
+@media (min-width:1280px){.ob-top.ob-top-sola{grid-template-columns:minmax(0,1fr);grid-template-rows:auto;row-gap:28px}.ob-top.ob-top-sola .ob-intro{grid-column:1;grid-row:1}}
 /* S14: «Descargar mi carta en PDF» */
 .ob-pdf{margin-top:24px}
 .ob-pdf .ob-peq{margin:10px 0 0}

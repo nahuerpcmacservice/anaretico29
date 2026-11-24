@@ -73,6 +73,8 @@
   leer: function () { try { return JSON.parse(localStorage.getItem(limite.clave) || '[]'); } catch (e) { return []; } },
   guardar: function (lista) { try { localStorage.setItem(limite.clave, JSON.stringify(lista)); } catch (e) { /* sin localStorage no hay tope */ } }
  };
+ // La huella de los datos que hay ahora después del # ('' si no hay datos, como en el ancla #inicio): carta-op2.js recalcula cuando cambia.
+ function claveNatal() { var e = entradaNatal(); return e.fecha || e.hora || e.lugar ? limite.huella(e) : ''; }
  function pedirNatal() {
   var e = entradaNatal(), h, x;
   if (!e.fecha && !e.hora && !e.lugar) { x = new Error('sin datos'); x.sinDatos = true; return Promise.reject(x); }
@@ -705,7 +707,7 @@
   colores: { aspectos: COLORES_ASPECTOS, trazos: TRAZOS_ASPECTOS, orden: ORDEN_ASPECTOS, base: DEF.colores },
   fuentes: { glifos: FUENTE_GLIFOS, texto: FUENTE_TEXTO },
   nombre: nombre, punto: punto, modoDe: modoDe,
-  limite: limite
+  limite: limite, claveNatal: claveNatal
  };
 })();
 

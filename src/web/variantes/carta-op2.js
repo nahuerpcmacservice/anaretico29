@@ -427,6 +427,7 @@
  var LIMITE_TXT = 'Ya calculaste tus 2 cartas de esta semana. Si querés una lectura completa, agendá una consulta';
  var WHATSAPP = 'https://wa.me/5491153144378';
  function sinCarta(err) {
+  raiz.querySelector('.ob-top').classList.add('ob-top-sola'); // sin la rueda, la cabecera en una columna (carta-op2.css)
   Array.prototype.forEach.call(raiz.querySelectorAll('.ob-lado, .ob-ficha, .ob-cinta, .ob-mesa-w, #balance, #como-leer'), function (n) { n.style.display = 'none'; });
   var c = $('[data-cargando]'), p, a;
   if (!c) return;
@@ -442,6 +443,11 @@
   }
   if (a) { p.appendChild(a); c.parentNode.insertBefore(p, c.nextSibling); }
  }
+
+ // Si cambian los datos después del # con la página abierta, se calcula de nuevo como al abrirla (con el mismo límite): la carta anterior
+ // no queda en pantalla ni se imprime. Los mismos datos (misma huella) o un ancla de la página (#inicio) no recalculan.
+ var CLAVE = A.claveNatal();
+ window.addEventListener('hashchange', function () { var k = A.claveNatal(); if (MODO === 'natal' && k && k !== CLAVE) location.reload(); });
 
  encabezado(MODO, SIN_HORA_URL, null); // antes de pedir los datos
  A.cargar().then(pintar).catch(function (err) {

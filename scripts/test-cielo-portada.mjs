@@ -21,7 +21,7 @@ import { refsHtml, esExterna } from "./web-refs.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const WEB = path.join(HERE, "..", "src", "web");
-const VERSION = "20261124.3";
+const VERSION = "20261124.4";
 
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "cielo-portada-"));
 process.env.DB_PATH = path.join(tmp, "prueba.db");

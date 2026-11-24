@@ -1,6 +1,6 @@
 {
  "_ayuda": "Lo genera scripts/importar-web.mjs. El servidor publica SOLO estos archivos (rutas desde src/web/); lo de variantes/ se sirve en la raíz.",
- "version": "20261124.3",
+ "version": "20261124.4",
  "entrega": "Anaretico29-entrega-programador-2026-11-21",
  "paginas": {
   "/": "combinado.html",
