@@ -15,7 +15,7 @@ import { refsHtml, refsCss, fetchsJs, rutasJson, refsSvg, fotosCarrusel, esExter
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const WEB = path.join(HERE, "..", "src", "web");
-const VERSION = "20261124.1";
+const VERSION = "20261124.2";
 const SITIO = "https://www.anaretico29.com";
 const LEGAL = "Contenido astrológico y educativo. No constituye asesoramiento ni recomendación de inversión.";
 const GOOGLE = /fonts\.(?:googleapis|gstatic)\.com/;
@@ -249,6 +249,12 @@ try {
     cierto("la hora es obligatoria", form.includes('<label><span>Hora</span><input type="time" name="hora" required aria-describedby="err-hora"><span class="t3-err" id="err-hora" role="alert"></span></label>'));
     cierto("ya no dice «(opcional)»", !inicio.includes("(opcional)"));
     cierto("no pide mail", !/type="email"|name="email"|Tu mail|t3-mail|hint-email/.test(form));
+    // Sin el mail, la grilla de escritorio no puede dejar una columna vacía al lado de Lugar
+    const hcss = fs.readFileSync(path.join(WEB, "variantes", "herramientas.css"), "utf8");
+    const ultima = [...hcss.matchAll(/^\.t3 form\{grid-template-columns:([^}]+)\}/gm)].at(-1)?.[1] || "";
+    const columnas = ultima.trim().split(/\s+(?![^(]*\))/).length;
+    const campos = (form.match(/<label\b/g) || []).length;
+    cierto("la grilla de escritorio tiene una columna por campo", columnas === campos, `${columnas} columnas, ${campos} campos`);
     cierto("el texto de Fernando, sin la promesa del mail",
       inicio.includes('<p class="t-text">Calculada con tu fecha, hora y lugar de nacimiento. Te la mostramos en pantalla.</p>'));
     cierto("el botón queda solo", form.includes('<div class="t3-submit"><button type="submit" class="t-btn primary">Ver mi carta →</button></div>'));

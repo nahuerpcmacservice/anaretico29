@@ -31,7 +31,7 @@ import { refsHtml, refsCss, fetchsJs, rutasJson, refsSvg, fotosCarrusel, esExter
 import { WEB_DIR, PAGINAS, destino, pagVisible } from "../src/lib/web-nueva.js";
 
 /** Versión para vaciar la caché de CSS y JS: subirla en cada importación. */
-const VERSION = "20261124.1";
+const VERSION = "20261124.2";
 const CODIGO_FUENTE = "https://github.com/nahuerpcmacservice/anaretico29";
 /** Host canónico (config.js, hostCanonico): el og:image tiene que ser absoluto. */
 const SITIO = "https://www.anaretico29.com";
@@ -443,6 +443,10 @@ const PARCHES = {
     return t;
   },
   // Con la carta en Próximamente, el formulario y "Ver la carta de ahora" van a la pantalla: nada de cartas de ejemplo
+  // S9: sin el campo de mail, la grilla de escritorio del formulario pasa de 4 a 3 columnas
+  "variantes/herramientas.css": (t) => parche(t, "herramientas.css",
+    ".t3 form{grid-template-columns:150px 150px minmax(0,1fr) minmax(0,1.3fr)}",
+    ".t3 form{grid-template-columns:150px 150px minmax(0,1fr)}"),
   "variantes/herramientas.js": (t) => {
     const carta = destino("carta.html", D);
     const H = "herramientas.js";

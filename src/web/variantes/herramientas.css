@@ -104,7 +104,7 @@ html[data-tools="1"] .tools-opt[data-opt="1"],html[data-tools="2"] .tools-opt[da
 @media (max-width:760px){.t3 form{grid-template-columns:repeat(2,minmax(0,1fr))}.t3 .t3-mail,.t3 .t3-submit{grid-column:1/-1}.t3 .t3-submit{flex-wrap:wrap}}
 @media (max-width:600px){.t3 .t3-natal,.t3 .t3-now{padding:18px}.t3 .t3-now{display:flex}.t3 .t3-head .t-title{font-size:22px}}
 @media (max-width:380px){.t3 form{grid-template-columns:1fr}}
-.t3 form{grid-template-columns:150px 150px minmax(0,1fr) minmax(0,1.3fr)}
+.t3 form{grid-template-columns:150px 150px minmax(0,1fr)}
 .t3 label{white-space:nowrap}
 .t3 label .t3-err{white-space:normal}
 @media (max-width:760px){.t3 form{grid-template-columns:repeat(2,minmax(0,1fr))}}
