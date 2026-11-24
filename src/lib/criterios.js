@@ -44,6 +44,15 @@ export const ORDEN_MODALIDADES = ["cardinal", "fijo", "mutable"];
 
 const norm360 = (x) => ((x % 360) + 360) % 360;
 export const signoDe = (longitud) => Math.floor(norm360(longitud) / 30) % 12;
+/**
+ * Grado y minuto dentro del signo (doc 02 §4.7): minutos redondeados al más
+ * cercano, con tope en 29°59′; el signo sale siempre de la longitud real.
+ */
+export function gradoMinuto(longitud) {
+  const signo = signoDe(longitud);
+  const total = Math.min(1799, Math.floor((norm360(longitud) - signo * 30) * 60 + 0.5));
+  return { signo, grado: Math.floor(total / 60), minuto: total % 60 };
+}
 export const elementoDe = (longitud) => ELEMENTO_SIGNO[signoDe(longitud) % 4];
 export const modalidadDe = (longitud) => MODALIDAD_SIGNO[signoDe(longitud) % 3];
 

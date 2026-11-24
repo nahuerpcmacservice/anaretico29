@@ -16,12 +16,19 @@ export const WEB_DIR = path.resolve(HERE, "..", "web");
 export const VISIBILIDAD = path.join(WEB_DIR, "variantes", "datos", "visibilidad.json");
 export const MANIFIESTO = path.join(WEB_DIR, "publicado.json");
 
-/** Las tres páginas que se publican: URL limpia → archivo del prototipo. */
+/** Las páginas que se publican: URL limpia → archivo del prototipo. */
 export const PAGINAS = {
   "/": "combinado.html",
   "/sobre-mi": "sobre-mi.html",
   "/proximamente": "proximamente.html",
+  "/carta": "carta.html",
 };
+
+/**
+ * Páginas cuyo estado vive en la query (la carta: ?modo=momento). Solo para
+ * ellas destino() conserva la query; las demás la pierden como siempre.
+ */
+const CON_QUERY = new Set(["carta"]);
 
 /**
  * Archivos publicados que no están en visibilidad.json. "Sobre mí" todavía no
@@ -64,7 +71,7 @@ export function destino(href, D) {
     const h = ancla.slice(1);
     const x = h ? (p.partes || []).find((y) => y.id === h) : null;
     if (x && !parteVisible(p, x)) return aPantalla(x.id);
-    if (p.ruta && p.archivo === archivo) return p.ruta + ancla;
+    if (p.ruta && p.archivo === archivo) return p.ruta + (CON_QUERY.has(p.id) ? query : "") + ancla;
     throw new Error(`«${p.nombre}» está visible pero ${archivo} no se publica (${href})`);
   }
   if (SIN_ENTRADA[archivo]) return SIN_ENTRADA[archivo] + ancla;

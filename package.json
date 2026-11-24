@@ -8,7 +8,7 @@
   "engines": { "node": ">=22" },
   "scripts": {
     "start": "node server.js",
-    "test": "node scripts/test-portero.mjs && node scripts/test-cielo.mjs && node scripts/test-criterios.mjs && node scripts/test-efemerides.mjs && node scripts/test-geo.mjs"
+    "test": "node scripts/test-portero.mjs && node scripts/test-cielo.mjs && node scripts/test-criterios.mjs && node scripts/test-efemerides.mjs && node scripts/test-geo.mjs && node scripts/test-carta.mjs"
   },
   "dependencies": {
     "@kuntay/swisseph": "^0.2.2",

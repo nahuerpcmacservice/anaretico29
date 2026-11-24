@@ -12,6 +12,7 @@ import { cieloPortada, derivado, partesBA, ahora, DIAS_AGENDA } from "./cielo-po
 import { iniciarMotor } from "./efemerides.js";
 import { CUERPOS, SIGNOS, ASPECTOS } from "./astro-config.js";
 import { META_ELEMENTO, META_MODALIDAD } from "./cielo.js";
+import { gradoMinuto } from "./criterios.js";
 import { TZ_SITIO } from "../config.js";
 
 const DIAS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
@@ -43,9 +44,8 @@ const utcLargo = (fecha) => fecha.toISOString().replace("T", " ").replace("Z", "
  * tope en 29°59′ (doc 02 §4.7: el signo sale de la longitud real).
  */
 export function grados(longitud) {
-  const lon = ((longitud % 360) + 360) % 360, idx = Math.floor(lon / 30) % 12;
-  const total = Math.min(1799, Math.floor((lon - idx * 30) * 60 + 0.5));
-  return { signo: SIGNOS[idx].nombre, texto: `${dos(Math.floor(total / 60))}°${dos(total % 60)}′` };
+  const g = gradoMinuto(longitud);
+  return { signo: SIGNOS[g.signo].nombre, texto: `${dos(g.grado)}°${dos(g.minuto)}′` };
 }
 const signoYGrados = (longitud) => { const g = grados(longitud); return `${g.signo} ${g.texto}`; };
 

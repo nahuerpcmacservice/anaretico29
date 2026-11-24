@@ -1,11 +1,12 @@
-// Herramientas. Carta natal: fecha, hora y lugar son obligatorios; con datos válidos el formulario lleva a carta.html (pantalla de resultado con una carta de ejemplo).
-// "Ver la carta de ahora" lleva a carta.html?modo=momento. Los datos tipeados viajan en la URL solo para mostrarse en el encabezado: nada se guarda.
+// Herramientas. Carta natal: fecha, hora y lugar son obligatorios; con datos válidos el formulario lleva a /carta con los datos después del #
+// (el navegador no manda esa parte de la dirección: la carta se pide por POST y no queda en ningún registro).
+// "Ver la carta de ahora" lleva a /carta?modo=momento. Nada se guarda.
 // Los botones data-tool="natal" de las variantes de herramientas.html siguen mostrando el aviso "en preparación".
 const toolMsg={
  natal:['HERRAMIENTA / CARTA NATAL','Calculá tu carta natal','<p>Este botón llevará a la calculadora de carta natal. Todavía no está conectada: la armamos en un paso siguiente.</p>'],
  momento:['HERRAMIENTA / CARTA DEL MOMENTO','La carta de este momento','<p>Este botón llevará a la carta del cielo actual. Todavía no está conectada: la armamos en un paso siguiente.</p>']
 };
-document.querySelectorAll('.tools [data-tool]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();if(a.dataset.tool==='momento'){e.stopPropagation();location.assign('/proximamente?p=carta');return}openDialog(...toolMsg[a.dataset.tool])}));
+document.querySelectorAll('.tools [data-tool]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();if(a.dataset.tool==='momento'){e.stopPropagation();location.assign('/carta?modo=momento');return}openDialog(...toolMsg[a.dataset.tool])}));
 const esc=t=>t.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
 const checks={
  fecha:v=>v?'':'Ingresá tu fecha de nacimiento.',
@@ -23,6 +24,6 @@ document.querySelectorAll('.tools form').forEach(f=>{
   const q=new URLSearchParams({fecha:f.elements.fecha.value,lugar:f.elements.lugar.value.trim()});
   q.set('hora',f.elements.hora.value);
   f.reset();Object.keys(checks).forEach(n=>setErr(n,''));
-  location.assign('/proximamente?p=carta');
+  location.assign('/carta#'+q.toString());
  });
 });

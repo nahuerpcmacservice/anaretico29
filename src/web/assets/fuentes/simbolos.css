@@ -7,7 +7,7 @@
   font-stretch: 100%;
   font-display: block;
   src: url(noto-sans-normal-400-simbolos.woff2) format('woff2');
-  unicode-range: U+211e, U+2192, U+25a1, U+25b3, U+2609, U+260c-260d, U+263d, U+263f-2640, U+2642-2653, U+26b9;
+  unicode-range: U+211e, U+2192, U+25a1, U+25b3, U+2609-260a, U+260c-260d, U+263d, U+263f-2640, U+2642-2653, U+26b7, U+26b9;
 }
 @font-face {
   font-family: 'Noto Sans Symbols';
@@ -15,7 +15,7 @@
   font-weight: 400;
   font-display: block;
   src: url(noto-sans-symbols-normal-400-simbolos.woff2) format('woff2');
-  unicode-range: U+211e, U+2192, U+25a1, U+25b3, U+2609, U+260c-260d, U+263d, U+263f-2640, U+2642-2653, U+26b9;
+  unicode-range: U+211e, U+2192, U+25a1, U+25b3, U+2609-260a, U+260c-260d, U+263d, U+263f-2640, U+2642-2653, U+26b7, U+26b9;
 }
 @font-face {
   font-family: 'Noto Sans Symbols 2';
@@ -23,5 +23,5 @@
   font-weight: 400;
   font-display: block;
   src: url(noto-sans-symbols-2-normal-400-simbolos.woff2) format('woff2');
-  unicode-range: U+211e, U+2192, U+25a1, U+25b3, U+2609, U+260c-260d, U+263d, U+263f-2640, U+2642-2653, U+26b9;
+  unicode-range: U+211e, U+2192, U+25a1, U+25b3, U+2609-260a, U+260c-260d, U+263d, U+263f-2640, U+2642-2653, U+26b7, U+26b9;
 }

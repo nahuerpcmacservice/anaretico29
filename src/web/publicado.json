@@ -1,11 +1,12 @@
 {
  "_ayuda": "Lo genera scripts/importar-web.mjs. El servidor publica SOLO estos archivos (rutas desde src/web/); lo de variantes/ se sirve en la raíz.",
- "version": "20261124.2",
+ "version": "20261124.3",
  "entrega": "Anaretico29-entrega-programador-2026-11-21",
  "paginas": {
   "/": "combinado.html",
   "/sobre-mi": "sobre-mi.html",
-  "/proximamente": "proximamente.html"
+  "/proximamente": "proximamente.html",
+  "/carta": "carta.html"
  },
  "archivos": [
   "app.js",
@@ -78,11 +79,16 @@
   "variantes/arreglos.css",
   "variantes/arreglos.js",
   "variantes/canales.css",
+  "variantes/carta-op2.css",
+  "variantes/carta-op2.js",
+  "variantes/carta.html",
+  "variantes/carta.js",
   "variantes/combinado.css",
   "variantes/combinado.html",
   "variantes/datos/mapa-mundial.svg",
   "variantes/datos/presentacion.json",
   "variantes/datos/servicios.json",
+  "variantes/datos/significados.json",
   "variantes/datos/visibilidad.json",
   "variantes/esquinas/media.css",
   "variantes/herramientas.css",

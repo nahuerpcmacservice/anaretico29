@@ -28,6 +28,29 @@ El sitio no junta datos de los visitantes: no hay suscripción por mail ni
 formularios que guarden algo, y las fuentes se sirven desde el propio sitio
 (el navegador no le pide nada a Google Fonts).
 
+### La carta natal y la carta del momento (`/carta`)
+
+- La calcula el servidor (`src/lib/carta.js`) y la pantalla la dibuja.
+  `POST /api/carta` con `{ "fecha": "AAAA-MM-DD", "hora": "HH:MM", "lugar": "Ciudad, país" }`
+  en JSON devuelve la carta natal; `GET /api/carta/momento`, la del momento
+  (Buenos Aires, el minuto en curso; se puede cachear hasta que termina ese
+  minuto). Los errores vuelven con 400 y `{ "campo", "mensaje" }`; **sin hora
+  no hay carta**.
+- Los datos de nacimiento **no viajan en ninguna dirección que llegue al
+  servidor**: el formulario de la portada lleva a `/carta#fecha=…&hora=…&lugar=…`
+  (lo que va después del `#` no se manda) y la página pide la carta por POST.
+  La respuesta sale con `cache-control: no-store`; nada se guarda ni se
+  registra. Contra los robots hay un freno en memoria por huella con sal de la
+  IP (la IP no se guarda).
+- Criterios: tropical, Placidus, casa por intervalos entre cúspides, balance
+  de 50 puntos, aspectos solo entre los diez planetas con orbes 8/8/6/6/4
+  (`src/lib/criterios.js`).
+- **«Descargar mi carta en PDF»** usa la impresión del navegador (hoja
+  `@media print`); no hay servicios de terceros.
+- **Límite**: 2 cartas natales cada 7 días por navegador, contadas en el
+  navegador (`localStorage`, ventana corrida de 7 días; volver a calcular los
+  mismos datos no cuenta otra vez). La carta del momento no tiene límite.
+
 ## Tests
 
 Ninguno necesita internet; los que levantan el router usan un puerto libre de
@@ -42,6 +65,7 @@ node scripts/test-criterios.mjs      # criterios de cálculo (pesos, orbes, tens
 node scripts/test-cielo.mjs          # cálculos derivados
 node scripts/test-efemerides.mjs     # el motor, cruzado contra astronomy-engine
 node scripts/test-geo.mjs            # ciudades y zona horaria histórica
+node scripts/test-carta.mjs          # la carta: referencias, orbes, casas, balance, API, pantalla, PDF y límite
 ```
 
 ## Las piezas que importan
@@ -52,6 +76,8 @@ node scripts/test-geo.mjs            # ciudades y zona horaria histórica
   solo lugar (pesos del balance de 50 y de 36 puntos, orbes, tensión,
   dominante y empates, aplicativo/separativo).
 - **`src/lib/cielo.js`**: cálculos derivados (elementos, modalidades, tensión).
+- **`src/lib/carta.js`**: la carta natal y la del momento, en el JSON que lee
+  la pantalla (`window.A29Carta`).
 - **`src/lib/geo.js`**: ciudad → coordenadas y huso horario vigente en la
   fecha. Todo local: los datos de nacimiento no salen a ningún tercero.
 

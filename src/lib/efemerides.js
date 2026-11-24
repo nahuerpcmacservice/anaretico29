@@ -106,6 +106,29 @@ export async function posiciones(fecha) {
   return CUERPOS.map((def) => conSigno(swe.calc(jd, BODY_DE[def.clave]), def));
 }
 
+/**
+ * Nodo norte VERDADERO y Quirón, para la carta (doc 02 §4.2): se muestran pero
+ * no entran en el balance ni forman aspectos. Quirón necesita seas_18.se1: si
+ * Swiss Ephemeris no usó sus archivos (cayó a Moshier o no lo encontró) se
+ * corta con error en vez de devolver una carta peor sin avisar.
+ */
+export async function nodoYQuiron(fecha) {
+  const swe = await motor();
+  const jd = await jdDe(fecha);
+  const out = {};
+  for (const [clave, cuerpo] of [["nodo", Body.TrueNode], ["quiron", Body.Chiron]]) {
+    const p = swe.calc(jd, cuerpo);
+    if (p.ephemeris !== "swiss") throw new Error(`efemérides: ${clave} sin los archivos de Swiss Ephemeris (${p.ephemeris})`);
+    out[clave] = { longitud: norm360(p.longitude), latitud: p.latitude, velocidad: p.longitudeSpeed };
+  }
+  return out;
+}
+
+/** La versión de Swiss Ephemeris que corre (para «Motor de cálculo»). */
+export async function versionMotor() {
+  return (await motor()).version;
+}
+
 /** Longitud de un solo cuerpo, por día juliano. Para las búsquedas de cruces. */
 async function lonEn(clave, jd) {
   const swe = await motor();

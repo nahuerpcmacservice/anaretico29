@@ -2,7 +2,8 @@
 // src/web/assets/fuentes/, servidas por nosotros (S11: "Las fuentes alojalas en
 // nuestro servidor"). Así el navegador del visitante no le pide nada a Google.
 //
-//   node scripts/bajar-fuentes-web.mjs      (necesita internet; después ya no)
+//   node scripts/bajar-fuentes-web.mjs             (necesita internet; después ya no)
+//   node scripts/bajar-fuentes-web.mjs --simbolos  (solo simbolos.css: al sumar glifos)
 //
 // Lo que pedía el prototipo y lo que queda acá, con la misma cobertura:
 //   - styles.css: @import de Fraunces (ital, opsz 9..144, wght 300..600 / itálica
@@ -12,8 +13,9 @@
 //     solo los que la página usa, igual que antes.
 //   - <link> de combinado.html y sobre-mi.html: Noto Sans Symbols, Noto Sans
 //     Symbols 2 y Noto Sans recortadas a los glifos del sitio (&text=) →
-//     simbolos.css. Una sola hoja para las dos páginas, con la unión de los
-//     glifos de las dos más ☌ ⚹ △ (los aspectos que muestra la portada).
+//     simbolos.css. Una sola hoja para todas las páginas, con la unión de los
+//     glifos de la portada, Sobre mí y la carta (☊ nodo, ⚷ Quirón) más ☌ ⚹ △
+//     (los aspectos que muestra la portada).
 //   - La licencia de cada familia (SIL Open Font License 1.1), del repositorio
 //     oficial de Google Fonts: OFL-<familia>.txt, al lado de los archivos.
 //
@@ -29,8 +31,9 @@ const DIR_FUENTES = path.join(WEB_DIR, "assets", "fuentes");
 // El User-Agent decide qué formato devuelve Google: con uno moderno, woff2.
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36";
 
-/** Los glifos de los dos <link> del prototipo, más los tres aspectos que faltaban. */
-const GLIFOS = "☉☽☿♀♂♃♄♅♆♇♈♉♊♋♌♍♎♏♐♑♒♓□☍→℞☌⚹△";
+/** Los glifos de los <link> del prototipo (portada, Sobre mí y carta), más los tres aspectos que faltaban. */
+const GLIFOS = "☉☽☿♀♂♃♄♅♆♇♈♉♊♋♌♍♎♏♐♑♒♓□☍→℞☌⚹△☊⚷";
+const SOLO_SIMBOLOS = process.argv.includes("--simbolos");
 
 const HOJAS = [
   {
@@ -58,7 +61,7 @@ fs.mkdirSync(DIR_FUENTES, { recursive: true });
 const bajados = new Map(); // URL de Google → nombre local (Inter usa el mismo archivo variable para los cuatro pesos)
 let bytes = 0;
 
-for (const hoja of HOJAS) {
+for (const hoja of HOJAS.filter((h) => !SOLO_SIMBOLOS || h.archivo === "simbolos.css")) {
   const css = await (await traer(hoja.url)).text();
   let out = `/* Generado por scripts/bajar-fuentes-web.mjs — no editar a mano.\n   Fuentes bajo SIL Open Font License 1.1: ver OFL-*.txt en esta carpeta. */\n`;
   // Google manda un @font-face por subconjunto, precedido por /* subconjunto */
@@ -86,7 +89,7 @@ for (const hoja of HOJAS) {
   console.log(`✓ ${hoja.archivo}`);
 }
 
-for (const [familia, dir] of Object.entries(LICENCIAS)) {
+for (const [familia, dir] of Object.entries(LICENCIAS).filter(([f]) => !SOLO_SIMBOLOS || f.startsWith("Noto"))) {
   const txt = await (await traer(`https://raw.githubusercontent.com/google/fonts/main/ofl/${dir}/OFL.txt`)).text();
   if (!txt.includes("SIL OPEN FONT LICENSE")) throw new Error(`${familia}: la licencia no es la OFL`);
   fs.writeFileSync(path.join(DIR_FUENTES, `OFL-${slug(familia)}.txt`), txt);

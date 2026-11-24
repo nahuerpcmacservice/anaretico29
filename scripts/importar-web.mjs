@@ -2,8 +2,8 @@
 //
 //   node scripts/importar-web.mjs <carpeta web/ de la entrega>
 //
-// Se publica SOLO lo que cargan las tres páginas (combinado.html, sobre-mi.html
-// y proximamente.html): sus <link>, <script>, imágenes, srcset, url() y
+// Se publica SOLO lo que cargan las cuatro páginas (combinado.html, sobre-mi.html,
+// proximamente.html y carta.html): sus <link>, <script>, imágenes, srcset, url() y
 // @import de las hojas, lo que los scripts piden con fetch, las rutas de
 // imágenes de esos JSON y las fotos del carrusel que arma portada-plaza.js
 // desde data.js. Los respaldos y variantes de la guía §2.2 quedan afuera porque
@@ -23,6 +23,10 @@
 //   - las fuentes, autoalojadas (S11): las hojas de Google pasan a las de
 //     src/web/assets/fuentes/ (las baja scripts/bajar-fuentes-web.mjs, una vez)
 //   - el pie: «Imágenes: Anaretico 29» (S12) y el enlace al código fuente
+//   - la carta (T8): carta.html, la opción 2 «Observatorio» elegida, conectada
+//     a la API (POST /api/carta, GET /api/carta/momento) en vez de a las cartas
+//     de ejemplo, sin los rótulos de prototipo, con «Descargar mi carta en PDF»
+//     (impresión del navegador) y el límite de 2 cartas natales por semana
 // Cada retoque exige encontrar EXACTAMENTE lo que espera: si el prototipo
 // cambia, la importación se corta en vez de publicar algo a medias.
 import fs from "node:fs";
@@ -31,7 +35,7 @@ import { refsHtml, refsCss, fetchsJs, rutasJson, refsSvg, fotosCarrusel, esExter
 import { WEB_DIR, PAGINAS, destino, pagVisible } from "../src/lib/web-nueva.js";
 
 /** Versión para vaciar la caché de CSS y JS: subirla en cada importación. */
-const VERSION = "20261124.2";
+const VERSION = "20261124.3";
 const CODIGO_FUENTE = "https://github.com/nahuerpcmacservice/anaretico29";
 /** Host canónico (config.js, hostCanonico): el og:image tiene que ser absoluto. */
 const SITIO = "https://www.anaretico29.com";
@@ -41,7 +45,7 @@ const SITIO = "https://www.anaretico29.com";
  * Servicios está bloqueada en el JSON de muestra (regla 1), pero Fernando la
  * pidió en Próximamente mientras la arma: se le saca el bloqueo.
  */
-const APAGADAS = ["servicios", "research", "academia", "revista", "membresia", "carta"];
+const APAGADAS = ["servicios", "research", "academia", "revista", "membresia"];
 /**
  * Partes apagadas (regla 3 del doc 05: una parte apagada no aparece en su
  * página). Fernando, 24/11/2026: "Newsletter apagado por ahora, en
@@ -56,7 +60,7 @@ const PARTES_APAGADAS = { inicio: ["boletin"], carta: ["mail-carta"] };
  */
 const FUENTES = "assets/fuentes";
 /** URL limpia de las entradas de visibilidad.json que se publican. */
-const RUTAS = { inicio: "/", enfoque: "/", recorrido: "/sobre-mi" };
+const RUTAS = { inicio: "/", enfoque: "/", recorrido: "/sobre-mi", carta: "/carta" };
 
 const origen = process.argv[2];
 if (!origen || !fs.existsSync(path.join(origen, "variantes", "combinado.html"))) {
@@ -96,6 +100,7 @@ for (const [pag, ids] of Object.entries(PARTES_APAGADAS)) {
   for (const id of ids) ((p.partes || []).find((x) => x.id === id) || falla(`${pag} no tiene la parte ${id}`)).visible = false;
 }
 const boletinApagado = PARTES_APAGADAS.inicio.includes("boletin");
+const mailCartaApagado = PARTES_APAGADAS.carta.includes("mail-carta");
 
 // Las fuentes propias (S11): tienen que estar bajadas antes de importar
 const dirFuentes = path.join(WEB_DIR, FUENTES);
@@ -157,6 +162,14 @@ function recortar(html, archivo) {
     // "Ver servicios" no tiene a dónde llevar con Servicios en Próximamente
     if (serviciosApagada) quitar(/<a [^>]*data-pr-servicios[^>]*>Ver servicios<\/a>/g, 1, "«Ver servicios»");
   }
+  if (archivo === "carta.html") {
+    // Regla 3: la franja del mail es una parte apagada (S9: la carta no se manda por mail)
+    if (mailCartaApagado) {
+      quitar(/<section class="ob-mail" data-solo="natal"[\s\S]*?<\/section>\n/g, 1, "franja «También te la enviamos por mail»",
+        (h) => h.includes("Usamos tu mail únicamente para enviártela.") && (h.match(/<section\b/g) || []).length === 1);
+    }
+    out = cartaPublicada(out);
+  }
   if (membresiaApagada) {
     // Regla 4: los botones principales de Membresía se OCULTAN, no van a Próximamente
     const n = archivo === "combinado.html" ? 1 : 0;
@@ -187,6 +200,9 @@ for (const archivo of Object.values(PAGINAS)) {
     }
   }
 }
+// Los textos de la carta: carta.js los pide con new URL('datos/' + nombre, …), que fetchsJs() no lee
+if (!leer("variantes/carta.js").includes("pedir('significados.json')")) falla("carta.js ya no pide significados.json como se espera");
+sumar("variantes/datos/significados.json", "carta.js (A29Carta.cargar)");
 // Las fotos del carrusel: portada-plaza.js las arma desde data.js
 if (!leer("variantes/portada-plaza.js").includes("`${base}portada/${s.id}-${w}.${ext} ${w}w`")) {
   falla("portada-plaza.js ya no arma las fotos como espera fotosCarrusel()");
@@ -376,6 +392,149 @@ function cartaSinMail(html) {
   return t;
 }
 
+/**
+ * La pantalla de la carta (carta.html, opción 2 «Observatorio») como se publica:
+ * sin los rótulos de prototipo (doc 03 §1.3, §4.1, §11.2 y §11.6) y con el botón
+ * del PDF (S14) en el lugar de la franja del mail.
+ */
+function cartaPublicada(html) {
+  const A = "carta.html";
+  let t = html;
+  const p = (buscar, poner) => { t = parche(t, A, buscar, poner); };
+  p("<title>Anaretico 29 · Tu carta natal (ejemplo) · Opción 2</title>", "<title>Anaretico 29 · Tu carta natal</title>");
+  p('<meta property="og:title" content="Anaretico 29 · Tu carta natal (ejemplo) · Opción 2">', '<meta property="og:title" content="Anaretico 29 · Tu carta natal">');
+  p('<meta property="og:description" content="Carta natal y carta del momento de Anaretico 29. Prototipo con datos de ejemplo.">',
+    '<meta property="og:description" content="Carta natal y carta del momento de Anaretico 29.">');
+  p(" balance de elementos y aspectos con sus posibles significados. Prototipo con datos de ejemplo.\">", " balance de elementos y aspectos con sus posibles significados.\">");
+  // El aviso de prototipo se quita al publicar (doc 03 §4.1): la carta ya no es de ejemplo
+  p('<div class="ob-proto" role="note"><div class="ob-wrap"><strong>Carta de ejemplo</strong><span data-proto-d>Prototipo con datos de ejemplo calculados con Swiss Ephemeris.</span></div></div>\n', "");
+  p('<p class="ob-kicker" data-kicker>Carta natal · ejemplo</p>', '<p class="ob-kicker" data-kicker>Carta natal</p>');
+  // Sin hora no hay carta (S10) y las cartas de ejemplo no se publican (doc 03 §11.2)
+  p('<a class="ob-link" data-sinhora-link href="carta.html?sinhora=1">Ver el ejemplo sin hora de nacimiento</a>', "");
+  p('<span class="ob-sello" data-sello>Ejemplo</span>', '<span class="ob-sello" data-sello>Con tus datos</span>');
+  // S14: «Descargar mi carta en PDF», debajo de los datos de la carta (lo muestra carta-op2.js en la carta natal)
+  p('<p class="ob-ingresado" data-ingresado hidden></p></section>\n</div>',
+    '<p class="ob-ingresado" data-ingresado hidden></p></section>\n<div class="ob-pdf" data-pdf hidden><button type="button" class="ob-btn" data-pdf-btn>Descargar mi carta en PDF</button>' +
+    '<p class="ob-peq">Se abre la ventana de impresión del navegador: elegí «Guardar como PDF».</p></div>\n</div>');
+  const resto = /.{0,40}(?:ejemplo|Opción 2|Prototipo|sinhora=|sinhora-link|ob-mail).{0,40}/.exec(t);
+  if (resto) falla(`${A}: quedó un rótulo de prototipo: ${resto[0]}`);
+  return t;
+}
+
+/**
+ * window.A29Carta (carta.js): la carta sale del servidor, no de los JSON de
+ * ejemplo. La natal se pide por POST con los datos que la portada deja después
+ * del # (nunca en una dirección que llegue al servidor); el límite de 2 cartas
+ * natales cada 7 días se cuenta acá, en el navegador (S14).
+ */
+const CARGAR_CARTA = ` function pedir(nombre) {
+  return fetch(new URL('datos/' + nombre, BASE).href, { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error(nombre + ': ' + r.status); return r.json(); });
+ }
+ // La carta la calcula el servidor (src/lib/carta.js). Si rechaza los datos (400), la promesa falla con { mensaje, campo } y no se dibuja nada.
+ function api(url, opciones) {
+  return fetch(url, opciones).then(function (r) {
+   return r.json().catch(function () { return {}; }).then(function (j) {
+    if (r.ok) return j;
+    var e = new Error(j.mensaje || ('carta: ' + r.status)); e.mensaje = j.mensaje || ''; e.campo = j.campo || ''; e.estado = r.status; throw e;
+   });
+  });
+ }
+ // Los datos que dejó el formulario de la portada después del # (/carta#fecha=…&hora=…&lugar=…): el navegador no manda esa parte de la dirección.
+ function entradaNatal() {
+  var q = new URLSearchParams((location.hash || '').replace(/^#/, ''));
+  return { fecha: q.get('fecha') || '', hora: q.get('hora') || '', lugar: (q.get('lugar') || '').slice(0, 120) };
+ }
+ // El límite de Fernando: 2 cartas natales cada 7 días por navegador, contadas acá (localStorage; el servidor no guarda nada ni ve IPs).
+ // Se anota la huella de los datos (no los datos) y la hora de cada carta calculada con éxito. La ventana corre: cada carta deja de contar
+ // a los 7 días justos de calculada. Volver a pedir los mismos datos no gasta otro lugar. Sin localStorage (bloqueado), no hay tope.
+ var limite = {
+  clave: 'a29-cartas-natales', max: 2, ventana: 7 * 864e5,
+  huella: function (e) {
+   var t = [e.fecha, e.hora, e.lugar].map(function (v) { return String(v || '').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').replace(/[^a-z0-9:-]+/g, ' ').trim(); }).join('|');
+   var h = 0x811c9dc5;
+   for (var i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+   return ('0000000' + h.toString(16)).slice(-8);
+  },
+  vigentes: function (lista, ahora) {
+   return (Array.isArray(lista) ? lista : []).filter(function (x) { return x && typeof x.h === 'string' && typeof x.t === 'number' && ahora - x.t < limite.ventana; });
+  },
+  puede: function (lista, h, ahora) { var v = limite.vigentes(lista, ahora); return v.some(function (x) { return x.h === h; }) || v.length < limite.max; },
+  anotar: function (lista, h, ahora) { var v = limite.vigentes(lista, ahora); if (!v.some(function (x) { return x.h === h; })) v.push({ h: h, t: ahora }); return v; },
+  leer: function () { try { return JSON.parse(localStorage.getItem(limite.clave) || '[]'); } catch (e) { return []; } },
+  guardar: function (lista) { try { localStorage.setItem(limite.clave, JSON.stringify(lista)); } catch (e) { /* sin localStorage no hay tope */ } }
+ };
+ function pedirNatal() {
+  var e = entradaNatal(), h, x;
+  if (!e.fecha && !e.hora && !e.lugar) { x = new Error('sin datos'); x.sinDatos = true; return Promise.reject(x); }
+  h = limite.huella(e);
+  if (!limite.puede(limite.leer(), h, Date.now())) { x = new Error('límite semanal'); x.limite = true; return Promise.reject(x); }
+  return api('/api/carta', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(e), cache: 'no-store' })
+   .then(function (c) { limite.guardar(limite.anotar(limite.leer(), h, Date.now())); return c; });
+ }
+ // cargar('natal' | 'momento') o cargar() para leer ?modo= de la URL. Devuelve una promesa con { modo, carta, significados, sinHora }.
+ function cargar(modo) {
+  modo = modoDe(modo);
+  var carta = modo === 'momento' ? api('/api/carta/momento', {}) : pedirNatal();
+  return Promise.all([carta, pedir('significados.json')])
+   .then(function (r) { return { modo: modo, carta: r[0], significados: r[1], sinHora: sinHora(r[0]) }; });
+ }`;
+
+/** carta-op2.js: ante un error o el límite no queda la carta a medias; y el botón del PDF. */
+const SIN_CARTA = ` // S14: el PDF es la impresión del navegador («Guardar como PDF») con la hoja @media print de carta-op2.css: nada sale a otro servicio.
+ function paraImprimir() { var d = $('[data-lista]'); if (d) d.open = true; }
+ window.addEventListener('beforeprint', paraImprimir);
+ var bpdf = $('[data-pdf-btn]');
+ if (bpdf) bpdf.addEventListener('click', function () { paraImprimir(); window.print(); });
+
+ // Sin carta (datos rechazados, el límite de la semana o un error): solo el aviso y el cierre, nada a medias.
+ var LIMITE_TXT = 'Ya calculaste tus 2 cartas de esta semana. Si querés una lectura completa, agendá una consulta';
+ var WHATSAPP = 'https://wa.me/5491153144378';
+ function sinCarta(err) {
+  Array.prototype.forEach.call(raiz.querySelectorAll('.ob-lado, .ob-ficha, .ob-cinta, .ob-mesa-w, #balance, #como-leer'), function (n) { n.style.display = 'none'; });
+  var c = $('[data-cargando]'), p, a;
+  if (!c) return;
+  c.hidden = false; c.textContent = '';
+  p = el('p', 'ob-enlaces');
+  if (err && err.limite) {
+   c.textContent = LIMITE_TXT;
+   a = el('a', 'ob-btn', 'Agendá una consulta'); a.href = WHATSAPP; a.target = '_blank'; a.rel = 'noopener';
+  } else {
+   c.classList.add('is-error');
+   c.textContent = (err && err.mensaje) || 'No pudimos cargar la carta. Recargá la página para intentarlo de nuevo.';
+   if (err && err.campo) { a = el('a', 'ob-link', 'Volver al formulario'); a.href = '/#herramientas'; }
+  }
+  if (a) { p.appendChild(a); c.parentNode.insertBefore(p, c.nextSibling); }
+ }
+
+ encabezado(MODO, SIN_HORA_URL, null); // antes de pedir los datos
+ A.cargar().then(pintar).catch(function (err) {
+  if (err && err.sinDatos) { location.replace('/#herramientas'); return; } // /carta sin datos: al formulario de la portada
+  if (window.console && !(err && (err.limite || err.mensaje))) console.error('carta-op2.js:', err);
+  sinCarta(err);
+ });
+})();`;
+
+/** carta-op2.css: 50 casillas en el balance, el botón del PDF y la hoja de impresión (va al final). */
+const CSS_CARTA = `
+/* Anaretico 29 (T8). El balance de 50 puntos de Fernando son 50 casillas: separación más fina para que entren */
+.ob-b-t{gap:2px}
+@media (max-width:720px){.ob-b-t{gap:1px}}
+/* S14: «Descargar mi carta en PDF» */
+.ob-pdf{margin-top:24px}
+.ob-pdf .ob-peq{margin:10px 0 0}
+.ob .ob-pdf .ob-btn{cursor:pointer}
+/* El PDF: la carta impresa como se ve (rueda, posiciones, aspectos, casas, balance y el pie legal), sin menú ni botones */
+@media print{
+ @page{size:A4;margin:12mm}
+ html,body{background:#243236!important}
+ *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+ .skip,.strap,header nav,header button,#canales,dialog,.ob-enlaces,.ob-pdf,.ob-panel,.ob-acciones,.ob-estado,.ob-mx-lectura,tr.ob-mean,.ob-ver-m,.ob-sec-h .ob-nota>span{display:none!important}
+ header{position:static!important;box-shadow:none!important}
+ .ob-mesa{display:block!important}
+ .ob-ticket,.ob-tablero,.ob-rueda,.ob-b,.ob-asp,tr,.ob-leer li{break-inside:avoid}
+ .ob-svg{max-width:180mm;margin-inline:auto!important}
+}`;
+
 const PARCHES = {
   "app.js": (t) => {
     // Busca su propio <script> por el final del src: con ?v= ya no termina en app.js
@@ -442,7 +601,77 @@ const PARCHES = {
     }
     return t;
   },
-  // Con la carta en Próximamente, el formulario y "Ver la carta de ahora" van a la pantalla: nada de cartas de ejemplo
+  "variantes/carta.js": (t) => {
+    const A = "carta.js";
+    t = parcheTramo(t, A, "// Carta natal y carta del momento: pantalla de resultado (prototipo, datos de ejemplo).", "Ningún número de la carta se escribe a mano acá.\n",
+      "// Carta natal y carta del momento: window.A29Carta, la biblioteca de la pantalla carta.html (opción 2 «Observatorio»):\n" +
+      "// carga de datos, textos, ayudas de datos y rueda en SVG. NO toca el DOM de la página.\n" +
+      "// La carta la calcula el servidor (POST /api/carta, GET /api/carta/momento) y los textos salen de datos/significados.json (borrador).\n" +
+      "// Ningún número de la carta se escribe a mano acá.\n",
+      (x) => x.includes("(B) Diseño 1") && x.includes("carta-ejemplo.json"));
+    t = parcheTramo(t, A, " function pedir(nombre) {", "sinHora: sinHora(r[0]) }; });\n }", CARGAR_CARTA,
+      (x) => x.includes("'carta-momento-ejemplo.json'") && x.includes("'carta-sinhora-ejemplo.json'") && x.includes("pedir('significados.json')"));
+    // Fernando: si empatan todos los grupos, «Equilibrio» (y ninguno «Predomina»)
+    t = parche(t, A, "  var filas = b[grupo].filter(function (x) { return dom.indexOf(x.id) >= 0; });\n",
+      "  var filas = b[grupo].filter(function (x) { return dom.indexOf(x.id) >= 0; });\n  if (b['balanced_' + grupo]) return { titulo: 'Equilibrio.', texto: '' };\n");
+    t = parche(t, A, "    dominante: dom.indexOf(x.id) >= 0,", "    dominante: dom.indexOf(x.id) >= 0 && !b['balanced_' + grupo],");
+    t = parche(t, A, "' de ejemplo, zodíaco tropical'", "', zodíaco tropical'");
+    t = parche(t, A, "(modo === 'momento' ? 'Rueda de la carta del momento (ejemplo)' : 'Rueda de la carta natal (ejemplo)')",
+      "(modo === 'momento' ? 'Rueda de la carta del momento' : 'Rueda de la carta natal')");
+    t = parche(t, A, "  nombre: nombre, punto: punto, modoDe: modoDe\n };", "  nombre: nombre, punto: punto, modoDe: modoDe,\n  limite: limite\n };");
+    // La parte (B) es la opción 1 «Almanaque», descartada (guía §2.2): no se publica
+    const corte = "\n// ====================================================================== (B) Diseño 1 \"Almanaque\"";
+    if (t.split(corte).length !== 2 || !t.slice(t.indexOf(corte)).includes("[data-carta-almanaque]")) falla(`${A}: no encuentro la parte (B) «Almanaque»`);
+    t = t.slice(0, t.indexOf(corte)) + "\n";
+    if (/ejemplo/.test(t)) falla(`${A}: quedó una carta de ejemplo`);
+    return t;
+  },
+  "variantes/carta-op2.js": (t) => {
+    const A = "carta-op2.js";
+    t = parche(t, A, "// Ningún número de la carta se escribe a mano: todo sale de datos/carta-ejemplo.json, datos/carta-momento-ejemplo.json o datos/carta-sinhora-ejemplo.json.",
+      "// Ningún número de la carta se escribe a mano: todo sale del JSON que calcula el servidor (POST /api/carta, GET /api/carta/momento).");
+    // S10: la hora es obligatoria, no hay carta sin hora
+    t = parche(t, A, " var SIN_HORA_URL = MODO === 'natal' && new URLSearchParams(location.search).get('sinhora') === '1';",
+      " var SIN_HORA_URL = false; // la hora de nacimiento es obligatoria (S10): no hay carta sin hora");
+    t = parche(t, A, "  var q = new URLSearchParams(location.search), f = q.get('fecha')", "  var q = new URLSearchParams((location.hash || '').replace(/^#/, '')), f = q.get('fecha')");
+    // Rótulos: sin «ejemplo», sin «Opción 2», la del momento en vivo (doc 03 §3, §11.3 y §11.6); los enlaces de ejemplo no van (§11.2)
+    t = parcheTramo(t, A, "  $('[data-kicker]').textContent = m ?", "sh.href = sin ? PAGINA : PAGINA + '?sinhora=1';\n",
+      "  $('[data-kicker]').textContent = m ? 'Carta del momento' : 'Carta natal';\n" +
+      "  $('[data-titulo]').textContent = m ? 'La carta del momento' : 'Tu carta natal';\n" +
+      "  document.title = 'Anaretico 29 · ' + (m ? 'La carta del momento' : 'Tu carta natal');\n" +
+      "  if (m) {\n" +
+      "   $('[data-bajada]').textContent = i\n" +
+      "    ? 'El cielo de ahora: ' + A.formato.fecha(i.date) + ', ' + i.time + ' de Buenos Aires (' + carta.meta.utc_instant.slice(11, 16) + ' UTC). Las posiciones, casas, balance de elementos y aspectos, con sus posibles significados.'\n" +
+      "    : 'Las posiciones, casas, balance de elementos y aspectos del cielo de ahora, para Buenos Aires.';\n" +
+      "   $('[data-sello]').textContent = 'Cielo de ahora';\n" +
+      "  } else {\n" +
+      "   $('[data-bajada]').textContent = 'Tus posiciones, casas, balance de elementos y aspectos, con sus posibles significados.';\n" +
+      "   $('[data-sello]').textContent = 'Con tus datos';\n" +
+      "  }\n" +
+      "  var otro = $('[data-otro]');\n" +
+      "  otro.hidden = m; otro.textContent = 'Ver la carta del momento'; otro.href = '/carta?modo=momento';\n",
+      (x) => x.includes("'Corte fijo · no en vivo'") && x.includes("$('[data-solo=\"natal\"]').hidden = m;") && x.includes("(ejemplo) · Opción 2"));
+    t = parche(t, A, "   campo(dl, 'Fecha del corte', A.formato.fecha(i.date));", "   campo(dl, 'Fecha', A.formato.fecha(i.date));");
+    t = parche(t, A, "   campo(dl, 'Hora del corte', i.time + ' (hora de Buenos Aires)');", "   campo(dl, 'Hora', i.time + ' (hora de Buenos Aires)');");
+    t = parche(t, A, "   p.appendChild(document.createTextNode(partes + '. Esta es una vista previa: la carta que ves se calculó con los datos del ejemplo (' + A.formato.fecha(i.date) + ', ' + (A.sinHora(carta) ? 'sin hora' : i.time) + ', ' + i.place + '). Con la calculadora conectada, se calcula con los tuyos.'));",
+      "   p.appendChild(document.createTextNode(partes + '.'));");
+    // Fernando: la carta usa el mismo criterio que la portada (50 puntos), así que la nota de «puede diferir» ya no es cierta
+    t = parche(t, A, "  $('[data-difiere]').textContent = 'Este conteo (1 punto por planeta' + (sin ? '' : ' y ángulo') + ') puede diferir del balance ponderado de la portada.';",
+      "  $('[data-difiere]').hidden = true; // el mismo criterio que la portada (Fernando, 24/11/2026)");
+    // Fernando: el Ascendente y el Medio Cielo no forman aspectos
+    t = parche(t, A, "'Las líneas de la rueda y las celdas de la matriz unen planetas' + (sin ? '' : ' (y los ángulos AC y MC)') + ' que forman,",
+      "'Las líneas de la rueda y las celdas de la matriz unen planetas que forman,");
+    // S14: el botón del PDF, solo en la carta natal y cuando ya está dibujada
+    t = parche(t, A, "  raiz.classList.add('is-listo');\n", "  raiz.classList.add('is-listo');\n  var pdf = $('[data-pdf]'); if (pdf) pdf.hidden = modo !== 'natal';\n");
+    t = parcheTramo(t, A, " encabezado(MODO, SIN_HORA_URL, null); // antes de pedir los datos", "})();", SIN_CARTA,
+      (x) => x.includes("No pudimos cargar la carta de ejemplo."));
+    return t;
+  },
+  "variantes/carta-op2.css": (t) => {
+    const fin = "@media (prefers-reduced-motion:reduce){.ob *{transition:none!important;animation:none!important;scroll-behavior:auto!important}}";
+    if (!t.trimEnd().endsWith(fin)) falla("carta-op2.css: no termina como se esperaba");
+    return t.trimEnd() + "\n" + CSS_CARTA.trim() + "\n";
+  },
   // S9: sin el campo de mail, la grilla de escritorio del formulario pasa de 4 a 3 columnas
   "variantes/herramientas.css": (t) => parche(t, "herramientas.css",
     ".t3 form{grid-template-columns:150px 150px minmax(0,1fr) minmax(0,1.3fr)}",
@@ -451,20 +680,23 @@ const PARCHES = {
     const carta = destino("carta.html", D);
     const H = "herramientas.js";
     // S9 y S10: sin mail, con la hora obligatoria (mismo estilo de aviso que la fecha)
-    t = parche(t, H, "// Herramientas. Carta natal: fecha, lugar y mail son obligatorios;", "// Herramientas. Carta natal: fecha, hora y lugar son obligatorios;");
+    t = parche(t, H, "// Herramientas. Carta natal: fecha, lugar y mail son obligatorios; con datos válidos el formulario lleva a carta.html (pantalla de resultado con una carta de ejemplo).",
+      "// Herramientas. Carta natal: fecha, hora y lugar son obligatorios; con datos válidos el formulario lleva a /carta con los datos después del #\n" +
+      "// (el navegador no manda esa parte de la dirección: la carta se pide por POST y no queda en ningún registro).");
     t = parche(t, H, "// Sin hora de nacimiento el enlace lleva sinhora=1 (la pantalla muestra la carta sin Ascendente ni casas).\n", "");
-    t = parche(t, H, "nada se guarda y el mail no viaja.", "nada se guarda.");
+    t = parche(t, H, "// \"Ver la carta de ahora\" lleva a carta.html?modo=momento. Los datos tipeados viajan en la URL solo para mostrarse en el encabezado: nada se guarda y el mail no viaja.",
+      `// "Ver la carta de ahora" lleva a ${destino("carta.html?modo=momento", D)}. Nada se guarda.`);
     t = parcheTramo(t, H, " fecha:v=>v?'':'Ingresá tu fecha de nacimiento.',", "'Revisá el mail: parece incompleto.')\n",
       " fecha:v=>v?'':'Ingresá tu fecha de nacimiento.',\n hora:v=>v?'':'Ingresá tu hora de nacimiento.',\n lugar:v=>v.trim()?'':'Ingresá el lugar de nacimiento.'\n",
       (x) => x.includes(" lugar:v=>v.trim()?'':'Ingresá el lugar de nacimiento.',") && x.includes(" email:v=>"));
     t = parche(t, H, "if(f.elements.hora&&f.elements.hora.value)q.set('hora',f.elements.hora.value);else q.set('sinhora','1');",
       "q.set('hora',f.elements.hora.value);");
     t = parche(t, "herramientas.js", `location.assign('carta.html?modo=momento')`, `location.assign('${destino("carta.html?modo=momento", D)}')`);
-    if (!carta.startsWith("/proximamente")) falla("herramientas.js: la carta está visible pero no se publica");
+    if (carta !== "/carta") falla(`herramientas.js: la carta no se publica en /carta (${carta})`);
     // S4: el diálogo de la carta del momento hablaba del corte fijo del cielo; esa frase no va
     t = parche(t, "herramientas.js",
       `<p>Los datos del panel "El cielo de hoy" siguen siendo un corte fijo del 20/10/2026.</p>`, "");
-    return parche(t, "herramientas.js", `location.assign('carta.html?'+q.toString())`, `location.assign('${carta}')`);
+    return parche(t, "herramientas.js", `location.assign('carta.html?'+q.toString())`, `location.assign('${carta}#'+q.toString())`);
   },
   // Las puertas de «Cuatro áreas de trabajo»
   "variantes/oferta.js": (t) => {

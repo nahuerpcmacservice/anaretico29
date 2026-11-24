@@ -2,16 +2,17 @@
 // y el autocompletado de ciudades.
 //
 // La portada ahora es la web nueva (routes/web.js). Las otras dos ya no
-// muestran las vistas viejas: van a lo que las reemplaza en la web nueva. Son
-// 302 porque la carta todavía está en Próximamente (doc 05 §6.3: una
-// redirección a Próximamente es temporal, nunca 301).
+// muestran las vistas viejas: van a lo que las reemplaza en la web nueva, con
+// 302 como siempre. /carta-natal va al formulario de la portada: la carta
+// natal se calcula desde ahí (los datos viajan después del #, ver
+// routes/carta.js), así que los de la dirección vieja no se usan.
 import express from "express";
 import { buscarCiudades } from "../lib/geo.js";
 
 const router = express.Router();
 
 export const PUBLICAS_VIEJAS = {
-  "/carta-natal": "/proximamente?p=carta", // con o sin datos: la carta todavía no se publica
+  "/carta-natal": "/#herramientas", // con o sin datos: el formulario de la carta natal
   "/cielo": "/#cielo",                     // «El cielo de hoy», en la portada
 };
 

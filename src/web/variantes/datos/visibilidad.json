@@ -458,7 +458,7 @@
    "id": "carta",
    "nombre": "Carta natal y carta del momento",
    "archivo": "carta.html",
-   "visible": false,
+   "visible": true,
    "donde": "Inicio, en «Calculá tu carta natal gratis»",
    "partes": [
     {
@@ -510,7 +510,8 @@
      "selector": "section.ob-cierre",
      "visible": true
     }
-   ]
+   ],
+   "ruta": "/carta"
   }
  ]
 }

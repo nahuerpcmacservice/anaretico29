@@ -1,4 +1,5 @@
-// Test de la web nueva: las tres páginas publicadas, sus archivos, Próximamente
+// Test de la web nueva: las páginas publicadas (la carta tiene además su test,
+// test-carta.mjs), sus archivos, Próximamente
 // para lo demás, las redirecciones viejas y el portero delante de todo.
 //
 // Levanta el router en 127.0.0.1 con un puerto libre y le pide cosas: no sale a
@@ -15,12 +16,12 @@ import { refsHtml, refsCss, fetchsJs, rutasJson, refsSvg, fotosCarrusel, esExter
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const WEB = path.join(HERE, "..", "src", "web");
-const VERSION = "20261124.2";
+const VERSION = "20261124.3";
 const SITIO = "https://www.anaretico29.com";
 const LEGAL = "Contenido astrológico y educativo. No constituye asesoramiento ni recomendación de inversión.";
 const GOOGLE = /fonts\.(?:googleapis|gstatic)\.com/;
 // Los glifos que tienen que salir como texto con las fuentes Noto propias (S11)
-const GLIFOS = "☉☽☿♀♂♃♄♅♆♇♈♉♊♋♌♍♎♏♐♑♒♓□☍→℞☌⚹△";
+const GLIFOS = "☉☽☿♀♂♃♄♅♆♇♈♉♊♋♌♍♎♏♐♑♒♓□☍→℞☌⚹△☊⚷";
 
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "web-nueva-"));
 process.env.DB_PATH = path.join(tmp, "prueba.db");
@@ -60,6 +61,7 @@ const PAGINAS = [
   { ruta: "/", archivo: "combinado.html" },
   { ruta: "/sobre-mi", archivo: "sobre-mi.html" },
   { ruta: "/proximamente?p=servicios", archivo: "proximamente.html" },
+  { ruta: "/carta", archivo: "carta.html" },
 ];
 const enDisco = (archivo) => {
   try { return fs.readFileSync(path.join(WEB, "variantes", archivo), "utf8"); } catch { return null; }
@@ -102,6 +104,13 @@ const ORDEN = {
       "portada-plaza.css", "servicios-op2.css"]),
     scripts: v(["data.js", "app.js", "menu.js", "movimiento.js", "proximamente.js"]),
   },
+  // Doc 03 §1.2: la hoja de símbolos (antes Google) en su lugar, antes de tonos.css
+  "carta.html": {
+    hojas: v(["styles.css", "compact.css", "rich.css", "combinado.css", "paletas/pizarra-auto.css",
+      "paletas/pizarra.css", "tipos/recomendado.css", "esquinas/media.css", "arreglos.css", "menu.css",
+      "canales.css", "movimiento.css", "carta-op2.css", "assets/fuentes/simbolos.css", "tonos.css"]),
+    scripts: v(["data.js", "app.js", "menu.js", "movimiento.js", "carta.js", "carta-op2.js"]),
+  },
 };
 const locales = (lista) => lista.filter((u) => !esExterna(u));
 
@@ -122,7 +131,7 @@ try {
     cierto(`${ruta} es ${archivo}`, esLaPagina(x.texto, archivo));
   }
 
-  console.log("— Portero abierto: las tres páginas");
+  console.log("— Portero abierto: las cuatro páginas");
   setEnDesarrollo(false);
   const servidas = {};
   for (const { ruta, archivo } of PAGINAS) {
@@ -155,12 +164,13 @@ try {
     const x = await pedir(r);
     cierto(`${r} pierde la barra final`, x.codigo === 301 && x.donde === r.replace("/?", "?").replace(/\/$/, ""), `${x.codigo} ${x.donde}`);
   }
-  for (const [r, a] of [["/combinado.html", "/"], ["/sobre-mi.html", "/sobre-mi"], ["/proximamente.html?p=academia", "/proximamente?p=academia"]]) {
+  for (const [r, a] of [["/combinado.html", "/"], ["/sobre-mi.html", "/sobre-mi"], ["/proximamente.html?p=academia", "/proximamente?p=academia"],
+    ["/carta.html", "/carta"], ["/carta.html?modo=momento", "/carta?modo=momento"], ["/combinado.html?modo=momento", "/"]]) {
     const x = await pedir(r);
     cierto(`${r} → ${a} (301)`, x.codigo === 301 && x.donde === a, `${x.codigo} ${x.donde}`);
   }
 
-  console.log("— Cada archivo que cargan las tres páginas responde");
+  console.log("— Cada archivo que cargan las cuatro páginas responde");
   const vistos = new Map(); // url → { codigo, tipo, texto }
   const traer = async (u) => {
     if (!vistos.has(u)) vistos.set(u, await pedir(u));
@@ -277,7 +287,8 @@ try {
     igual("sin hora: «Ingresá tu hora de nacimiento.»", sinHora.errores.hora, "Ingresá tu hora de nacimiento.");
     cierto("sin hora: el foco va a la hora y no se sale de la página", sinHora.errores.foco === "hora" && sinHora.idas.length === 0);
     const completo = correr({ fecha: "1980-05-04", hora: "14:30", lugar: "Rosario, Argentina" });
-    cierto("con fecha, hora y lugar: va a Próximamente (la carta es otra etapa)", completo.idas.join() === "/proximamente?p=carta" && completo.errores.hora === "");
+    // T8: a la carta, con los datos después del # (no llegan al servidor en la dirección)
+    cierto("con fecha, hora y lugar: va a /carta#fecha=…&lugar=…&hora=…", completo.idas.join() === "/carta#fecha=1980-05-04&lugar=Rosario%2C+Argentina&hora=14%3A30" && completo.errores.hora === "", completo.idas.join());
     const sinFecha = correr({ fecha: "", hora: "", lugar: "" });
     cierto("la fecha y el lugar siguen siendo obligatorios", sinFecha.errores.fecha === "Ingresá tu fecha de nacimiento." && sinFecha.errores.lugar === "Ingresá el lugar de nacimiento." && sinFecha.errores.foco === "fecha");
     cierto("herramientas.js ya no valida ni nombra un mail", !/mail/i.test(js));
@@ -301,7 +312,7 @@ try {
     for (const e of refsHtml(servidas[archivo]).enlaces) {
       if (esExterna(e)) continue;
       cierto(`${ruta}: ${e} no es un .html`, !/\.html\b/.test(e));
-      const bien = /^\/(?:#[\w-]+)?$/.test(e) || /^\/sobre-mi(?:#[\w-]+)?$/.test(e) ||
+      const bien = /^\/(?:#[\w-]+)?$/.test(e) || /^\/sobre-mi(?:#[\w-]+)?$/.test(e) || /^\/carta(?:\?modo=momento)?$/.test(e) ||
         (/^\/proximamente\?p=([\w-]+)$/.test(e) && ids.has(e.split("=")[1]));
       cierto(`${ruta}: ${e} es una página publicada`, bien);
       destinos.add(e.split("#")[0]);
@@ -317,12 +328,12 @@ try {
       new RegExp(`href="/proximamente\\?p=${id}"[^>]*>[^<]*<span class="pronto">Pronto</span></a>`).test(nav(servidas["proximamente.html"])));
   }
 
-  console.log("— Lo que se apaga: Servicios, Research, Academia, Revista, Membresía y la carta");
+  console.log("— Lo que se apaga: Servicios, Research, Academia, Revista y Membresía (la carta ya no: T8)");
   const pagVisible = (p) => p.bloqueada === true || p.visible !== false;
-  for (const id of ["servicios", "research", "academia", "revista", "membresia", "carta"]) {
+  for (const id of ["servicios", "research", "academia", "revista", "membresia"]) {
     cierto(`visibilidad.json: ${id} apagada`, !pagVisible(vis.paginas.find((p) => p.id === id)));
   }
-  for (const id of ["inicio", "recorrido", "enfoque"]) {
+  for (const id of ["inicio", "recorrido", "enfoque", "carta"]) {
     cierto(`visibilidad.json: ${id} visible`, pagVisible(vis.paginas.find((p) => p.id === id)));
   }
   cierto("«Mi recorrido» lleva a /sobre-mi", vis.paginas.find((p) => p.id === "recorrido").ruta === "/sobre-mi");
@@ -332,8 +343,8 @@ try {
   const menuJs = (await traer(`/menu.js?v=${VERSION}`)).texto;
   cierto("menu.js no agrega «Sumarme» al encabezado", !/appendChild\(cta\)/.test(menuJs) && !menuJs.includes("membresia.html"));
   const herrJs = (await traer(`/herramientas.js?v=${VERSION}`)).texto;
-  cierto("el formulario de la carta no lleva a una carta de ejemplo",
-    !/location\.assign\([^)]*carta\.html/.test(herrJs) && (herrJs.match(/location\.assign\('\/proximamente\?p=carta'\)/g) || []).length === 2);
+  cierto("el formulario y «Ver la carta de ahora» llevan a /carta, no a una carta de ejemplo",
+    !/location\.assign\([^)]*carta\.html/.test(herrJs) && herrJs.includes("location.assign('/carta#'+q.toString())") && herrJs.includes("location.assign('/carta?modo=momento')"));
   const ofertaJs = (await traer(`/oferta.js?v=${VERSION}`)).texto;
   cierto("las puertas de «Cuatro áreas» van a Próximamente", !ofertaJs.includes("servicios.html") && ofertaJs.includes('href="/proximamente?p=servicios"'));
   const proxJs = (await traer(`/proximamente.js?v=${VERSION}`)).texto;
@@ -350,8 +361,8 @@ try {
     ["/shop", "/proximamente?p=research"], ["/academia", "/proximamente?p=academia"],
     ["/revista", "/proximamente?p=revista"], ["/membresia", "/proximamente?p=membresia"],
     ["/servicios.html#personal", "/proximamente?p=servicios"], ["/curso.html?id=1", "/proximamente?p=academia"],
-    ["/carta.html?modo=momento", "/proximamente?p=carta"],
-    ["/carta-natal", "/proximamente?p=carta"], ["/carta-natal?fecha=2000-01-01&ciudad=Rosario", "/proximamente?p=carta"],
+    ["/carta-natal", "/#herramientas"], ["/carta-natal?fecha=2000-01-01&ciudad=Rosario", "/#herramientas"],
+    ["/proximamente?p=carta", "/carta"],
     ["/cielo", "/#cielo"], ["/herramientas", "/#herramientas"],
     ["/revista/carril/trabajo", "/proximamente?p=revista"], ["/revista/una-nota", "/proximamente?p=revista"],
     ["/recorrido", "/sobre-mi"], ["/estoy-trabado", "/proximamente?p=servicios"], ["/empezar", "/proximamente?p=servicios"],

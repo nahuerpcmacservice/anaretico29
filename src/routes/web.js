@@ -1,4 +1,4 @@
-// La web nueva: las tres páginas publicadas, sus archivos y las redirecciones de
+// La web nueva: las páginas publicadas, sus archivos y las redirecciones de
 // los nombres de archivo del prototipo. Va DESPUÉS del portero (app.js): con el
 // sitio cerrado, el anónimo ve el cartel también acá.
 import express from "express";
@@ -48,12 +48,24 @@ const query = (req) => {
   return i === -1 ? "" : req.originalUrl.slice(i);
 };
 
+// La carta estuvo en Próximamente: quien vuelva por ahí va a la carta (302,
+// como toda redirección que sale de Próximamente). Lo hace también
+// proximamente.js en el navegador (regla 6 del doc 05); acá no depende de él.
+router.get("/proximamente", (req, res, next) => {
+  const carta = D.paginas.find((p) => p.id === "carta");
+  if (req.query.p === "carta" && carta && pagVisible(carta) && carta.ruta) return res.redirect(302, carta.ruta);
+  next();
+});
+
 for (const [ruta, archivo] of Object.entries(PAGINAS)) {
   const abs = path.join(WEB_DIR, "variantes", archivo);
   router.get(ruta, (req, res, next) => {
     // Con barra final la página resolvería "datos/..." contra otra carpeta
     if (ruta !== "/" && req.path.endsWith("/")) return res.redirect(301, ruta + query(req));
     res.set("cache-control", "no-cache");
+    // La carta lleva los datos de nacimiento después del # (no llegan acá): que
+    // la pestaña no se guarde en ninguna caché ni pase su dirección a otro sitio
+    if (ruta === "/carta") res.set({ "cache-control": "no-store", "referrer-policy": "no-referrer" });
     // La portada lleva el cielo del motor: se rellena la plantilla (src/lib/portada.js)
     if (ruta === "/") {
       return paginaInicio().then((html) => res.type("html").send(html), next);

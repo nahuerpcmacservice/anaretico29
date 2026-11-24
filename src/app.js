@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { config } from "./config.js";
 import { paginaError } from "./views/layout.js";
 import publicRoutes from "./routes/public.js";
+import cartaRoutes from "./routes/carta.js";
 import contenidoRoutes from "./routes/contenido.js";
 import viejasRoutes from "./routes/viejas.js";
 import webRoutes from "./routes/web.js";
@@ -34,6 +35,8 @@ router.use(viejasRoutes);
 // La web nueva (src/web/, ver routes/web.js): /, /sobre-mi, /proximamente y
 // los archivos que esas tres páginas cargan.
 router.use(webRoutes);
+// La API de la carta natal y del momento (la pide /carta; nada se guarda)
+router.use(cartaRoutes);
 router.use(publicRoutes);
 router.use(panelRoutes);
 router.use(contenidoRoutes);
