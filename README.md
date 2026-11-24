@@ -24,6 +24,14 @@ El frente público está en `src/web/` y se genera con
 `node scripts/importar-web.mjs <carpeta web/ del diseño>`: copia solo lo que
 publican las páginas y les agrega `?v=` a los CSS y JS.
 
+Buscadores: el inicio, «Sobre mí» y la carta se indexan y llevan su
+`<link rel="canonical">` absoluto (`/`, `/sobre-mi`, `/carta` y, para la carta
+del momento, `/carta?modo=momento`). «Próximamente», el panel y las páginas de
+error llevan `noindex`. Las páginas 404 y 500 usan el mismo encabezado, la
+franja de canales y el pie de las demás (`src/lib/errores.js`, armadas sobre
+«Sobre mí»); el 500 no muestra detalles del error y no registra nada del
+pedido.
+
 El sitio no junta datos de los visitantes: no hay suscripción por mail ni
 formularios que guarden algo, y las fuentes se sirven desde el propio sitio
 (el navegador no le pide nada a Google Fonts).
@@ -69,7 +77,7 @@ Ninguno necesita internet; los que levantan el router usan un puerto libre de
 
 ```bash
 node scripts/test-portero.mjs        # sitio cerrado: quién pasa y quién ve el cartel
-node scripts/test-web-nueva.mjs      # páginas, archivos publicados, Próximamente y redirecciones
+node scripts/test-web-nueva.mjs      # páginas, archivos publicados, Próximamente, redirecciones, noindex/canónicas y 404/500
 node scripts/test-cielo-portada.mjs  # el cielo de hoy y la línea de tiempo, con reloj fijo
 node scripts/test-suscripcion.mjs    # sin datos de visitantes: no hay suscripción ni /privacidad
 node scripts/test-criterios.mjs      # criterios de cálculo (pesos, orbes, tensión) y la portada

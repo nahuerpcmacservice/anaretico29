@@ -542,7 +542,13 @@ try {
   igual("/carta: no-store y sin referer", [pag.cab.get("cache-control"), pag.cab.get("referrer-policy")], ["no-store", "no-referrer"]);
   const html = pag.texto;
   cierto("/carta es carta.html publicado", html === fs.readFileSync(path.join(WEB, "variantes", "carta.html"), "utf8"));
-  cierto("/carta sigue con noindex", html.includes('<meta name="robots" content="noindex,nofollow">'));
+  // S19: la carta se indexa, con su canónica absoluta sin el # (los datos de nacimiento no van ahí)
+  cierto("/carta ya no lleva noindex", !/name="robots"|noindex/i.test(html) && !pag.cab.get("x-robots-tag"));
+  igual("/carta: canónica absoluta, sin datos", [...html.matchAll(/<link rel="canonical" href="([^"]*)">/g)].map((m) => m[1]), ["https://www.anaretico29.com/carta"]);
+  {
+    const mom = await pedir("/carta?modo=momento");
+    igual("/carta?modo=momento: canónica propia", [...mom.texto.matchAll(/<link rel="canonical" href="([^"]*)">/g)].map((m) => m[1]), ["https://www.anaretico29.com/carta?modo=momento"]);
+  }
   for (const x of ["(ejemplo)", "Opción 2", "Prototipo", "Carta de ejemplo", "ob-proto", "sinhora=", "data-sinhora-link", "Ver el ejemplo", "También te la enviamos por mail", "ob-mail", "Fotografías con sus créditos"]) {
     cierto(`/carta no dice «${x}»`, !html.includes(x));
   }

@@ -14,6 +14,7 @@
 //   - referencias locales de los HTML → rutas absolutas; CSS y JS con ?v=VERSION
 //   - enlaces → la función única destino() de src/lib/web-nueva.js
 //   - og:image absoluto en el dominio
+//   - S19: noindex solo en Próximamente; las demás, con su canónica absoluta
 //   - regla 4: con Membresía apagada no se generan sus botones principales
 //   - Próximamente sin la franja de aprobación [SOLO MAQUETA] (doc 05 §4.7)
 //   - los scripts que arman enlaces (menú, carta, puertas, Próximamente)
@@ -38,7 +39,7 @@ import { refsHtml, refsCss, fetchsJs, rutasJson, refsSvg, fotosCarrusel, esExter
 import { WEB_DIR, PAGINAS, destino, pagVisible } from "../src/lib/web-nueva.js";
 
 /** Versión para vaciar la caché de CSS y JS: subirla en cada importación. */
-const VERSION = "20261124.5";
+const VERSION = "20261124.6";
 const CODIGO_FUENTE = "https://github.com/nahuerpcmacservice/anaretico29";
 /** Host canónico (config.js, hostCanonico): el og:image tiene que ser absoluto. */
 const SITIO = "https://www.anaretico29.com";
@@ -62,6 +63,14 @@ const PARTES_APAGADAS = { inicio: ["boletin"], carta: ["mail-carta"] };
  * están ahí (woff2, sus dos hojas y las licencias OFL).
  */
 const FUENTES = "assets/fuentes";
+/**
+ * S19 (24/11/2026): las páginas públicas se indexan. El noindex del prototipo
+ * se cambia por su canónica absoluta (la URL limpia de PAGINAS, sin query ni #);
+ * Próximamente lo conserva. Mientras el portero está cerrado, el 503 y su
+ * robots.txt siguen dejando afuera a los buscadores.
+ */
+const CON_NOINDEX = ["proximamente.html"];
+const NOINDEX = '<meta name="robots" content="noindex,nofollow">';
 /** URL limpia de las entradas de visibilidad.json que se publican. */
 const RUTAS = { inicio: "/", enfoque: "/", recorrido: "/sobre-mi", carta: "/carta" };
 
@@ -286,7 +295,13 @@ function reescribirHtml(html, archivo) {
   for (const [i, largo, nuevo] of reemplazos.reverse()) out = out.slice(0, i) + nuevo + out.slice(i + largo);
 
   // Chequeos de lo que no se puede perder
-  if (!out.includes('<meta name="robots" content="noindex,nofollow">')) falla(`${archivo}: perdió el noindex`);
+  if (out.split(NOINDEX).length !== 2) falla(`${archivo}: esperaba el noindex del prototipo una vez`);
+  if (/rel="canonical"/.test(out)) falla(`${archivo}: ya trae una canónica`);
+  if (!CON_NOINDEX.includes(archivo)) {
+    const ruta = Object.keys(PAGINAS).find((r) => PAGINAS[r] === archivo) || falla(`${archivo}: sin ruta limpia`);
+    out = out.replace(NOINDEX, () => `<link rel="canonical" href="${SITIO}${ruta}">`);
+    if (/name="robots"|noindex/i.test(out)) falla(`${archivo}: quedó un noindex`);
+  }
   if (!out.includes("Contenido astrológico y educativo. No constituye asesoramiento ni recomendación de inversión.")) falla(`${archivo}: perdió el texto legal`);
   const antes = refsHtml(html), despues = refsHtml(out);
   if (antes.hojas.length !== despues.hojas.length || antes.scripts.length !== despues.scripts.length) falla(`${archivo}: cambió la cantidad de hojas o scripts`);

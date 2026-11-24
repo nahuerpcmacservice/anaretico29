@@ -16,7 +16,7 @@ import { refsHtml, refsCss, fetchsJs, rutasJson, refsSvg, fotosCarrusel, esExter
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const WEB = path.join(HERE, "..", "src", "web");
-const VERSION = "20261124.5";
+const VERSION = "20261124.6";
 const SITIO = "https://www.anaretico29.com";
 const LEGAL = "Contenido astrológico y educativo. No constituye asesoramiento ni recomendación de inversión.";
 const GOOGLE = /fonts\.(?:googleapis|gstatic)\.com/;
@@ -54,15 +54,22 @@ async function pedir(ruta, { metodo = "GET", sesion = false } = {}) {
     headers: sesion && galleta ? { cookie: galleta } : {},
   });
   const cuerpo = Buffer.from(await r.arrayBuffer());
-  return { codigo: r.status, donde: r.headers.get("location"), tipo: r.headers.get("content-type") || "", cuerpo, texto: cuerpo.toString("utf8") };
+  return { codigo: r.status, donde: r.headers.get("location"), tipo: r.headers.get("content-type") || "", cab: r.headers, cuerpo, texto: cuerpo.toString("utf8") };
 }
 
+// S19: las páginas públicas se indexan y llevan su canónica absoluta;
+// Próximamente sigue con noindex (canonica: null).
 const PAGINAS = [
-  { ruta: "/", archivo: "combinado.html" },
-  { ruta: "/sobre-mi", archivo: "sobre-mi.html" },
-  { ruta: "/proximamente?p=servicios", archivo: "proximamente.html" },
-  { ruta: "/carta", archivo: "carta.html" },
+  { ruta: "/", archivo: "combinado.html", canonica: `${SITIO}/` },
+  { ruta: "/sobre-mi", archivo: "sobre-mi.html", canonica: `${SITIO}/sobre-mi` },
+  { ruta: "/proximamente?p=servicios", archivo: "proximamente.html", canonica: null },
+  { ruta: "/carta", archivo: "carta.html", canonica: `${SITIO}/carta` },
 ];
+const NOINDEX = '<meta name="robots" content="noindex,nofollow">';
+const canonicas = (html) => [...html.matchAll(/<link rel="canonical" href="([^"]*)">/g)].map((m) => m[1]);
+const PIE = `${LEGAL}<br>Imágenes: Anaretico 29<br><a href="https://github.com/nahuerpcmacservice/anaretico29" rel="noopener">Código fuente (AGPL)</a></small></footer>`;
+// Lo que tenía el layout anterior y ya no existe en la web nueva
+const VIEJO = /href="\/(?:p\/|agenda|revista|estatico\/)|class="pie"|class="cab"|Error \d{3}<\/span>|Esta página no existe/;
 const enDisco = (archivo) => {
   try { return fs.readFileSync(path.join(WEB, "variantes", archivo), "utf8"); } catch { return null; }
 };
@@ -122,6 +129,14 @@ try {
     cierto(`${r} no filtra la web nueva`, !/Próximamente|Astrología financiera/.test(x.texto));
   }
   cierto("el panel sigue entrando con el portero cerrado", (await pedir("/panel/entrar")).codigo === 200);
+  {
+    const rb = await pedir("/robots.txt");
+    cierto("cerrado: robots.txt sigue siendo Disallow: / (200, texto, no-store)",
+      rb.codigo === 200 && rb.tipo.startsWith("text/plain") && rb.texto === "User-agent: *\nDisallow: /\n" && rb.cab.get("cache-control") === "no-store",
+      `${rb.codigo} ${rb.tipo} ${JSON.stringify(rb.texto)}`);
+    const nada = await pedir("/no-existe-esta-pagina");
+    cierto("cerrado: una dirección desconocida da el 503 del portero, no el 404", nada.codigo === 503 && nada.cab.get("retry-after") === "86400", `${nada.codigo}`);
+  }
 
   console.log("— Portero cerrado, con sesión del panel");
   galleta = `anaretico_panel=${crearSesion("127.0.0.1")}`;
@@ -134,13 +149,19 @@ try {
   console.log("— Portero abierto: las cuatro páginas");
   setEnDesarrollo(false);
   const servidas = {};
-  for (const { ruta, archivo } of PAGINAS) {
+  for (const { ruta, archivo, canonica } of PAGINAS) {
     const x = await pedir(ruta);
     servidas[archivo] = x.texto;
     cierto(`${ruta} da 200`, x.codigo === 200, `dio ${x.codigo}`);
     cierto(`${ruta} es HTML`, x.tipo.startsWith("text/html"), x.tipo);
     cierto(`${ruta} es ${archivo}`, esLaPagina(x.texto, archivo));
-    cierto(`${ruta} sigue con noindex,nofollow`, x.texto.includes('<meta name="robots" content="noindex,nofollow">'));
+    if (canonica) {
+      cierto(`${ruta} ya no lleva noindex (S19)`, !/name="robots"|noindex/i.test(x.texto) && !x.cab.get("x-robots-tag"));
+      igual(`${ruta} lleva su canónica absoluta`, JSON.stringify(canonicas(x.texto)), JSON.stringify([canonica]));
+    } else {
+      cierto(`${ruta} sigue con noindex,nofollow`, x.texto.includes(NOINDEX));
+      cierto(`${ruta} no lleva canónica`, canonicas(x.texto).length === 0);
+    }
     cierto(`${ruta} trae el texto legal del pie sin tocar`, x.texto.includes(LEGAL));
     // AGPL §13: quien usa el sitio por red tiene que poder llegar al código fuente
     cierto(`${ruta} enlaza el código fuente (AGPL) en el pie`,
@@ -398,6 +419,97 @@ try {
     while (x.codigo >= 300 && x.codigo < 400 && saltos < 4) { saltos++; x = await pedir(x.donde); }
     cierto(`${vieja}: 301, termina en 200 en ≤ 2 saltos`, primero === 301 && x.codigo === 200 && saltos <= 2,
       `primero ${primero}, final ${x.codigo}, ${saltos} saltos`);
+  }
+
+  console.log("— S19: noindex solo en Próximamente, el panel y los errores; canónicas");
+  {
+    const m = await pedir("/carta?modo=momento");
+    igual("/carta?modo=momento da 200", m.codigo, 200);
+    igual("la carta del momento tiene su propia canónica", JSON.stringify(canonicas(m.texto)), JSON.stringify([`${SITIO}/carta?modo=momento`]));
+    cierto("la carta del momento no lleva noindex", !/name="robots"|noindex/i.test(m.texto) && !m.cab.get("x-robots-tag"));
+    cierto("fuera de la canónica, el momento es carta.html tal cual",
+      m.texto.replace(`${SITIO}/carta?modo=momento`, `${SITIO}/carta`) === enDisco("carta.html"));
+    igual("el momento sigue con no-store y sin referer", JSON.stringify([m.cab.get("cache-control"), m.cab.get("referrer-policy")]), JSON.stringify(["no-store", "no-referrer"]));
+    for (const q of ["/carta?modo=natal", "/carta?modo=MOMENTO", "/carta?x=1"]) {
+      igual(`${q}: canónica /carta`, JSON.stringify(canonicas((await pedir(q)).texto)), JSON.stringify([`${SITIO}/carta`]));
+    }
+    igual("/?utm=x: canónica sin la query", JSON.stringify(canonicas((await pedir("/?utm_source=x")).texto)), JSON.stringify([`${SITIO}/`]));
+    for (const q of ["/proximamente", "/proximamente?p=academia", "/proximamente?p=revista", "/proximamente?p=no-existe"]) {
+      const x = await pedir(q);
+      cierto(`${q} sigue con noindex y sin canónica`, x.codigo === 200 && x.texto.includes(NOINDEX) && canonicas(x.texto).length === 0, `${x.codigo}`);
+    }
+    const panel = await pedir("/panel/entrar");
+    cierto("el panel sigue con noindex", panel.codigo === 200 && panel.texto.includes(NOINDEX) && canonicas(panel.texto).length === 0);
+    cierto("el panel (con sesión) sigue con noindex", (await pedir("/panel", { sesion: true })).texto.includes(NOINDEX));
+    const rb = await pedir("/robots.txt");
+    cierto("abierto: robots.txt no bloquea las páginas públicas (hoy no existe: 404)", rb.codigo === 404 && !/Disallow/.test(rb.texto), `${rb.codigo}`);
+  }
+
+  console.log("— S20: 404 y 500 con el diseño nuevo");
+  const sobreMi = servidas["sobre-mi.html"];
+  const cabecera = (html) => (/<header>[\s\S]*?<\/header>/.exec(html) || [""])[0];
+  const canales = (html) => (/<section class="channels" id="canales"[\s\S]*?<\/section>/.exec(html) || [""])[0];
+  const pie = (html) => (/<footer>[\s\S]*?<\/footer>/.exec(html) || [""])[0];
+  const esCaparazon = (nombre, x, { titulo, frase }) => {
+    cierto(`${nombre}: HTML`, x.tipo.startsWith("text/html"), x.tipo);
+    igual(`${nombre}: no-store`, x.cab.get("cache-control"), "no-store");
+    cierto(`${nombre}: noindex en la página y en la cabecera`, x.texto.includes(NOINDEX) && /noindex/.test(x.cab.get("x-robots-tag") || ""), x.cab.get("x-robots-tag"));
+    cierto(`${nombre}: sin canónica`, canonicas(x.texto).length === 0);
+    igual(`${nombre}: título`, (/<title>([^<]*)<\/title>/.exec(x.texto) || [])[1], titulo);
+    cierto(`${nombre}: el mismo encabezado y menú que las páginas publicadas`, cabecera(x.texto).length > 0 && cabecera(x.texto) === cabecera(sobreMi));
+    cierto(`${nombre}: la misma franja de canales`, canales(x.texto).length > 0 && canales(x.texto) === canales(sobreMi));
+    cierto(`${nombre}: el mismo pie, con «Imágenes: Anaretico 29» y «Código fuente (AGPL)»`, pie(x.texto) === pie(sobreMi) && x.texto.includes(PIE));
+    cierto(`${nombre}: dice «${frase}»`, x.texto.includes(`<h1>${frase}</h1>`));
+    cierto(`${nombre}: «Volver al inicio» lleva a /`, /<a class="btn-sm" href="\/">Volver al inicio<\/a>/.test(x.texto));
+    cierto(`${nombre}: nada del layout anterior ni enlaces al sitio viejo`, !VIEJO.test(x.texto) && !x.texto.includes("/p/privacidad"), (VIEJO.exec(x.texto) || [""])[0]);
+    cierto(`${nombre}: no queda el recorrido de «Sobre mí»`, !x.texto.includes("Fernando <br>Javier Pérez") && !x.texto.includes('class="ix"'));
+    const { hojas, scripts } = refsHtml(x.texto);
+    cierto(`${nombre}: las hojas y scripts de «Sobre mí», en su orden`,
+      JSON.stringify(locales(hojas)) === JSON.stringify(ORDEN["sobre-mi.html"].hojas) && JSON.stringify(locales(scripts)) === JSON.stringify(ORDEN["sobre-mi.html"].scripts));
+    const malos = refsHtml(x.texto).enlaces.filter((e) => !esExterna(e) &&
+      !(/^\/(?:#[\w-]+)?$/.test(e) || /^\/sobre-mi$/.test(e) || /^\/proximamente\?p=[\w-]+$/.test(e) || e === "#inicio"));
+    cierto(`${nombre}: todos los enlaces van a páginas publicadas`, malos.length === 0, malos.join(" "));
+  };
+  const N404 = { titulo: "Anaretico 29 · Página no encontrada", frase: "No encontramos esta página." };
+  for (const r of ["/no-existe-esta-pagina", "/una/ruta/honda/que-no-existe", "/no-existe.html", "/robots.txt"]) {
+    const x = await pedir(r);
+    igual(`${r} da 404`, x.codigo, 404);
+    esCaparazon(`404 ${r}`, x, N404);
+  }
+  {
+    const x = await pedir("/no-existe", { metodo: "POST" });
+    cierto("POST a una dirección desconocida: 404 con el diseño nuevo", x.codigo === 404 && x.texto.includes("<h1>No encontramos esta página.</h1>"));
+    setEnDesarrollo(true);
+    const s = await pedir("/no-existe-esta-pagina", { sesion: true });
+    igual("cerrado, con sesión: el 404 también es el nuevo", s.codigo, 404);
+    esCaparazon("404 con sesión", s, N404);
+    setEnDesarrollo(false);
+  }
+  {
+    // Un 500 forzado: una ruta de prueba que falla, delante del sitio, y el
+    // manejador de errores del sitio detrás (el mismo que monta app.js).
+    const { manejarError, noEncontrada } = await import("../src/lib/errores.js");
+    cierto("app.js monta noEncontrada y manejarError al final",
+      app.stack.at(-2)?.handle === noEncontrada && app.stack.at(-1)?.handle === manejarError);
+    const prueba = express();
+    prueba.get("/romper", () => { throw new Error("DETALLE-INTERNO en /srv/app/src/x.js:12"); });
+    prueba.use(manejarError);
+    const h = prueba.listen(0, "127.0.0.1");
+    await once(h, "listening");
+    const registro = [];
+    const errorOriginal = console.error;
+    console.error = (...a) => registro.push(a.map((v) => (v instanceof Error ? v.stack : String(v))).join(" "));
+    let x;
+    try {
+      const r = await fetch(`http://127.0.0.1:${h.address().port}/romper?fecha=1980-05-04&lugar=Rosario-Secreto`, { headers: { "x-dato": "DatoDelVisitante", cookie: "c=GalletaVisitante" } });
+      x = { codigo: r.status, tipo: r.headers.get("content-type") || "", cab: r.headers, texto: await r.text() };
+    } finally { console.error = errorOriginal; h.close(); }
+    igual("un error da 500", x.codigo, 500);
+    esCaparazon("500", x, { titulo: "Anaretico 29 · Algo salió mal", frase: "Algo salió mal. Probá de nuevo en un rato." });
+    cierto("500: sin detalles del error ni rastro de pila", !/DETALLE-INTERNO|\/srv\/app|x\.js|\bat \w|Error:|stack/i.test(x.texto));
+    const log = registro.join("\n");
+    cierto("500: se registra que hubo un error", registro.length > 0);
+    cierto("500: el registro no lleva datos del pedido (S9)", !/1980-05-04|Rosario-Secreto|DatoDelVisitante|GalletaVisitante|\/romper|fecha=/.test(log), log);
   }
 
   console.log("— Se vuelve a cerrar");

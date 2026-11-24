@@ -43,6 +43,20 @@ router.get(/.*/, (req, res, next) => {
   res.sendFile(archivo, { maxAge: cacheDe(req.path), dotfiles: "deny" }, (err) => { if (err) next(err); });
 });
 
+// S19: la carta del momento (?modo=momento) es otra pantalla con el mismo
+// archivo: lleva su propia canónica. La natal queda en /carta (sin el #, que
+// no llega al servidor). carta.js usa el mismo criterio (modoDe: solo
+// "momento" exacto; cualquier otra cosa es la natal).
+const CANON_CARTA = '<link rel="canonical" href="https://www.anaretico29.com/carta">';
+const CANON_MOMENTO = '<link rel="canonical" href="https://www.anaretico29.com/carta?modo=momento">';
+let cartaMomento = null;
+const paginaMomento = (abs) => {
+  if (cartaMomento) return cartaMomento;
+  const html = fs.readFileSync(abs, "utf8");
+  if (html.split(CANON_CARTA).length !== 2) throw new Error("carta.html: esperaba su canónica una vez");
+  return (cartaMomento = html.replace(CANON_CARTA, () => CANON_MOMENTO));
+};
+
 const query = (req) => {
   const i = req.originalUrl.indexOf("?");
   return i === -1 ? "" : req.originalUrl.slice(i);
@@ -66,6 +80,9 @@ for (const [ruta, archivo] of Object.entries(PAGINAS)) {
     // La carta lleva los datos de nacimiento después del # (no llegan acá): que
     // la pestaña no se guarde en ninguna caché ni pase su dirección a otro sitio
     if (ruta === "/carta") res.set({ "cache-control": "no-store", "referrer-policy": "no-referrer" });
+    if (ruta === "/carta" && req.query.modo === "momento") {
+      try { return res.type("html").send(paginaMomento(abs)); } catch (err) { return next(err); }
+    }
     // La portada lleva el cielo del motor: se rellena la plantilla (src/lib/portada.js)
     if (ruta === "/") {
       return paginaInicio().then((html) => res.type("html").send(html), next);
